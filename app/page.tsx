@@ -8,6 +8,8 @@ import {
   FacebookIcon,
   GithubIcon,
   LinkedinIcon,
+  MenuIcon,
+  XIcon,
 } from "lucide-react";
 
 // --- DYNAMIC DATA ---
@@ -303,6 +305,7 @@ const PROJECTS = [
 
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState("All");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // Added mobile menu state
 
   // Filter projects based on selected category
   const filteredProjects = PROJECTS.filter((project) =>
@@ -333,7 +336,7 @@ export default function Home() {
     <div className="min-h-screen bg-[#0d0f14] text-gray-200 font-sans selection:bg-blue-500/30 scroll-smooth overflow-x-hidden">
       {/* STICKY NAVBAR */}
       <nav className="fixed w-full top-0 z-50 backdrop-blur-lg bg-[#0d0f14]/80 border-b border-gray-800/50 transition-all">
-        <div className="flex items-center justify-between px-8 py-4 max-w-7xl mx-auto">
+        <div className="flex items-center justify-between px-6 md:px-8 py-4 max-w-7xl mx-auto">
           <div className="flex items-center gap-3 text-xl font-bold group cursor-pointer">
             <div className="w-11 h-11 rounded-xl bg-linear-to-br from-blue-500 to-emerald-400 p-0.5 shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/40 transition-all duration-300">
               <Link
@@ -350,6 +353,16 @@ export default function Home() {
               </Link>
             </div>
           </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden text-gray-300 hover:text-white focus:outline-none"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <XIcon size={28} /> : <MenuIcon size={28} />}
+          </button>
+
+          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
             {["Home", "Services", "Projects", "Experience", "Contact"].map(
               (item) => (
@@ -372,34 +385,62 @@ export default function Home() {
             </a>
           </div>
         </div>
+
+        {/* Mobile Navigation Dropdown */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden bg-[#0d0f14] border-t border-gray-800/50 px-6 py-4 flex flex-col gap-4 shadow-xl">
+            {["Home", "Services", "Projects", "Experience", "Contact"].map(
+              (item) => (
+                <Link
+                  key={item}
+                  href={`#${item.toLowerCase()}`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-gray-400 hover:text-white transition-colors block py-2 text-lg font-medium"
+                >
+                  {item}
+                </Link>
+              ),
+            )}
+            <a
+              href="/uploads/resume.pdf"
+              target="_blank"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="bg-blue-600/10 hover:bg-blue-600/20 text-blue-400 border border-blue-500/30 text-center px-5 py-3 rounded-lg transition-all duration-300 font-medium mt-2"
+            >
+              View Resume
+            </a>
+          </div>
+        )}
       </nav>
 
       {/* HERO SECTION */}
       <section
         id="home"
-        className="pt-32 pb-20 max-w-7xl mx-auto px-8 lg:pb-32 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center reveal-target opacity-0 translate-y-12 transition-all duration-1000 ease-out"
+        className="pt-32 pb-20 max-w-7xl mx-auto px-6 md:px-8 lg:pb-32 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center reveal-target opacity-0 translate-y-12 transition-all duration-1000 ease-out"
       >
         {/* Content Side */}
-        <div className="order-2 lg:order-1 space-y-8 relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-semibold tracking-wide backdrop-blur-sm cursor-default shadow-[0_0_15px_rgba(16,185,129,0.1)]">
-            Available for new opportunities
+        <div className="order-2 lg:order-1  space-y-8 relative z-10">
+          <div className="flex flex-col justify-center  lg:items-start lg:text-left gap-2 items-center text-center">
+            <div className="  items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-semibold tracking-wide backdrop-blur-sm cursor-default shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+              Available for new opportunities
+            </div>
+
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.15] tracking-tight text-white">
+              {`Hi, I'm`} <br />
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 via-cyan-400 to-emerald-400 animate-linear-x cursor-default drop-shadow-sm">
+                Rajan Sharma.
+              </span>
+            </h1>
           </div>
 
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.15] tracking-tight text-white">
-            {`Hi, I'm`} <br />
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 via-cyan-400 to-emerald-400 animate-linear-x cursor-default drop-shadow-sm">
-              Rajan Sharma.
-            </span>
-          </h1>
-
-          <p className="text-gray-400 text-lg md:text-xl max-w-xl text-left leading-relaxed cursor-default">
+          <p className="text-gray-400 text-base md:text-lg lg:text-xl max-w-xl text-left leading-relaxed cursor-default">
             {`I'm a Full-Stack Developer engineering secure, high-performance web applications. I specialize in the MERN stack, Next.js, TypeScript, and integrating modern AI solutions.`}
           </p>
 
-          <div className="flex flex-wrap gap-4 pt-4">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-4 pt-4">
             <a
               href="#projects"
-              className="group bg-linear-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_rgba(37,99,235,0.5)] hover:-translate-y-1 flex items-center justify-center gap-2 cursor-pointer"
+              className="group bg-linear-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_rgba(37,99,235,0.5)] hover:-translate-y-1 flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto"
             >
               View My Work
               {/* Arrow Icon */}
@@ -419,7 +460,7 @@ export default function Home() {
             </a>
             <a
               href="#contact"
-              className="group bg-[#11141c] hover:bg-[#1a1d27] border border-gray-700 hover:border-gray-500 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:-translate-y-1 flex items-center justify-center gap-2 cursor-pointer"
+              className="group bg-[#11141c] hover:bg-[#1a1d27] border border-gray-700 hover:border-gray-500 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:-translate-y-1 flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto"
             >
               Contact Me
               {/* Mail Icon */}
@@ -440,8 +481,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Image / Graphic Side */}
-        <div className="order-1 lg:order-2 flex justify-center lg:justify-end relative">
+        {/* Image / Graphic Side - Hidden on Mobile (md and below) */}
+        <div className="order-1 lg:order-2 hidden md:flex justify-center lg:justify-end relative">
           {/* Animated Background Glow */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-linear-to-tr from-blue-500/20 to-emerald-500/20 blur-3xl rounded-full opacity-70 animate-pulse pointer-events-none"></div>
 
@@ -473,8 +514,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
       {/* TECH STACK SECTION (INFINITE MARQUEE) */}
-      <section className="max-w-7xl mx-auto px-8 pb-24 relative z-10 reveal-target opacity-0 translate-y-12 transition-all duration-1000 delay-200 ease-out">
+      <section className="max-w-7xl mx-auto px-6 md:px-8 pb-24 relative z-10 reveal-target opacity-0 translate-y-12 transition-all duration-1000 delay-200 ease-out">
         <p className="text-sm font-semibold tracking-widest text-gray-500 uppercase text-center mb-10 cursor-default">
           Core Technologies
         </p>
@@ -505,7 +547,7 @@ export default function Home() {
         />
 
         {/* Marquee Container with linear Mask for faded edges */}
-        <div className="relative max-w-5xl mx-auto overflow-hidden [mask-image:linear-linear(to_right,transparent,black_10%,black_90%,transparent)]">
+        <div className="relative max-w-5xl mx-auto overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
           {/* First Row (Scrolls Left) */}
           <div className="flex w-max gap-4 animate-scroll-left py-2">
             {/* Duplicating the array creates the seamless infinite loop */}
@@ -542,12 +584,12 @@ export default function Home() {
         id="services"
         className="bg-[#11141c] border-t border-gray-800/50 py-24 scroll-mt-20 cursor-default"
       >
-        <div className="max-w-7xl mx-auto px-8 reveal-target opacity-0 translate-y-12 transition-all duration-1000 ease-out">
+        <div className="max-w-7xl mx-auto px-6 md:px-8 reveal-target opacity-0 translate-y-12 transition-all duration-1000 ease-out">
           <div className="mb-16 text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               What I Do
             </h2>
-            <p className="text-gray-400 max-w-2xl mx-auto text-lg">
+            <p className="text-gray-400 max-w-2xl mx-auto text-base md:text-lg">
               Delivering end-to-end web solutions from intuitive interfaces to
               robust database architectures.
             </p>
@@ -576,12 +618,12 @@ export default function Home() {
 
       {/* PROJECTS SECTION WITH CATEGORIES */}
       <section id="projects" className="bg-[#11141c] py-24 scroll-mt-20">
-        <div className="max-w-7xl mx-auto px-8 reveal-target opacity-0 translate-y-12 transition-all duration-1000 ease-out">
+        <div className="max-w-7xl mx-auto px-6 md:px-8 reveal-target opacity-0 translate-y-12 transition-all duration-1000 ease-out">
           <div className="mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 cursor-default">
               Featured Projects
             </h2>
-            <p className="text-gray-400 max-w-2xl text-lg cursor-default">
+            <p className="text-gray-400 max-w-2xl text-base md:text-lg cursor-default">
               A selection of my recent builds categorized by technology stack.
             </p>
           </div>
@@ -610,7 +652,7 @@ export default function Home() {
                 key={project.id}
                 className="group bg-[#0d0f14] rounded-2xl border border-gray-800 hover:border-blue-500/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(59,130,246,0.1)] overflow-hidden flex flex-col"
               >
-                <div className="aspect-Vibe w-full relative overflow-hidden bg-gray-900 cursor-default">
+                <div className="aspect-video w-full relative overflow-hidden bg-gray-900 cursor-default">
                   <Image
                     src={project.image}
                     alt={project.title}
@@ -644,13 +686,13 @@ export default function Home() {
                   </div>
 
                   {/* Dynamic Action Buttons */}
-                  <div className="flex justify-center flex-wrap gap-3 mt-auto">
+                  <div className="flex flex-wrap gap-3 mt-auto">
                     {project.githubFrontend && (
                       <a
                         href={project.githubFrontend}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-[48%] flex items-center justify-center gap-2  min-w-30 bg-white/5 hover:bg-white/10 border border-gray-700 text-white py-2.5 rounded-lg text-xs md:text-sm font-medium transition-all duration-300 text-center cursor-pointer"
+                        className="flex-1 min-w-[120px] flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-gray-700 text-white py-2.5 rounded-lg text-xs md:text-sm font-medium transition-all duration-300 text-center cursor-pointer"
                       >
                         <GithubIcon size={18} />
                         Frontend
@@ -661,7 +703,7 @@ export default function Home() {
                         href={project.githubBackend}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-[48%] flex items-center justify-center gap-2  min-w-30 bg-white/5 hover:bg-white/10 border border-gray-700 text-white py-2.5 rounded-lg text-xs md:text-sm font-medium transition-all duration-300 text-center cursor-pointer"
+                        className="flex-1 min-w-[120px] flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-gray-700 text-white py-2.5 rounded-lg text-xs md:text-sm font-medium transition-all duration-300 text-center cursor-pointer"
                       >
                         <GithubIcon size={18} />
                         Backend
@@ -672,7 +714,7 @@ export default function Home() {
                         href={project.live}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 min-w-30 bg-blue-600 hover:bg-blue-500 text-white py-2.5 rounded-lg text-xs md:text-sm font-medium transition-all duration-300 text-center cursor-pointer"
+                        className="flex-1 min-w-[120px] bg-blue-600 hover:bg-blue-500 text-white py-2.5 rounded-lg text-xs md:text-sm font-medium transition-all duration-300 text-center cursor-pointer flex items-center justify-center"
                       >
                         Live Demo
                       </a>
@@ -690,12 +732,12 @@ export default function Home() {
         id="experience"
         className="border-y border-gray-800/50 py-24 scroll-mt-20 cursor-default"
       >
-        <div className="max-w-7xl mx-auto px-8 reveal-target opacity-0 translate-y-12 transition-all duration-1000 ease-out">
+        <div className="max-w-7xl mx-auto px-6 md:px-8 reveal-target opacity-0 translate-y-12 transition-all duration-1000 ease-out">
           <div className="mb-16 text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Experience & Background
             </h2>
-            <p className="text-gray-400 max-w-2xl mx-auto text-lg">
+            <p className="text-gray-400 max-w-2xl mx-auto text-base md:text-lg">
               My professional journey across software development, technical
               operations, and engineering education.
             </p>
@@ -705,7 +747,7 @@ export default function Home() {
             {EXPERIENCE.map((item) => (
               <div
                 key={item.id}
-                className="bg-[#11141c] p-8 rounded-2xl border border-gray-800 hover:border-blue-500/30 transition-all duration-300 group"
+                className="bg-[#11141c] p-6 md:p-8 rounded-2xl border border-gray-800 hover:border-blue-500/30 transition-all duration-300 group"
               >
                 <div className="flex justify-between items-start mb-4">
                   <div>
@@ -719,10 +761,12 @@ export default function Home() {
                     </h3>
                   </div>
                 </div>
-                <div className="text-gray-400 text-sm font-medium mb-4 flex items-center gap-2">
+                <div className="text-gray-400 text-sm font-medium mb-4 flex flex-wrap items-center gap-2">
                   <span>{item.company}</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-gray-700"></span>
-                  <span>{item.location}</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-gray-700 hidden sm:inline-block"></span>
+                  <span className="w-full sm:w-auto mt-1 sm:mt-0">
+                    {item.location}
+                  </span>
                 </div>
                 <p className="text-gray-500 leading-relaxed text-sm">
                   {item.description}
@@ -740,12 +784,12 @@ export default function Home() {
       >
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-150 h-150 bg-blue-500/5 rounded-full blur-[100px] pointer-events-none"></div>
 
-        <div className="max-w-5xl mx-auto px-8 relative z-10 reveal-target opacity-0 translate-y-12 transition-all duration-1000 ease-out">
+        <div className="max-w-5xl mx-auto px-6 md:px-8 relative z-10 reveal-target opacity-0 translate-y-12 transition-all duration-1000 ease-out">
           <div className="text-center mb-16 cursor-default">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               {`Let's Work Together`}
             </h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+            <p className="text-gray-400 text-base md:text-lg max-w-2xl mx-auto">
               {`I'm currently available for freelance work and full-time
               opportunities. Feel free to reach out through any of the channels
               below.`}
@@ -775,7 +819,9 @@ export default function Home() {
                 </svg>
               </div>
               <h3 className="text-white font-bold mb-1">Email Me</h3>
-              <p className="text-gray-400 text-sm">email.rajan001@gmail.com</p>
+              <p className="text-gray-400 text-sm break-all">
+                email.rajan001@gmail.com
+              </p>
             </a>
 
             {/* Phone Card (Call / WhatsApp) */}
@@ -887,14 +933,14 @@ export default function Home() {
 
       {/* FOOTER */}
       <footer className="bg-[#0a0c10] border-t border-gray-800/50 pt-16 pb-8 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-8 flex flex-col md:flex-row items-center justify-between text-xs text-gray-500 pt-8 border-t border-gray-800/80 cursor-default relative z-10">
+        <div className="max-w-7xl mx-auto px-6 md:px-8 flex flex-col md:flex-row items-center justify-between text-xs text-gray-500 pt-8 border-t border-gray-800/80 cursor-default relative z-10 text-center md:text-left">
           <p>© {new Date().getFullYear()} Rajan Sharma. All rights reserved.</p>
-          <div className="flex items-center gap-4 mt-4 md:mt-0">
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 mt-4 md:mt-0">
             <p>Built with Next.js & Tailwind</p>
-            <span className="hidden md:inline-block w-1 h-1 rounded-full bg-gray-700"></span>
+            <span className="hidden sm:inline-block w-1 h-1 rounded-full bg-gray-700"></span>
             <Link
               href="#home"
-              className="hover:text-blue-400 transition-colors flex items-center gap-1 cursor-pointer"
+              className="hover:text-blue-400 transition-colors flex items-center gap-1 cursor-pointer mt-2 sm:mt-0"
             >
               Back to top
               <svg
