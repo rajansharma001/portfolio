@@ -69,6 +69,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link rel="icon" href="/siteicon.png" sizes="any" />
+        <link rel="apple-touch-icon" href="/siteicon.png" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
