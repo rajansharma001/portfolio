@@ -94,7 +94,7 @@ export default function AdminDashboardPage() {
             <Eye size={18} color="var(--accent)" />
           </div>
           <div style={{ fontSize: '32px', fontWeight: '800', marginBottom: '4px' }}>{analytics.totalViews}</div>
-          <div style={{ fontSize: '12px', color: 'var(--status-success)' }}>+14.2% from last week</div>
+          <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Real-time page views</div>
         </div>
 
         <div className="card" style={{ borderLeft: '4px solid var(--accent-emerald)' }}>
@@ -103,7 +103,7 @@ export default function AdminDashboardPage() {
             <Users size={18} color="var(--accent-emerald)" />
           </div>
           <div style={{ fontSize: '32px', fontWeight: '800', marginBottom: '4px' }}>{analytics.uniqueVisitors}</div>
-          <div style={{ fontSize: '12px', color: 'var(--accent-emerald)' }}>Global unique IPs</div>
+          <div style={{ fontSize: '12px', color: 'var(--accent-emerald)' }}>Recorded unique IPs</div>
         </div>
 
         <div className="card" style={{ borderLeft: '4px solid var(--accent-purple)' }}>
@@ -121,8 +121,14 @@ export default function AdminDashboardPage() {
             <Globe size={18} color="var(--accent-cyan)" />
           </div>
           <div style={{ fontSize: '24px', fontWeight: '800', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span>{sortedLocations[0]?.[1]?.flag || '🇳🇵'}</span>
-            <span>{sortedLocations[0]?.[0] || 'Nepal'}</span>
+            {sortedLocations.length > 0 ? (
+              <>
+                <span>{sortedLocations[0][1].flag}</span>
+                <span>{sortedLocations[0][0]}</span>
+              </>
+            ) : (
+              <span style={{ fontSize: '16px', color: 'var(--text-dim)', fontWeight: '500' }}>No visits yet</span>
+            )}
           </div>
           <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Highest traffic source</div>
         </div>
@@ -143,33 +149,39 @@ export default function AdminDashboardPage() {
           </div>
 
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid var(--border)', color: 'var(--text-secondary)' }}>
-                  <th style={{ padding: '8px 12px' }}>Location</th>
-                  <th style={{ padding: '8px 12px' }}>City</th>
-                  <th style={{ padding: '8px 12px' }}>IP Address</th>
-                  <th style={{ padding: '8px 12px' }}>Path</th>
-                  <th style={{ padding: '8px 12px' }}>Time</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(analytics.visits || []).slice(0, 6).map((visit, i) => (
-                  <tr key={i} style={{ borderBottom: '1px solid var(--border-light)' }}>
-                    <td style={{ padding: '10px 12px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span>{visit.flag}</span>
-                      <span>{visit.country}</span>
-                    </td>
-                    <td style={{ padding: '10px 12px', color: 'var(--text-secondary)' }}>{visit.city}</td>
-                    <td style={{ padding: '10px 12px', fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--accent-cyan)' }}>{visit.ip}</td>
-                    <td style={{ padding: '10px 12px', color: 'var(--text-secondary)' }}>{visit.path}</td>
-                    <td style={{ padding: '10px 12px', fontSize: '11px', color: 'var(--text-dim)' }}>
-                      {new Date(visit.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </td>
+            {analytics.visits && analytics.visits.length > 0 ? (
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid var(--border)', color: 'var(--text-secondary)' }}>
+                    <th style={{ padding: '8px 12px' }}>Location</th>
+                    <th style={{ padding: '8px 12px' }}>City</th>
+                    <th style={{ padding: '8px 12px' }}>IP Address</th>
+                    <th style={{ padding: '8px 12px' }}>Path</th>
+                    <th style={{ padding: '8px 12px' }}>Time</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {analytics.visits.slice(0, 8).map((visit, i) => (
+                    <tr key={i} style={{ borderBottom: '1px solid var(--border-light)' }}>
+                      <td style={{ padding: '10px 12px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span>{visit.flag}</span>
+                        <span>{visit.country}</span>
+                      </td>
+                      <td style={{ padding: '10px 12px', color: 'var(--text-secondary)' }}>{visit.city}</td>
+                      <td style={{ padding: '10px 12px', fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--accent-cyan)' }}>{visit.ip}</td>
+                      <td style={{ padding: '10px 12px', color: 'var(--text-secondary)' }}>{visit.path}</td>
+                      <td style={{ padding: '10px 12px', fontSize: '11px', color: 'var(--text-dim)' }}>
+                        {new Date(visit.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <div style={{ padding: '3rem 0', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '14px' }}>
+                No live visitor traffic recorded yet. Open your portfolio in a browser tab to record your first live visit!
+              </div>
+            )}
           </div>
         </div>
 
@@ -180,24 +192,30 @@ export default function AdminDashboardPage() {
           </h3>
           <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '20px' }}>Geographic breakdown of portfolio readers</p>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            {sortedLocations.map(([country, data]) => {
-              const percentage = Math.round((data.count / (analytics.visits?.length || 1)) * 100);
-              return (
-                <div key={country}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', fontWeight: '600', marginBottom: '6px' }}>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span>{data.flag}</span> {country}
-                    </span>
-                    <span style={{ color: 'var(--text-secondary)' }}>{data.count} views ({percentage}%)</span>
+          {sortedLocations.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              {sortedLocations.map(([country, data]) => {
+                const percentage = Math.round((data.count / (analytics.visits?.length || 1)) * 100);
+                return (
+                  <div key={country}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', fontWeight: '600', marginBottom: '6px' }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span>{data.flag}</span> {country}
+                      </span>
+                      <span style={{ color: 'var(--text-secondary)' }}>{data.count} views ({percentage}%)</span>
+                    </div>
+                    <div style={{ height: '6px', width: '100%', background: 'var(--bg-hover)', borderRadius: '3px', overflow: 'hidden' }}>
+                      <div style={{ height: '100%', width: `${Math.max(percentage, 8)}%`, background: 'var(--accent)', borderRadius: '3px' }} />
+                    </div>
                   </div>
-                  <div style={{ height: '6px', width: '100%', background: 'var(--bg-hover)', borderRadius: '3px', overflow: 'hidden' }}>
-                    <div style={{ height: '100%', width: `${Math.max(percentage, 8)}%`, background: 'var(--accent)', borderRadius: '3px' }} />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div style={{ padding: '2rem 0', textAlign: 'center', color: 'var(--text-dim)', fontSize: '13px' }}>
+              Awaiting live traffic...
+            </div>
+          )}
         </div>
       </div>
     </AdminLayout>
