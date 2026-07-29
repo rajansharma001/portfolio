@@ -27,6 +27,12 @@ export default function HomePage() {
   useEffect(() => {
     async function fetchData() {
       try {
+        fetch('/api/analytics/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path: window.location.pathname }),
+        }).catch(() => {});
+
         const [resSettings, resProjects, resSkills, resExp] = await Promise.all([
           fetch('/api/settings').then((r) => r.json()),
           fetch('/api/projects').then((r) => r.json()),
