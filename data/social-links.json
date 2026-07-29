@@ -1,0 +1,5 @@
+[
+  { "id": "soc_github", "name": "GitHub", "url": "https://github.com/rajansharma001", "icon": "Github" },
+  { "id": "soc_linkedin", "name": "LinkedIn", "url": "https://linkedin.com/in/rajansharma001", "icon": "Linkedin" },
+  { "id": "soc_email", "name": "Email", "url": "mailto:sharmarajan4560@gmail.com", "icon": "Mail" }
+]

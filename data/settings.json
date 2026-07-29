@@ -1,0 +1,68 @@
+{
+  "name": "Rajan Sharma",
+  "role": "Backend-Focused Full Stack Developer",
+  "headline": "I build backend systems that handle real users, real data, and real business workflows.",
+  "location": "Kohalpur, Nepal",
+  "email": "email.rajan001@gmail.com",
+  "phone": "+977 9849809355",
+  "isAvailableForHire": true,
+  "availabilityBadgeText": "Open to International Opportunities",
+  "resumeUrl": "/uploads/resume.pdf",
+  "bio": "Backend architect specializing in distributed systems, RESTful microservices, query optimization, and secure full-stack Next.js applications.",
+  "codeSnippet": "const developer = {\n  name: 'Rajan Sharma',\n  role: 'Backend-Focused Full Stack Developer',\n  skills: ['Node.js', 'TypeScript', 'Next.js',\n           'PostgreSQL', 'React', 'REST APIs'],\n  passion: 'Building products that solve real problems',\n  location: 'Kohalpur, Nepal',\n  openTo: 'International Opportunities'\n};\n\n// Let's build something amazing together 🚀",
+  "heroTechChips": [
+    {
+      "name": "Node.js",
+      "iconText": "Terminal",
+      "iconColor": "#22c55e"
+    },
+    {
+      "name": "TypeScript",
+      "iconText": "FileCode2",
+      "iconColor": "#3178c6"
+    },
+    {
+      "name": "Next.js",
+      "iconText": "Globe",
+      "iconColor": "#ffffff"
+    },
+    {
+      "name": "React",
+      "iconText": "Atom",
+      "iconColor": "#61dafb"
+    },
+    {
+      "name": "PostgreSQL",
+      "iconText": "Database",
+      "iconColor": "#336791"
+    }
+  ],
+  "heroStats": [
+    {
+      "value": "3+",
+      "label": "Years Experience",
+      "icon": "calendar",
+      "iconColor": "#3b82f6"
+    },
+    {
+      "value": "50+",
+      "label": "Projects Completed",
+      "icon": "code",
+      "iconColor": "#3b82f6"
+    },
+    {
+      "value": "10+",
+      "label": "Core Technologies",
+      "icon": "server",
+      "iconColor": "#8b5cf6"
+    }
+  ],
+  "whatIBring": [
+    "Clean Code & Best Practices",
+    "Scalable Backend Architecture",
+    "Performance Optimization",
+    "Problem Solving & Debugging",
+    "Modern UI/UX Implementation",
+    "Strong Communication"
+  ]
+}

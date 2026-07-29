@@ -1,0 +1,34 @@
+{
+  "Backend": [
+    "Node.js",
+    "TypeScript",
+    "Express.js",
+    "RESTful APIs",
+    "GraphQL",
+    "Microservices",
+    "System Design"
+  ],
+  "Frontend": [
+    "Next.js (App Router)",
+    "React 19",
+    "JavaScript (ES6+)",
+    "HTML5 / Vanilla CSS",
+    "CSS Modules",
+    "TypeScript"
+  ],
+  "Database": [
+    "PostgreSQL",
+    "Prisma ORM",
+    "MongoDB",
+    "Mongoose",
+    "Redis (Caching)"
+  ],
+  "Tools": [
+    "Git & GitHub",
+    "Docker",
+    "Postman",
+    "Linux/Bash",
+    "Vercel",
+    "ESLint / Prettier"
+  ]
+}

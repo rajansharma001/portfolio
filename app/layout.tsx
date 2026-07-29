@@ -1,16 +1,38 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-
-// Load the Inter font
-const inter = Inter({ subsets: ["latin"] });
+import type { Metadata } from 'next';
+import './globals.css';
 
 export const metadata: Metadata = {
-  title: "Rajan Sharma | Full-Stack Developer",
+  title: 'Rajan Sharma | Backend-Focused Full Stack Developer',
   description:
-    "Portfolio of Rajan Sharma, a Full-Stack Developer specializing in the MERN stack, Next.js, TypeScript, and modern web applications.",
+    'Backend-Focused Full Stack Developer building secure, scalable web applications with Node.js, TypeScript, PostgreSQL, Next.js, and React. Open to international opportunities.',
+  keywords: [
+    'Rajan Sharma',
+    'Backend Developer',
+    'Full Stack Engineer',
+    'Node.js',
+    'TypeScript',
+    'Next.js',
+    'PostgreSQL',
+    'Europe Software Engineer',
+    'React',
+  ],
+  authors: [{ name: 'Rajan Sharma' }],
+  openGraph: {
+    title: 'Rajan Sharma | Backend-Focused Full Stack Developer',
+    description:
+      'Backend-Focused Full Stack Developer building secure, scalable web applications with Node.js, TypeScript, PostgreSQL, Next.js, and React.',
+    type: 'website',
+    url: 'https://rajansharma.dev',
+    siteName: 'Rajan Sharma Portfolio',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Rajan Sharma | Backend-Focused Full Stack Developer',
+    description:
+      'Backend-Focused Full Stack Developer building secure, scalable web applications with Node.js, TypeScript, PostgreSQL, Next.js, and React.',
+  },
   icons: {
-    icon: "/uploads/favicon.ico",
+    icon: '/favicon.ico',
   },
 };
 
@@ -19,13 +41,38 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: 'Rajan Sharma',
+    jobTitle: 'Backend-Focused Full Stack Developer',
+    description:
+      'Backend-Focused Full Stack Developer building secure, scalable web applications with Node.js, TypeScript, PostgreSQL, Next.js, and React.',
+    email: 'sharmarajan4560@gmail.com',
+    sameAs: [
+      'https://github.com/rajansharma001',
+      'https://linkedin.com/in/rajansharma001',
+    ],
+    knowsAbout: [
+      'Node.js',
+      'TypeScript',
+      'Next.js',
+      'PostgreSQL',
+      'React',
+      'REST APIs',
+      'System Architecture',
+    ],
+  };
+
   return (
-    <html lang="en" className="scroll-smooth">
-      <body
-        className={`${inter.className} antialiased bg-[#0d0f14] text-gray-200`}
-      >
-        {children}
-      </body>
+    <html lang="en">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
+      <body>{children}</body>
     </html>
   );
 }

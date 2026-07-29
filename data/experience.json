@@ -1,0 +1,39 @@
+[
+  {
+    "id": "exp_1",
+    "role": "Full Stack / Backend Engineer",
+    "company": "Souq Al Baladi",
+    "period": "2023 - Present",
+    "location": "Qatar / Remote",
+    "description": "Engineered high-concurrency backend services, inventory management REST APIs, and order processing workflows for enterprise retail & e-commerce platforms.",
+    "highlights": [
+      "Designed and deployed PostgreSQL schemas handling 50k+ transactions with zero downtime.",
+      "Built microservices for real-time inventory synchronization and POS transaction processing.",
+      "Optimized query performance and API latency by 40% using Redis caching and index tuning."
+    ]
+  },
+  {
+    "id": "exp_2",
+    "role": "Full Stack Developer",
+    "company": "Manakamana Trade & Suppliers",
+    "period": "2022 - 2023",
+    "location": "Kathmandu, Nepal",
+    "description": "Architected custom ERP software, supply chain tracking modules, and billing systems for regional wholesale distributors.",
+    "highlights": [
+      "Engineered automated invoicing and stock tracking dashboards using Node.js & React.",
+      "Integrated secure role-based access control (RBAC) and payment tracking APIs."
+    ]
+  },
+  {
+    "id": "exp_3",
+    "role": "Software Consultant & Web Developer",
+    "company": "Freelance / Client Projects",
+    "period": "2021 - 2022",
+    "location": "Remote",
+    "description": "Delivered custom web applications, SaaS platforms, and high-performance WordPress portals for international and regional clients.",
+    "highlights": [
+      "Built custom Next.js themes and WordPress REST API integrations for digital publishers.",
+      "Integrated third-party payment gateways and transport booking engines."
+    ]
+  }
+]
