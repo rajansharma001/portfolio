@@ -17,7 +17,7 @@ export default function FeaturedProjects({ projects, onOpenModal }: FeaturedProj
           <span className="section-tag">Featured Projects</span>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
             <div>
-              <h2 className="section-title">Projects I&apos;m Proud Of</h2>
+              <h2 className="section-title">Featured Case Studies</h2>
               <p className="section-subtitle">
                 High-impact solutions built with modern technologies.
               </p>
