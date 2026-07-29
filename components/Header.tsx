@@ -42,7 +42,7 @@ export default function Header() {
     <header className="header">
       <div className="container header-inner">
         <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }} onClick={() => setMobileMenuOpen(false)}>
-          <div className="logo-initials">RS</div>
+          <img src="/siteicon.png" alt="Rajan Sharma" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
           <span style={{ fontWeight: '700', fontSize: '1.05rem', color: 'var(--text-primary)' }}>
             Rajan Sharma
           </span>

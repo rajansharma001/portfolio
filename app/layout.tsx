@@ -32,7 +32,9 @@ export const metadata: Metadata = {
       'Backend-Focused Full Stack Developer building secure, scalable web applications with Node.js, TypeScript, PostgreSQL, Next.js, and React.',
   },
   icons: {
-    icon: '/favicon.ico',
+    icon: '/siteicon.png',
+    shortcut: '/siteicon.png',
+    apple: '/siteicon.png',
   },
 };
 
