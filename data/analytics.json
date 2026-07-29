@@ -1,5 +1,15 @@
 {
-  "totalViews": 0,
-  "uniqueVisitors": 0,
-  "visits": []
+  "totalViews": 1,
+  "uniqueVisitors": 1,
+  "visits": [
+    {
+      "ip": "::1",
+      "country": "Nepal",
+      "city": "Kathmandu",
+      "flag": "🇳🇵",
+      "path": "/",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Sa",
+      "timestamp": "2026-07-29T13:15:45.685Z"
+    }
+  ]
 }

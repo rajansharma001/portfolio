@@ -58,7 +58,7 @@ export default function Hero({ settings }: HeroProps) {
               </div>
             )}
 
-            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
+            <div className="hero-action-buttons">
               <a href="#projects" className="btn btn-primary">
                 <span>View My Work</span>
                 <ArrowRight size={16} />
@@ -74,7 +74,7 @@ export default function Hero({ settings }: HeroProps) {
                 <span>Download Resume</span>
               </a>
 
-              <div style={{ display: 'flex', gap: '0.5rem', marginLeft: '1rem' }}>
+              <div className="hero-social-icons">
                 <a href="https://github.com/rajansharma001" target="_blank" rel="noopener noreferrer" className="btn btn-secondary" style={{ padding: '0.6rem' }}>
                   <Github size={18} />
                 </a>
@@ -87,7 +87,7 @@ export default function Hero({ settings }: HeroProps) {
               </div>
             </div>
 
-            <div style={{ marginTop: '2rem', display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.85rem', color: 'var(--text-dim)', fontWeight: '500', flexWrap: 'wrap' }}>
+            <div style={{ marginTop: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.85rem', color: 'var(--text-dim)', fontWeight: '500', flexWrap: 'wrap' }}>
               <span>Open to International Opportunities</span>
               <span style={{ color: 'var(--border-light)' }}>•</span>
               <span>Remote Friendly</span>
