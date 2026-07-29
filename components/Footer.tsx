@@ -5,7 +5,7 @@ export default function Footer() {
     <footer className="footer-bar" style={{ padding: '3rem 0', textAlign: 'center' }}>
       <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.25rem' }}>
-          <img src="/siteicon.png" alt="Rajan Sharma Icon" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
+          <div className="logo-initials" style={{ width: '32px', height: '32px', fontSize: '0.8rem' }}>RS</div>
           <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '1rem' }}>Rajan Sharma</div>
         </div>
 
