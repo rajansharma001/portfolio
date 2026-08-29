@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import Link from 'next/link';
-import { Users, Eye, Globe, MapPin, ArrowUpRight, FolderKanban, Mail } from 'lucide-react';
+import { Users, Eye, Globe, MapPin, ArrowUpRight, FolderKanban, Mail, FileText, Upload, CheckCircle2 } from 'lucide-react';
 import { Project, SkillsMap, ExperienceItem, PortfolioSettings } from '@/lib/types';
 
 interface VisitRecord {
@@ -38,32 +38,76 @@ export default function AdminDashboardPage() {
   const [settings, setSettings] = useState<PortfolioSettings | null>(null);
   const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [analytics, setAnalytics] = useState<AnalyticsData>({ totalViews: 0, uniqueVisitors: 0, visits: [] });
+  const [uploadingPdf, setUploadingPdf] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState<string | null>(null);
+
+  const loadData = async () => {
+    try {
+      const [resProjects, resSkills, resExp, resSettings, resAnalytics, resMessages] = await Promise.all([
+        fetch('/api/projects?admin=true').then((r) => r.json()),
+        fetch('/api/skills').then((r) => r.json()),
+        fetch('/api/experience').then((r) => r.json()),
+        fetch('/api/settings').then((r) => r.json()),
+        fetch('/api/analytics/track').then((r) => r.json()).catch(() => ({ totalViews: 0, uniqueVisitors: 0, visits: [] })),
+        fetch('/api/messages').then((r) => r.json()).catch(() => []),
+      ]);
+
+      setProjects(resProjects || []);
+      setSkills(resSkills || {});
+      setExperience(resExp || []);
+      setSettings(resSettings);
+      if (resAnalytics) setAnalytics(resAnalytics);
+      setMessages(resMessages || []);
+    } catch (err) {
+      console.error('Error loading admin dashboard stats:', err);
+    }
+  };
 
   useEffect(() => {
-    async function loadData() {
-      try {
-        const [resProjects, resSkills, resExp, resSettings, resAnalytics, resMessages] = await Promise.all([
-          fetch('/api/projects?admin=true').then((r) => r.json()),
-          fetch('/api/skills').then((r) => r.json()),
-          fetch('/api/experience').then((r) => r.json()),
-          fetch('/api/settings').then((r) => r.json()),
-          fetch('/api/analytics/track').then((r) => r.json()).catch(() => ({ totalViews: 0, uniqueVisitors: 0, visits: [] })),
-          fetch('/api/messages').then((r) => r.json()).catch(() => []),
-        ]);
-
-        setProjects(resProjects || []);
-        setSkills(resSkills || {});
-        setExperience(resExp || []);
-        setSettings(resSettings);
-        if (resAnalytics) setAnalytics(resAnalytics);
-        setMessages(resMessages || []);
-      } catch (err) {
-        console.error('Error loading admin dashboard stats:', err);
-      }
-    }
-
     loadData();
   }, []);
+
+  const handleResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== 'application/pdf') {
+      alert('Only PDF files are allowed.');
+      return;
+    }
+
+    setUploadingPdf(true);
+    setUploadStatus(null);
+    const data = new FormData();
+    data.append('file', file);
+    data.append('type', 'resume');
+
+    try {
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: data,
+      });
+
+      const result = await res.json();
+      if (res.ok && result.url && settings) {
+        // Save to settings
+        const updated = { ...settings, resumeUrl: result.url };
+        await fetch('/api/settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updated),
+        });
+        setSettings(updated);
+        setUploadStatus('Resume PDF updated successfully!');
+      } else {
+        alert(result.error || 'Resume PDF upload failed');
+      }
+    } catch {
+      alert('Upload error. Please try again.');
+    } finally {
+      setUploadingPdf(false);
+    }
+  };
 
   // Compute country breakdown
   const locationCounts: Record<string, { count: number; flag: string }> = {};
@@ -86,16 +130,16 @@ export default function AdminDashboardPage() {
       <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '2rem' }}>
         <div>
           <h1 style={{ fontSize: '28px', fontWeight: '800', letterSpacing: '-0.02em' }}>Welcome back, Rajan 👋</h1>
-          <p style={{ color: 'var(--text-muted)', marginTop: '8px' }}>
-            Production overview, recruiter inquiries, traffic analytics, and visitor locations.
+          <p style={{ color: 'var(--text-muted)', marginTop: '6px' }}>
+            Production overview, recruiter inquiries, traffic analytics, and quick actions.
           </p>
         </div>
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
           <span style={{ display: 'inline-flex', alignItems: 'center', padding: '4px 10px', borderRadius: '12px', fontSize: '12px', fontWeight: '600', background: 'rgba(22, 163, 74, 0.1)', color: 'var(--status-success)' }}>
-            ● Portfolio is Live
+            ● Portfolio Live
           </span>
-          <Link href="/admin/projects/new" className="btn btn-primary">
-            Add Project
+          <Link href="/admin/projects/new" className="btn btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            + Add Project
           </Link>
         </div>
       </div>
@@ -104,11 +148,11 @@ export default function AdminDashboardPage() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '32px' }}>
         <div className="card" style={{ borderLeft: '4px solid var(--accent)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <div className="form-label">Total Page Views</div>
+            <div className="form-label">Total Impressions</div>
             <Eye size={18} color="var(--accent)" />
           </div>
           <div style={{ fontSize: '32px', fontWeight: '800', marginBottom: '4px' }}>{analytics.totalViews}</div>
-          <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Real-time page impressions</div>
+          <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Real-time page views</div>
         </div>
 
         <div className="card" style={{ borderLeft: '4px solid var(--accent-emerald)' }}>
@@ -133,61 +177,112 @@ export default function AdminDashboardPage() {
 
         <div className="card" style={{ borderLeft: '4px solid var(--accent-cyan)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <div className="form-label">Top Visitor Country</div>
+            <div className="form-label">Top Location</div>
             <Globe size={18} color="var(--accent-cyan)" />
           </div>
-          <div style={{ fontSize: '24px', fontWeight: '800', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ fontSize: '22px', fontWeight: '800', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             {sortedLocations.length > 0 ? (
               <>
                 <span>{sortedLocations[0][1].flag}</span>
                 <span>{sortedLocations[0][0]}</span>
               </>
             ) : (
-              <span style={{ fontSize: '16px', color: 'var(--text-dim)', fontWeight: '500' }}>No visits yet</span>
+              <span style={{ fontSize: '15px', color: 'var(--text-dim)', fontWeight: '500' }}>No visits yet</span>
             )}
           </div>
-          <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Highest traffic source</div>
+          <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Highest traffic origin</div>
         </div>
       </div>
 
-      {/* Inquiries & Recent Activity Row */}
-      {messages.length > 0 && (
-        <div className="card" style={{ marginBottom: '32px' }}>
+      {/* Quick Actions & Resume Manager Row */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '32px' }}>
+        {/* Resume Quick Upload Card */}
+        <div className="card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <div>
-              <h3 style={{ fontSize: '16px', fontWeight: '700' }}>Recent Inbound Inquiries</h3>
-              <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Direct messages from the contact form</p>
-            </div>
-            <Link href="/admin/messages" style={{ fontSize: '12px', color: 'var(--accent)', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              View All In Inbox <ArrowUpRight size={14} />
-            </Link>
+            <h3 style={{ fontSize: '16px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <FileText size={18} color="var(--accent)" /> Resume PDF Document
+            </h3>
+            {settings?.resumeUrl && (
+              <a
+                href={settings.resumeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ fontSize: '12px', color: 'var(--accent)', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '4px' }}
+              >
+                View PDF <ArrowUpRight size={14} />
+              </a>
+            )}
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
-            {messages.slice(0, 3).map((msg) => (
-              <div
-                key={msg.id}
-                style={{
-                  background: 'var(--bg-main)',
-                  border: '1px solid var(--border-light)',
-                  borderRadius: '6px',
-                  padding: '1rem',
-                  borderLeft: !msg.read ? '3px solid var(--accent)' : '3px solid var(--border)',
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                  <span style={{ fontWeight: '700', fontSize: '14px' }}>{msg.name}</span>
-                  <span style={{ fontSize: '11px', color: 'var(--text-dim)' }}>{new Date(msg.createdAt).toLocaleDateString()}</span>
-                </div>
-                <div style={{ fontSize: '12px', color: 'var(--accent)', marginBottom: '8px' }}>{msg.email}</div>
-                <div style={{ fontSize: '13px', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {msg.message}
-                </div>
-              </div>
-            ))}
+          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '16px' }}>
+            The PDF resume linked to the "Print / Download CV" actions across your portfolio.
+          </p>
+
+          {uploadStatus && (
+            <div style={{ fontSize: '12px', color: 'var(--status-success)', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <CheckCircle2 size={14} /> {uploadStatus}
+            </div>
+          )}
+
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '10px',
+              border: '2px dashed var(--border)',
+              borderRadius: '6px',
+              padding: '16px',
+              cursor: 'pointer',
+              background: 'var(--bg-main)',
+            }}
+          >
+            <Upload size={18} color="var(--accent)" />
+            <span style={{ fontSize: '13px', fontWeight: '700' }}>
+              {uploadingPdf ? 'Uploading PDF...' : 'Upload / Replace Resume PDF'}
+            </span>
+            <input type="file" accept="application/pdf" onChange={handleResumeUpload} disabled={uploadingPdf} style={{ display: 'none' }} />
+          </label>
+        </div>
+
+        {/* Quick System Links */}
+        <div className="card">
+          <h3 style={{ fontSize: '16px', fontWeight: '700', marginBottom: '16px' }}>Quick Navigation</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <Link
+              href="/admin/projects"
+              className="btn btn-outline"
+              style={{ justifyContent: 'flex-start', padding: '12px', gap: '8px', fontSize: '13px' }}
+            >
+              <FolderKanban size={16} /> Manage Projects ({projects.length})
+            </Link>
+
+            <Link
+              href="/admin/messages"
+              className="btn btn-outline"
+              style={{ justifyContent: 'flex-start', padding: '12px', gap: '8px', fontSize: '13px' }}
+            >
+              <Mail size={16} /> Inquiries ({messages.length})
+            </Link>
+
+            <Link
+              href="/admin/skills"
+              className="btn btn-outline"
+              style={{ justifyContent: 'flex-start', padding: '12px', gap: '8px', fontSize: '13px' }}
+            >
+              Manage Skills ({Object.keys(skills).length} categories)
+            </Link>
+
+            <Link
+              href="/admin/settings"
+              className="btn btn-outline"
+              style={{ justifyContent: 'flex-start', padding: '12px', gap: '8px', fontSize: '13px' }}
+            >
+              Profile & Contact Settings
+            </Link>
           </div>
         </div>
-      )}
+      </div>
 
       {/* Visitor Analytics & Location Breakdown */}
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px', marginBottom: '32px' }}>

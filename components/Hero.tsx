@@ -76,10 +76,6 @@ export default function Hero({ settings }: HeroProps) {
 
   return (
     <section className="hero container reveal" id="about">
-      <div className="status-badge" style={{ marginBottom: '2rem', alignSelf: 'flex-start' }}>
-        <span className="dot"></span> {settings?.availabilityBadgeText || 'Available for Full-Stack & Backend Engineering Roles'}
-      </div>
-
       <div className="hero-grid">
         <div className="hero-main">
           <div className="hero-title-group">

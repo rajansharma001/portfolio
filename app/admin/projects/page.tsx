@@ -3,12 +3,14 @@
 import React, { useEffect, useState } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import Link from 'next/link';
-import { Plus, Edit, Trash2, Star, Eye, EyeOff, ArrowUp, ArrowDown } from 'lucide-react';
+import { Plus, Edit, Trash2, Star, Eye, EyeOff, ArrowUp, ArrowDown, Search, ExternalLink } from 'lucide-react';
 import { Project } from '@/lib/types';
 
 export default function AdminProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [typeFilter, setTypeFilter] = useState('ALL');
 
   const fetchProjects = async () => {
     try {
@@ -66,18 +68,17 @@ export default function AdminProjectsPage() {
     if ((direction === 'up' && index === 0) || (direction === 'down' && index === projects.length - 1)) return;
     const newProjects = [...projects];
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
-    
-    // Swap
+
     const temp = newProjects[index];
     newProjects[index] = newProjects[targetIndex];
     newProjects[targetIndex] = temp;
 
-    // Update order numbers
-    newProjects.forEach((p, i) => { p.order = i + 1; });
+    newProjects.forEach((p, i) => {
+      p.order = i + 1;
+    });
 
     setProjects(newProjects);
 
-    // Save to API
     try {
       await fetch('/api/projects', {
         method: 'PUT',
@@ -89,87 +90,188 @@ export default function AdminProjectsPage() {
     }
   };
 
+  const filteredProjects = projects.filter((p) => {
+    const matchesSearch =
+      p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (p.techStack || []).some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()));
+
+    const matchesType = typeFilter === 'ALL' || (p.type || '').toUpperCase() === typeFilter;
+    return matchesSearch && matchesType;
+  });
+
   return (
     <AdminLayout>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
         <div>
           <h1 style={{ fontSize: '28px', fontWeight: '800', letterSpacing: '-0.02em' }}>Projects Manager</h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginTop: '8px' }}>
-            Organize and publish your case studies.
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginTop: '6px' }}>
+            Add, reorder, feature, and publish your portfolio systems and case studies.
           </p>
         </div>
 
-        <Link href="/admin/projects/new" className="btn btn-primary">
-          <Plus size={16} /> New Project
+        <Link href="/admin/projects/new" className="btn btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Plus size={16} /> Add New Project
         </Link>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
-        <input type="text" className="form-input" placeholder="Search projects..." style={{ width: '300px' }} />
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <select className="form-input" style={{ width: 'auto' }}>
-            <option>All Types</option>
-            <option>SaaS</option>
-            <option>Client</option>
-          </select>
+      {/* Filter & Search Toolbar */}
+      <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', flexWrap: 'wrap' }}>
+        <div style={{ position: 'relative', flex: 1, minWidth: '240px' }}>
+          <Search size={16} style={{ position: 'absolute', left: '12px', top: '14px', color: 'var(--text-muted)' }} />
+          <input
+            type="text"
+            className="form-input"
+            placeholder="Search projects by title, tech, or description..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{ paddingLeft: '36px' }}
+          />
         </div>
+
+        <select
+          className="form-input"
+          style={{ width: 'auto', minWidth: '160px' }}
+          value={typeFilter}
+          onChange={(e) => setTypeFilter(e.target.value)}
+        >
+          <option value="ALL">All Categories</option>
+          <option value="SAAS">SaaS Applications</option>
+          <option value="CLIENT">Client Systems</option>
+          <option value="PERSONAL">Personal / Lab</option>
+          <option value="WORDPRESS">WordPress / CMS</option>
+        </select>
       </div>
 
       {loading ? (
         <div style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>Loading projects...</div>
+      ) : filteredProjects.length === 0 ? (
+        <div className="card" style={{ textAlign: 'center', padding: '3rem' }}>
+          <p style={{ color: 'var(--text-secondary)' }}>No projects found matching your query.</p>
+        </div>
       ) : (
-        <div className="grid-3">
-          {projects.map((project, idx) => (
-            <div key={project.id} className="card" style={{ padding: '0', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-              
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '20px' }}>
+          {filteredProjects.map((project, idx) => (
+            <div
+              key={project.id}
+              className="card"
+              style={{
+                padding: '0',
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
+                border: '1px solid var(--border)',
+                background: 'var(--bg-surface)',
+              }}
+            >
               {/* Card Image Header */}
-              <div style={{ 
-                height: '140px', 
-                background: project.thumbnail ? `url(${project.thumbnail}) center/cover` : 'var(--bg-hover)', 
-                position: 'relative' 
-              }}>
-                <div style={{ position: 'absolute', top: '12px', right: '12px', display: 'flex', gap: '8px' }}>
-                  {project.featured && (
-                    <span className="badge badge-featured">
-                      <Star size={12} /> Featured
-                    </span>
-                  )}
-                  {project.published ? (
-                    <span className="badge badge-published">
-                      <Eye size={12} /> Published
-                    </span>
-                  ) : (
-                    <span className="badge badge-draft">
-                      <EyeOff size={12} /> Draft
-                    </span>
-                  )}
+              <div
+                style={{
+                  height: '150px',
+                  background: project.thumbnail ? `url('${project.thumbnail}') center/cover` : 'var(--bg-hover)',
+                  position: 'relative',
+                  borderBottom: '1px solid var(--border)',
+                  backgroundColor: 'var(--bg-main)',
+                }}
+              >
+                <div style={{ position: 'absolute', top: '10px', right: '10px', display: 'flex', gap: '6px' }}>
+                  <button
+                    onClick={() => togglePublished(project)}
+                    className="btn btn-outline btn-sm"
+                    style={{
+                      background: project.published ? 'rgba(16, 185, 129, 0.9)' : 'rgba(0, 0, 0, 0.7)',
+                      color: '#fff',
+                      padding: '3px 8px',
+                      fontSize: '11px',
+                      border: 'none',
+                    }}
+                    title="Toggle Publish"
+                  >
+                    {project.published ? <Eye size={12} /> : <EyeOff size={12} />}
+                    <span style={{ marginLeft: '4px' }}>{project.published ? 'Published' : 'Draft'}</span>
+                  </button>
                 </div>
-                
-                {/* Project Type Badge */}
-                <div style={{ position: 'absolute', bottom: '-12px', left: '16px' }}>
-                  <span className="badge badge-type">
-                    {project.type}
+
+                <div style={{ position: 'absolute', bottom: '10px', left: '10px' }}>
+                  <span
+                    style={{
+                      background: 'rgba(0, 0, 0, 0.8)',
+                      color: 'var(--accent)',
+                      fontSize: '11px',
+                      fontFamily: 'var(--font-mono)',
+                      fontWeight: '700',
+                      padding: '3px 8px',
+                      border: '1px solid var(--border)',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {project.type || 'SYSTEM'}
                   </span>
                 </div>
               </div>
 
               {/* Card Body */}
-              <div style={{ padding: '24px 16px 16px 16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '8px', color: 'var(--text-primary)' }}>
+              <div style={{ padding: '16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <h3 style={{ fontSize: '16px', fontWeight: '800', marginBottom: '6px', color: 'var(--text-primary)' }}>
                   {project.title}
                 </h3>
-                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '16px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                  {project.description || project.tagline || 'No description provided.'}
+                <p
+                  style={{
+                    fontSize: '13px',
+                    color: 'var(--text-secondary)',
+                    marginBottom: '12px',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                    lineHeight: '1.5',
+                  }}
+                >
+                  {project.description}
                 </p>
-                
-                <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '16px', borderTop: '1px solid var(--border-light)' }}>
-                  {/* Order Controls */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+
+                {/* Tech tags preview */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '16px' }}>
+                  {(project.techStack || []).slice(0, 4).map((tech) => (
+                    <span
+                      key={tech}
+                      style={{
+                        fontSize: '11px',
+                        fontFamily: 'var(--font-mono)',
+                        background: 'var(--bg-main)',
+                        padding: '2px 6px',
+                        border: '1px solid var(--border-light)',
+                        color: 'var(--text-dim)',
+                      }}
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                  {(project.techStack || []).length > 4 && (
+                    <span style={{ fontSize: '11px', color: 'var(--text-dim)', alignSelf: 'center' }}>
+                      +{(project.techStack || []).length - 4}
+                    </span>
+                  )}
+                </div>
+
+                {/* Bottom Action Bar */}
+                <div
+                  style={{
+                    marginTop: 'auto',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    paddingTop: '12px',
+                    borderTop: '1px solid var(--border-light)',
+                  }}
+                >
+                  {/* Order control */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
                     <button
                       onClick={() => moveOrder(idx, 'up')}
                       disabled={idx === 0}
                       className="btn btn-outline"
-                      style={{ padding: '4px 8px', borderColor: 'transparent' }}
+                      style={{ padding: '4px 6px', borderColor: 'transparent' }}
                       title="Move Up"
                     >
                       <ArrowUp size={14} />
@@ -178,7 +280,7 @@ export default function AdminProjectsPage() {
                       onClick={() => moveOrder(idx, 'down')}
                       disabled={idx === projects.length - 1}
                       className="btn btn-outline"
-                      style={{ padding: '4px 8px', borderColor: 'transparent' }}
+                      style={{ padding: '4px 6px', borderColor: 'transparent' }}
                       title="Move Down"
                     >
                       <ArrowDown size={14} />
@@ -186,15 +288,31 @@ export default function AdminProjectsPage() {
                   </div>
 
                   {/* Actions */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Link href={`/admin/projects/${project.slug}`} className="btn btn-outline btn-sm">
-                      <Edit size={14} /> Edit
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    {project.liveUrl && (
+                      <a
+                        href={project.liveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-outline btn-sm"
+                        style={{ padding: '4px 8px' }}
+                        title="View Live"
+                      >
+                        <ExternalLink size={12} />
+                      </a>
+                    )}
+                    <Link
+                      href={`/admin/projects/${project.slug}`}
+                      className="btn btn-outline btn-sm"
+                      style={{ padding: '4px 10px', display: 'flex', alignItems: 'center', gap: '4px' }}
+                    >
+                      <Edit size={12} /> Edit
                     </Link>
                     <button
                       onClick={() => deleteProject(project)}
                       className="btn btn-outline btn-sm"
-                      style={{ color: 'var(--status-danger)', borderColor: 'transparent', padding: '4px 8px' }}
-                      title="Delete"
+                      style={{ color: '#ef4444', borderColor: 'transparent', padding: '4px 8px' }}
+                      title="Delete Project"
                     >
                       <Trash2 size={14} />
                     </button>

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import AdminLayout from '@/components/AdminLayout';
-import { Plus, Trash2, Save } from 'lucide-react';
+import { Plus, Trash2, Save, X } from 'lucide-react';
 import { ExperienceItem } from '@/lib/types';
 import Alert from '@/components/Alert';
 
@@ -20,12 +20,12 @@ export default function AdminExperiencePage() {
   const handleAddItem = () => {
     const newItem: ExperienceItem = {
       id: `exp_${Date.now()}`,
-      role: 'Full Stack Engineer',
-      company: 'Company Name',
-      period: '2024 - Present',
-      location: 'Location',
-      description: 'Role overview and key focus areas.',
-      highlights: ['Key achievement 1', 'Key achievement 2'],
+      role: 'Full-Stack Software Engineer',
+      company: 'Company / Project Name',
+      period: '2024 — Present',
+      location: 'Kathmandu, Nepal',
+      description: 'Architected and deployed full-stack web applications.',
+      highlights: ['Designed high-performance backend microservices.'],
     };
     setItems([newItem, ...items]);
   };
@@ -38,7 +38,7 @@ export default function AdminExperiencePage() {
 
   const handleUpdateHighlight = (itemIdx: number, hIdx: number, val: string) => {
     const updated = [...items];
-    const highlights = [...updated[itemIdx].highlights];
+    const highlights = [...(updated[itemIdx].highlights || [])];
     highlights[hIdx] = val;
     updated[itemIdx].highlights = highlights;
     setItems(updated);
@@ -46,13 +46,15 @@ export default function AdminExperiencePage() {
 
   const handleAddHighlight = (itemIdx: number) => {
     const updated = [...items];
-    updated[itemIdx].highlights.push('New key achievement');
+    const highlights = [...(updated[itemIdx].highlights || [])];
+    highlights.push('Engineered scalable REST APIs with PostgreSQL schema optimization.');
+    updated[itemIdx].highlights = highlights;
     setItems(updated);
   };
 
   const handleRemoveHighlight = (itemIdx: number, hIdx: number) => {
     const updated = [...items];
-    updated[itemIdx].highlights = updated[itemIdx].highlights.filter((_, i) => i !== hIdx);
+    updated[itemIdx].highlights = (updated[itemIdx].highlights || []).filter((_, i) => i !== hIdx);
     setItems(updated);
   };
 
@@ -63,6 +65,7 @@ export default function AdminExperiencePage() {
 
   const handleSave = async () => {
     setSaving(true);
+    setMessage({ type: '', text: '' });
     try {
       const res = await fetch('/api/experience', {
         method: 'POST',
@@ -83,17 +86,17 @@ export default function AdminExperiencePage() {
     <AdminLayout>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.8rem', fontWeight: '800' }}>Manage Experience Timeline</h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>
-            Edit career milestones, highlights, and roles shown on your portfolio timeline.
+          <h1 style={{ fontSize: '28px', fontWeight: '800', letterSpacing: '-0.02em' }}>Background & Experience</h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginTop: '6px' }}>
+            Manage career milestones, roles, and verified achievement bullets shown in Section 03.
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          <button onClick={handleAddItem} className="btn btn-outline">
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <button onClick={handleAddItem} className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Plus size={16} /> Add Position
           </button>
-          <button onClick={handleSave} disabled={saving} className="btn btn-primary">
+          <button onClick={handleSave} disabled={saving} className="btn btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Save size={16} /> {saving ? 'Saving...' : 'Save Timeline'}
           </button>
         </div>
@@ -101,44 +104,58 @@ export default function AdminExperiencePage() {
 
       <Alert type={message.type as 'error' | 'success' | 'warning'} message={message.text} />
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', maxWidth: '850px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
         {items.map((item, idx) => (
-          <div key={item.id} className="card" style={{ padding: '2rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-              <span className="badge" style={{ borderColor: 'var(--accent-cyan)', color: 'var(--accent-cyan)' }}>
-                Position #{items.length - idx}
+          <div key={item.id} className="card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '12px' }}>
+              <span
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '12px',
+                  fontWeight: '700',
+                  color: 'var(--accent)',
+                  textTransform: 'uppercase',
+                }}
+              >
+                Milestone #{items.length - idx} • {item.company}
               </span>
               <button
                 onClick={() => handleRemoveItem(idx)}
-                style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}
+                className="btn btn-outline btn-sm"
+                style={{ color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.3)', padding: '4px 8px' }}
+                title="Delete Record"
               >
-                <Trash2 size={16} /> Delete Record
+                <Trash2 size={14} /> Delete
               </button>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
               <div className="form-group">
-                <label className="form-label">Job Title / Role</label>
+                <label className="form-label">Role Title</label>
                 <input
                   type="text"
                   className="form-input"
                   value={item.role}
                   onChange={(e) => handleUpdateItem(idx, 'role', e.target.value)}
+                  placeholder="e.g. Full-Stack Software Engineer"
+                  required
                 />
               </div>
 
               <div className="form-group">
-                <label className="form-label">Company / Client</label>
+                <label className="form-label">Company / Organization</label>
                 <input
                   type="text"
                   className="form-input"
                   value={item.company}
                   onChange={(e) => handleUpdateItem(idx, 'company', e.target.value)}
+                  placeholder="e.g. Independent Engineer"
+                  required
                 />
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
               <div className="form-group">
                 <label className="form-label">Time Period</label>
                 <input
@@ -146,6 +163,8 @@ export default function AdminExperiencePage() {
                   className="form-input"
                   value={item.period}
                   onChange={(e) => handleUpdateItem(idx, 'period', e.target.value)}
+                  placeholder="e.g. 2023 — Present"
+                  required
                 />
               </div>
 
@@ -156,44 +175,58 @@ export default function AdminExperiencePage() {
                   className="form-input"
                   value={item.location}
                   onChange={(e) => handleUpdateItem(idx, 'location', e.target.value)}
+                  placeholder="e.g. Kathmandu, Nepal"
+                  required
                 />
               </div>
             </div>
 
             <div className="form-group">
-              <label className="form-label">Role Description</label>
+              <label className="form-label">Role Overview / Summary</label>
               <textarea
-                className="form-textarea"
+                className="form-input"
                 rows={2}
                 value={item.description}
                 onChange={(e) => handleUpdateItem(idx, 'description', e.target.value)}
+                placeholder="Core focus and summary..."
               />
             </div>
 
             <div className="form-group">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                <label className="form-label" style={{ margin: 0 }}>Bullet Achievements / Highlights</label>
-                <button onClick={() => handleAddHighlight(idx)} className="btn btn-outline btn-sm">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <label className="form-label" style={{ margin: 0 }}>
+                  Achievement Bullet Points
+                </label>
+                <button
+                  type="button"
+                  onClick={() => handleAddHighlight(idx)}
+                  className="btn btn-outline btn-sm"
+                  style={{ padding: '3px 8px', fontSize: '11px' }}
+                >
                   + Add Bullet
                 </button>
               </div>
 
-              {item.highlights.map((h, hIdx) => (
-                <div key={hIdx} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                  <input
-                    type="text"
-                    className="form-input"
-                    value={h}
-                    onChange={(e) => handleUpdateHighlight(idx, hIdx, e.target.value)}
-                  />
-                  <button
-                    onClick={() => handleRemoveHighlight(idx, hIdx)}
-                    style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              ))}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {(item.highlights || []).map((h, hIdx) => (
+                  <div key={hIdx} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={h}
+                      onChange={(e) => handleUpdateHighlight(idx, hIdx, e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveHighlight(idx, hIdx)}
+                      className="btn btn-outline btn-sm"
+                      style={{ color: '#ef4444', borderColor: 'transparent', padding: '8px' }}
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         ))}

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import AdminLayout from '@/components/AdminLayout';
-import { Plus, Trash2, Save } from 'lucide-react';
+import { Plus, Trash2, Save, X } from 'lucide-react';
 import { SkillsMap } from '@/lib/types';
 import Alert from '@/components/Alert';
 
@@ -60,6 +60,7 @@ export default function AdminSkillsPage() {
 
   const handleSave = async () => {
     setSaving(true);
+    setMessage({ type: '', text: '' });
     try {
       const res = await fetch('/api/skills', {
         method: 'POST',
@@ -68,7 +69,7 @@ export default function AdminSkillsPage() {
       });
 
       if (!res.ok) throw new Error('Failed to update skills');
-      setMessage({ type: 'success', text: 'Skills saved successfully!' });
+      setMessage({ type: 'success', text: 'Skills updated and published successfully!' });
     } catch (err: any) {
       setMessage({ type: 'error', text: err.message });
     } finally {
@@ -80,13 +81,13 @@ export default function AdminSkillsPage() {
     <AdminLayout>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.8rem', fontWeight: '800' }}>Manage Skills</h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>
-            Add, remove, or organize technical skill categories.
+          <h1 style={{ fontSize: '28px', fontWeight: '800', letterSpacing: '-0.02em' }}>Technical Capabilities</h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginTop: '6px' }}>
+            Manage the 4 core technical pillars and skill items shown in Section 02.
           </p>
         </div>
 
-        <button onClick={handleSave} disabled={saving} className="btn btn-primary">
+        <button onClick={handleSave} disabled={saving} className="btn btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Save size={16} /> {saving ? 'Saving...' : 'Save All Skills'}
         </button>
       </div>
@@ -99,59 +100,67 @@ export default function AdminSkillsPage() {
           <input
             type="text"
             className="form-input"
-            placeholder="New Category Name (e.g. DevOps & Cloud)"
+            placeholder="New Category Name (e.g. Cloud & Infrastructure)"
             value={newCategoryName}
             onChange={(e) => setNewCategoryName(e.target.value)}
           />
-          <button onClick={handleAddCategory} className="btn btn-outline" style={{ whiteSpace: 'nowrap' }}>
+          <button onClick={handleAddCategory} className="btn btn-outline" style={{ whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Plus size={16} /> Add Category
           </button>
         </div>
       </div>
 
-      <div className="grid-2">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
         {Object.keys(skills).map((category) => (
-          <div key={category} className="card" style={{ padding: '1.5rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: '700' }}>{category}</h3>
+          <div key={category} className="card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', borderBottom: '1px solid var(--border)', paddingBottom: '10px' }}>
+              <h3 style={{ fontSize: '15px', fontWeight: '800', fontFamily: 'var(--font-mono)', color: 'var(--accent)', textTransform: 'uppercase' }}>
+                {category}
+              </h3>
               <button
                 onClick={() => handleRemoveCategory(category)}
-                style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}
+                style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', opacity: 0.7 }}
                 title="Delete Category"
               >
                 <Trash2 size={16} />
               </button>
             </div>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1.25rem' }}>
+            {/* Skill tags */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '1.5rem', flex: 1 }}>
               {skills[category].map((skill, i) => (
                 <span
                   key={i}
-                  className="tech-chip"
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '0.4rem',
-                    padding: '0.35rem 0.75rem',
-                    fontSize: '0.85rem',
+                    gap: '6px',
+                    padding: '4px 10px',
+                    fontSize: '12px',
+                    fontFamily: 'var(--font-mono)',
+                    background: 'var(--bg-main)',
+                    border: '1px solid var(--border-light)',
+                    color: 'var(--text-primary)',
+                    borderRadius: '3px',
                   }}
                 >
                   <span>{skill}</span>
                   <button
                     onClick={() => handleRemoveSkill(category, i)}
-                    style={{ background: 'none', border: 'none', color: 'var(--text-subtle)', cursor: 'pointer', display: 'flex' }}
+                    style={{ background: 'none', border: 'none', color: 'var(--text-dim)', cursor: 'pointer', display: 'flex', padding: 0 }}
                   >
-                    &times;
+                    <X size={12} />
                   </button>
                 </span>
               ))}
             </div>
 
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
+            {/* Add skill input */}
+            <div style={{ display: 'flex', gap: '8px', marginTop: 'auto' }}>
               <input
                 type="text"
                 className="form-input"
-                placeholder={`Add skill to ${category}...`}
+                placeholder={`Add item to ${category}...`}
                 value={newSkillInput[category] || ''}
                 onChange={(e) => setNewSkillInput({ ...newSkillInput, [category]: e.target.value })}
                 onKeyDown={(e) => {
