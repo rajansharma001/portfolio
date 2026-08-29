@@ -1096,6 +1096,13 @@ footer.site-footer {
 }
 
 /* Responsive Breakpoints */
+/* Contact Grid */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+}
+
 @media (max-width: 1024px) {
   .hero-grid {
     grid-template-columns: 1fr;
@@ -1113,6 +1120,10 @@ footer.site-footer {
   }
   .process-card, .skill-col {
     border-bottom: 1px solid var(--border-color);
+  }
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 3.5rem;
   }
 }
 
@@ -1145,15 +1156,16 @@ footer.site-footer {
     border-right: none;
     padding-right: 0;
     margin-right: 0;
+    font-size: 0.75rem;
   }
   .hero-quick-facts {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 1.25rem;
   }
   .timeline-item {
     grid-template-columns: 1fr;
-    gap: 1rem;
-    padding: 2rem 0;
+    gap: 0.75rem;
+    padding: 1.5rem 0;
   }
   .process-grid, .skills-grid {
     grid-template-columns: 1fr;
@@ -1163,16 +1175,21 @@ footer.site-footer {
   }
   .project-card {
     grid-template-columns: 1fr;
-    gap: 2rem;
+    gap: 1.5rem;
+    padding: 2rem 0;
   }
-  #contact .container-grid {
+  .contact-grid {
     grid-template-columns: 1fr !important;
-    gap: 4rem !important;
+    gap: 2.5rem !important;
   }
   footer.site-footer {
     flex-direction: column;
     gap: 1rem;
     text-align: center;
+  }
+  .hero-actions .btn {
+    width: 100%;
+    justify-content: center;
   }
 }
 

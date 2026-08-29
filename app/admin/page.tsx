@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import Link from 'next/link';
-import { Users, Eye, Globe, MapPin, ArrowUpRight, FolderKanban, Mail, FileText, Upload, CheckCircle2 } from 'lucide-react';
+import { Users, Eye, Globe, MapPin, ArrowUpRight, FolderKanban, Mail, FileText, Upload, CheckCircle2, Database, RefreshCw, AlertCircle } from 'lucide-react';
 import { Project, SkillsMap, ExperienceItem, PortfolioSettings } from '@/lib/types';
 
 interface VisitRecord {
@@ -31,6 +31,17 @@ interface ContactMessage {
   read: boolean;
 }
 
+interface DbHealth {
+  status: string;
+  connected: boolean;
+  latencyMs: number;
+  host?: string;
+  databaseName?: string;
+  collectionsCount?: number;
+  message?: string;
+  checking?: boolean;
+}
+
 export default function AdminDashboardPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [skills, setSkills] = useState<SkillsMap>({});
@@ -41,8 +52,37 @@ export default function AdminDashboardPage() {
   const [uploadingPdf, setUploadingPdf] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<string | null>(null);
 
+  const [dbHealth, setDbHealth] = useState<DbHealth>({
+    status: 'checking',
+    connected: false,
+    latencyMs: 0,
+    checking: true,
+  });
+
+  const checkDb = async () => {
+    setDbHealth((prev) => ({ ...prev, checking: true }));
+    try {
+      const res = await fetch('/api/health/db');
+      const data = await res.json();
+      setDbHealth({
+        ...data,
+        checking: false,
+      });
+    } catch {
+      setDbHealth({
+        status: 'error',
+        connected: false,
+        latencyMs: 0,
+        message: 'Could not connect to database health API.',
+        checking: false,
+      });
+    }
+  };
+
   const loadData = async () => {
     try {
+      checkDb();
+
       const [resProjects, resSkills, resExp, resSettings, resAnalytics, resMessages] = await Promise.all([
         fetch('/api/projects?admin=true').then((r) => r.json()),
         fetch('/api/skills').then((r) => r.json()),
@@ -127,11 +167,11 @@ export default function AdminDashboardPage() {
 
   return (
     <AdminLayout>
-      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h1 style={{ fontSize: '28px', fontWeight: '800', letterSpacing: '-0.02em' }}>Welcome back, Rajan 👋</h1>
           <p style={{ color: 'var(--text-muted)', marginTop: '6px' }}>
-            Production overview, recruiter inquiries, traffic analytics, and quick actions.
+            Production overview, recruiter inquiries, database connection health, and traffic analytics.
           </p>
         </div>
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
@@ -144,8 +184,61 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
+      {/* Live MongoDB Atlas Database Health Banner */}
+      <div
+        className="card"
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '24px',
+          padding: '16px 20px',
+          background: dbHealth.connected ? 'rgba(16, 185, 129, 0.05)' : 'rgba(239, 68, 68, 0.05)',
+          borderLeft: `4px solid ${dbHealth.connected ? '#10b981' : '#ef4444'}`,
+          flexWrap: 'wrap',
+          gap: '12px',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <Database size={22} color={dbHealth.connected ? '#10b981' : '#ef4444'} />
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontWeight: '700', fontSize: '14px' }}>MongoDB Atlas Cloud Cluster</span>
+              <span
+                style={{
+                  fontSize: '11px',
+                  fontFamily: 'var(--font-mono)',
+                  padding: '2px 8px',
+                  borderRadius: '4px',
+                  background: dbHealth.connected ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)',
+                  color: dbHealth.connected ? '#10b981' : '#ef4444',
+                  fontWeight: '700',
+                }}
+              >
+                {dbHealth.checking ? 'CHECKING...' : dbHealth.connected ? 'CONNECTED (HEALTHY)' : 'DISCONNECTED'}
+              </span>
+            </div>
+            <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px', fontFamily: 'var(--font-mono)' }}>
+              {dbHealth.connected
+                ? `Latency: ${dbHealth.latencyMs}ms | Collections: ${dbHealth.collectionsCount} | DB: ${dbHealth.databaseName}`
+                : dbHealth.message || 'Unable to connect to MongoDB Atlas cluster'}
+            </div>
+          </div>
+        </div>
+
+        <button
+          onClick={checkDb}
+          disabled={dbHealth.checking}
+          className="btn btn-outline btn-sm"
+          style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px' }}
+        >
+          <RefreshCw size={12} className={dbHealth.checking ? 'spin' : ''} />
+          {dbHealth.checking ? 'Pinging Cluster...' : 'Check Connection'}
+        </button>
+      </div>
+
       {/* KPI Stats Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '32px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '32px' }}>
         <div className="card" style={{ borderLeft: '4px solid var(--accent)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
             <div className="form-label">Total Impressions</div>
@@ -195,7 +288,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Quick Actions & Resume Manager Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '32px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px', marginBottom: '32px' }}>
         {/* Resume Quick Upload Card */}
         <div className="card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
@@ -278,16 +371,16 @@ export default function AdminDashboardPage() {
               className="btn btn-outline"
               style={{ justifyContent: 'flex-start', padding: '12px', gap: '8px', fontSize: '13px' }}
             >
-              Profile & Contact Settings
+              Profile & Security
             </Link>
           </div>
         </div>
       </div>
 
       {/* Visitor Analytics & Location Breakdown */}
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px', marginBottom: '32px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px', marginBottom: '32px' }}>
         {/* Recent Visitors Table */}
-        <div className="card">
+        <div className="card" style={{ gridColumn: 'span 2' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
             <div>
               <h3 style={{ fontSize: '16px', fontWeight: '700' }}>Recent Visitor Sessions</h3>
