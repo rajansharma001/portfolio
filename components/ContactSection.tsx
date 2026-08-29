@@ -11,11 +11,13 @@ interface ContactSectionProps {
 export default function ContactSection({ onShowToast }: ContactSectionProps) {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   const faqs = [
     {
       q: 'Availability & Work Modes',
-      a: 'I am available for full-time remote developer positions, hybrid roles, or targeted contract development projects worldwide.',
+      a: 'I am available for full-time remote engineering positions, hybrid roles, or targeted contract development projects worldwide.',
     },
     {
       q: 'Full-Stack Workflow',
@@ -23,7 +25,7 @@ export default function ContactSection({ onShowToast }: ContactSectionProps) {
     },
     {
       q: 'Time Zone Alignment',
-      a: 'Based in Nepal (UTC+5:45), easily coordinating overlap with Asian, European, and US morning working hours.',
+      a: 'Based in Kathmandu, Nepal (UTC+5:45), easily coordinating overlap with Asian, European, and US morning working hours.',
     },
   ];
 
@@ -31,22 +33,48 @@ export default function ContactSection({ onShowToast }: ContactSectionProps) {
     setActiveFaq(activeFaq === idx ? null : idx);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (onShowToast) {
-      onShowToast('Message Sent Successfully');
+    setFormError(null);
+    setIsSubmitting(true);
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        if (onShowToast) {
+          onShowToast('Message Sent Successfully!');
+        }
+        setFormData({ name: '', email: '', message: '' });
+      } else {
+        setFormError(data.error || 'Failed to deliver message.');
+      }
+    } catch {
+      setFormError('Network error. Please try again or email directly.');
+    } finally {
+      setIsSubmitting(false);
     }
-    setFormData({ name: '', email: '', message: '' });
   };
 
   return (
     <section id="contact" className="section container reveal">
+      <div className="section-header">
+        <span className="section-num">05</span>
+        <h2 className="section-title">Contact & FAQ</h2>
+      </div>
+
       <div className="container-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem' }}>
         {/* Left Side: FAQ */}
         <div>
-          <h2 className="text-h3" style={{ marginBottom: '2rem' }}>
+          <h3 className="text-h3" style={{ marginBottom: '2rem' }}>
             Frequently Asked
-          </h2>
+          </h3>
           {faqs.map((faq, idx) => {
             const isActive = activeFaq === idx;
             return (
@@ -83,6 +111,12 @@ export default function ContactSection({ onShowToast }: ContactSectionProps) {
           </h2>
 
           <form className="contact-form" id="contact-form" onSubmit={handleSubmit}>
+            {formError && (
+              <div style={{ color: '#ef4444', fontSize: '13px', background: 'rgba(239, 68, 68, 0.1)', padding: '10px 14px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+                {formError}
+              </div>
+            )}
+
             <div className="form-group">
               <label htmlFor="name">Your Name</label>
               <input
@@ -93,6 +127,7 @@ export default function ContactSection({ onShowToast }: ContactSectionProps) {
                 placeholder="e.g. Jane Doe"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                disabled={isSubmitting}
               />
             </div>
 
@@ -106,6 +141,7 @@ export default function ContactSection({ onShowToast }: ContactSectionProps) {
                 placeholder="e.g. jane@company.com"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                disabled={isSubmitting}
               />
             </div>
 
@@ -115,14 +151,15 @@ export default function ContactSection({ onShowToast }: ContactSectionProps) {
                 id="message"
                 className="form-input"
                 required
-                placeholder="Describe your project or inquiry..."
+                placeholder="Describe your project, role, or inquiry..."
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                disabled={isSubmitting}
               ></textarea>
             </div>
 
-            <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
-              Send Message
+            <button type="submit" className="btn btn-primary" style={{ width: '100%' }} disabled={isSubmitting}>
+              {isSubmitting ? 'Sending Message...' : 'Send Message'}
             </button>
           </form>
         </div>

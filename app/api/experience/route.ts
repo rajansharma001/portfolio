@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { readJsonData, writeJsonData } from '@/lib/json-db';
 import { ExperienceItem } from '@/lib/types';
+import { verifyRequestAuth } from '@/lib/auth';
 
 const FILE_NAME = 'experience.json';
 
@@ -14,8 +15,12 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  if (!verifyRequestAuth(req)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
-    const data = await req.json() as ExperienceItem[];
+    const data = (await req.json()) as ExperienceItem[];
     await writeJsonData(FILE_NAME, data);
     return NextResponse.json(data);
   } catch (error) {

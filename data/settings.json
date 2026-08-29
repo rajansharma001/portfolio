@@ -1,20 +1,20 @@
 {
   "name": "Rajan Sharma",
-  "role": "Backend-Focused Full Stack Developer",
-  "headline": "I build backend systems that handle real users, real data, and real business workflows.",
-  "location": "Kohalpur, Nepal",
+  "role": "Full-Stack Software Engineer",
+  "headline": "I architect and build scalable, secure full-stack web applications and backend systems.",
+  "location": "Kathmandu, Bagmati Prov, Nepal",
   "email": "email.rajan001@gmail.com",
   "phone": "+977 9849809355",
   "isAvailableForHire": true,
-  "availabilityBadgeText": "Open to International Opportunities",
+  "availabilityBadgeText": "Available for Full-Stack & Backend Engineering Roles",
   "resumeUrl": "/uploads/resume.pdf",
-  "bio": "Backend architect specializing in distributed systems, RESTful microservices, query optimization, and secure full-stack Next.js applications.",
-  "codeSnippet": "const developer = {\n  name: 'Rajan Sharma',\n  role: 'Backend-Focused Full Stack Developer',\n  skills: ['Node.js', 'TypeScript', 'Next.js',\n           'PostgreSQL', 'React', 'REST APIs'],\n  passion: 'Building products that solve real problems',\n  location: 'Kohalpur, Nepal',\n  openTo: 'International Opportunities'\n};\n\n// Let's build something amazing together 🚀",
+  "bio": "Full-Stack Software Engineer specializing in scalable architecture, RESTful services, database optimization, and high-performance Next.js & Node.js systems.",
+  "codeSnippet": "const engineer = {\n  name: 'Rajan Sharma',\n  role: 'Full-Stack Software Engineer',\n  location: 'Kathmandu, Bagmati Prov, Nepal',\n  skills: ['Next.js', 'TypeScript', 'Node.js',\n           'PostgreSQL', 'MongoDB', 'REST APIs'],\n  focus: 'Scalable Architecture & High-Performance Systems',\n  status: 'Ready for full-stack engineering impact'\n};\n\n// Let's build something scalable together 🚀",
   "heroTechChips": [
     {
-      "name": "Node.js",
-      "iconText": "Terminal",
-      "iconColor": "#22c55e"
+      "name": "Next.js",
+      "iconText": "Globe",
+      "iconColor": "#ffffff"
     },
     {
       "name": "TypeScript",
@@ -22,9 +22,9 @@
       "iconColor": "#3178c6"
     },
     {
-      "name": "Next.js",
-      "iconText": "Globe",
-      "iconColor": "#ffffff"
+      "name": "Node.js",
+      "iconText": "Terminal",
+      "iconColor": "#22c55e"
     },
     {
       "name": "React",

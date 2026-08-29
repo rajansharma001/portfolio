@@ -58,7 +58,7 @@ export default function SkillsGrid({ skills }: SkillsGridProps) {
   return (
     <section id="skills" className="section container reveal">
       <div className="section-header">
-        <span className="section-num">04</span>
+        <span className="section-num">02</span>
         <h2 className="section-title">Technical Capabilities</h2>
       </div>
 

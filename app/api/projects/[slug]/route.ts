@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { readJsonData, writeJsonData } from '@/lib/json-db';
 import { Project } from '@/lib/types';
+import { verifyRequestAuth } from '@/lib/auth';
 
 const FILE_NAME = 'projects.json';
 
@@ -25,9 +26,13 @@ export async function GET(req: NextRequest, { params }: Context) {
 }
 
 export async function PUT(req: NextRequest, { params }: Context) {
+  if (!verifyRequestAuth(req)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     const { slug } = await params;
-    const updates = await req.json() as Partial<Project>;
+    const updates = (await req.json()) as Partial<Project>;
     const projects = await readJsonData<Project[]>(FILE_NAME);
     const index = projects.findIndex((p) => p.slug === slug || p.id === slug);
 
@@ -48,6 +53,10 @@ export async function PUT(req: NextRequest, { params }: Context) {
 }
 
 export async function DELETE(req: NextRequest, { params }: Context) {
+  if (!verifyRequestAuth(req)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     const { slug } = await params;
     const projects = await readJsonData<Project[]>(FILE_NAME);

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import Link from 'next/link';
-import { Users, Eye, Globe, MapPin, ArrowUpRight, FolderKanban } from 'lucide-react';
+import { Users, Eye, Globe, MapPin, ArrowUpRight, FolderKanban, Mail } from 'lucide-react';
 import { Project, SkillsMap, ExperienceItem, PortfolioSettings } from '@/lib/types';
 
 interface VisitRecord {
@@ -22,22 +22,33 @@ interface AnalyticsData {
   visits: VisitRecord[];
 }
 
+interface ContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  message: string;
+  createdAt: string;
+  read: boolean;
+}
+
 export default function AdminDashboardPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [skills, setSkills] = useState<SkillsMap>({});
   const [experience, setExperience] = useState<ExperienceItem[]>([]);
   const [settings, setSettings] = useState<PortfolioSettings | null>(null);
+  const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [analytics, setAnalytics] = useState<AnalyticsData>({ totalViews: 0, uniqueVisitors: 0, visits: [] });
 
   useEffect(() => {
     async function loadData() {
       try {
-        const [resProjects, resSkills, resExp, resSettings, resAnalytics] = await Promise.all([
+        const [resProjects, resSkills, resExp, resSettings, resAnalytics, resMessages] = await Promise.all([
           fetch('/api/projects?admin=true').then((r) => r.json()),
           fetch('/api/skills').then((r) => r.json()),
           fetch('/api/experience').then((r) => r.json()),
           fetch('/api/settings').then((r) => r.json()),
           fetch('/api/analytics/track').then((r) => r.json()).catch(() => ({ totalViews: 0, uniqueVisitors: 0, visits: [] })),
+          fetch('/api/messages').then((r) => r.json()).catch(() => []),
         ]);
 
         setProjects(resProjects || []);
@@ -45,6 +56,7 @@ export default function AdminDashboardPage() {
         setExperience(resExp || []);
         setSettings(resSettings);
         if (resAnalytics) setAnalytics(resAnalytics);
+        setMessages(resMessages || []);
       } catch (err) {
         console.error('Error loading admin dashboard stats:', err);
       }
@@ -67,13 +79,15 @@ export default function AdminDashboardPage() {
     .sort((a, b) => b[1].count - a[1].count)
     .slice(0, 5);
 
+  const unreadMessages = messages.filter((m) => !m.read);
+
   return (
     <AdminLayout>
       <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '2rem' }}>
         <div>
           <h1 style={{ fontSize: '28px', fontWeight: '800', letterSpacing: '-0.02em' }}>Welcome back, Rajan 👋</h1>
           <p style={{ color: 'var(--text-muted)', marginTop: '8px' }}>
-            Real-time portfolio overview, traffic analytics, and visitor locations.
+            Production overview, recruiter inquiries, traffic analytics, and visitor locations.
           </p>
         </div>
         <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
@@ -94,7 +108,7 @@ export default function AdminDashboardPage() {
             <Eye size={18} color="var(--accent)" />
           </div>
           <div style={{ fontSize: '32px', fontWeight: '800', marginBottom: '4px' }}>{analytics.totalViews}</div>
-          <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Real-time page views</div>
+          <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Real-time page impressions</div>
         </div>
 
         <div className="card" style={{ borderLeft: '4px solid var(--accent-emerald)' }}>
@@ -106,13 +120,15 @@ export default function AdminDashboardPage() {
           <div style={{ fontSize: '12px', color: 'var(--accent-emerald)' }}>Recorded unique IPs</div>
         </div>
 
-        <div className="card" style={{ borderLeft: '4px solid var(--accent-purple)' }}>
+        <div className="card" style={{ borderLeft: '4px solid #f59e0b' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <div className="form-label">Total Projects</div>
-            <FolderKanban size={18} color="var(--accent-purple)" />
+            <div className="form-label">Inbound Messages</div>
+            <Mail size={18} color="#f59e0b" />
           </div>
-          <div style={{ fontSize: '32px', fontWeight: '800', marginBottom: '4px' }}>{projects.length}</div>
-          <div style={{ fontSize: '12px', color: 'var(--status-success)' }}>{projects.filter((p) => p.published).length} Published</div>
+          <div style={{ fontSize: '32px', fontWeight: '800', marginBottom: '4px' }}>{messages.length}</div>
+          <div style={{ fontSize: '12px', color: unreadMessages.length > 0 ? '#f59e0b' : 'var(--text-secondary)' }}>
+            {unreadMessages.length} Unread inquiries
+          </div>
         </div>
 
         <div className="card" style={{ borderLeft: '4px solid var(--accent-cyan)' }}>
@@ -133,6 +149,45 @@ export default function AdminDashboardPage() {
           <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Highest traffic source</div>
         </div>
       </div>
+
+      {/* Inquiries & Recent Activity Row */}
+      {messages.length > 0 && (
+        <div className="card" style={{ marginBottom: '32px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <div>
+              <h3 style={{ fontSize: '16px', fontWeight: '700' }}>Recent Inbound Inquiries</h3>
+              <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Direct messages from the contact form</p>
+            </div>
+            <Link href="/admin/messages" style={{ fontSize: '12px', color: 'var(--accent)', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              View All In Inbox <ArrowUpRight size={14} />
+            </Link>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
+            {messages.slice(0, 3).map((msg) => (
+              <div
+                key={msg.id}
+                style={{
+                  background: 'var(--bg-main)',
+                  border: '1px solid var(--border-light)',
+                  borderRadius: '6px',
+                  padding: '1rem',
+                  borderLeft: !msg.read ? '3px solid var(--accent)' : '3px solid var(--border)',
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                  <span style={{ fontWeight: '700', fontSize: '14px' }}>{msg.name}</span>
+                  <span style={{ fontSize: '11px', color: 'var(--text-dim)' }}>{new Date(msg.createdAt).toLocaleDateString()}</span>
+                </div>
+                <div style={{ fontSize: '12px', color: 'var(--accent)', marginBottom: '8px' }}>{msg.email}</div>
+                <div style={{ fontSize: '13px', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {msg.message}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Visitor Analytics & Location Breakdown */}
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px', marginBottom: '32px' }}>

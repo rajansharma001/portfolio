@@ -11,10 +11,10 @@ export default function ExperienceTimeline({ experience }: ExperienceTimelinePro
   const defaultExperience: ExperienceItem[] = [
     {
       id: 'exp_1',
-      role: 'Full-Stack Web Developer',
+      role: 'Full-Stack Software Engineer',
       company: 'Independent Engineer',
       period: '2023 — Present',
-      location: 'Kohalpur, Nepal',
+      location: 'Kathmandu, Nepal',
       description: 'Architect and deploy production-ready full-stack applications with Next.js, TypeScript, and Node.js backend services.',
       highlights: [
         'Architect and deploy production-ready full-stack applications with Next.js, TypeScript, and Node.js backend services.',
@@ -51,7 +51,7 @@ export default function ExperienceTimeline({ experience }: ExperienceTimelinePro
   return (
     <section id="experience" className="section container reveal">
       <div className="section-header">
-        <span className="section-num">01</span>
+        <span className="section-num">03</span>
         <h2 className="section-title">Background & Experience</h2>
       </div>
 

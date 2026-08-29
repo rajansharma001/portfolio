@@ -4,10 +4,10 @@ import React, { useEffect, useState, useRef } from 'react';
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import Marquee from '@/components/Marquee';
-import ExperienceTimeline from '@/components/ExperienceTimeline';
-import ProcessGrid from '@/components/ProcessGrid';
 import FeaturedProjects from '@/components/FeaturedProjects';
 import SkillsGrid from '@/components/SkillsGrid';
+import ExperienceTimeline from '@/components/ExperienceTimeline';
+import ProcessGrid from '@/components/ProcessGrid';
 import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
 import Modal from '@/components/Modal';
@@ -25,7 +25,7 @@ export default function HomePage() {
 
   const cursorRef = useRef<HTMLDivElement>(null);
 
-  // 1. Fetch CMS data & track page view
+  // 1. Fetch dynamic data & track visitor view
   useEffect(() => {
     async function fetchData() {
       try {
@@ -56,7 +56,7 @@ export default function HomePage() {
     fetchData();
   }, []);
 
-  // 2. Custom Cursor & Hover Effects
+  // 2. Custom Cursor & Interactive Hover Effects
   useEffect(() => {
     const cursor = cursorRef.current;
     if (!cursor) return;
@@ -86,7 +86,7 @@ export default function HomePage() {
     };
   }, [loading]);
 
-  // 3. Scroll Progress Indicator
+  // 3. Top Scroll Progress Indicator
   useEffect(() => {
     const handleScroll = () => {
       const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
@@ -125,7 +125,7 @@ export default function HomePage() {
     setToastMessage(msg);
     setTimeout(() => {
       setToastMessage(null);
-    }, 3500);
+    }, 4000);
   };
 
   if (loading) {
@@ -143,7 +143,7 @@ export default function HomePage() {
           fontWeight: 700,
         }}
       >
-        <span>INITIALIZING SYSTEM...</span>
+        <span>INITIALIZING SECURE ENVIRONMENT...</span>
       </div>
     );
   }
@@ -164,12 +164,25 @@ export default function HomePage() {
       <Header />
 
       <main>
+        {/* Hero Section */}
         <Hero settings={settings} />
+
+        {/* Marquee Ticker */}
         <Marquee />
-        <ExperienceTimeline experience={experience} settings={settings} />
-        <ProcessGrid />
+
+        {/* 01: Featured Works & Case Studies (Recruiter Priority #1: Proof of Work) */}
         <FeaturedProjects projects={projects} onOpenModal={(p) => setSelectedProject(p)} />
+
+        {/* 02: Technical Capabilities & Stack (Recruiter Priority #2: Skills Match) */}
         <SkillsGrid skills={skills} />
+
+        {/* 03: Background & Experience (Recruiter Priority #3: Verified Career History) */}
+        <ExperienceTimeline experience={experience} settings={settings} />
+
+        {/* 04: Engineering Methodology (Recruiter Priority #4: Technical Process) */}
+        <ProcessGrid />
+
+        {/* 05: Contact & FAQ (Recruiter Priority #5: Inbound Hiring Inquiries) */}
         <ContactSection settings={settings} onShowToast={handleShowToast} />
       </main>
 

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { readJsonData, writeJsonData } from '@/lib/json-db';
 import { SocialLink } from '@/lib/types';
+import { verifyRequestAuth } from '@/lib/auth';
 
 const FILE_NAME = 'social-links.json';
 
@@ -14,8 +15,12 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  if (!verifyRequestAuth(req)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
-    const socialLinks = await req.json() as SocialLink[];
+    const socialLinks = (await req.json()) as SocialLink[];
     await writeJsonData(FILE_NAME, socialLinks);
     return NextResponse.json(socialLinks);
   } catch (error) {

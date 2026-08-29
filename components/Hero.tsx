@@ -22,8 +22,8 @@ export default function Hero({ settings }: HeroProps) {
   const commands: Record<string, string> = {
     help: `Available commands: <span style="color:#ffbd2e">skills</span>, <span style="color:#ffbd2e">exp</span>, <span style="color:#ffbd2e">contact</span>, <span style="color:#ffbd2e">theme</span>, <span style="color:#ffbd2e">clear</span>`,
     skills: 'Stack: Next.js | TypeScript | Node.js | Express | PostgreSQL | MongoDB | Tailwind',
-    exp: 'Experience: Full-Stack Engineer (Self-Employed) | Ex-Data Entry (Souq Al Baladi) | CTEVT Diploma',
-    contact: `Email: ${settings?.email || 'email.rajan001@gmail.com'} | Location: Kohalpur, Nepal`,
+    exp: 'Experience: Full-Stack Engineer (Independent) | Ex-Data Entry (Souq Al Baladi) | CTEVT Diploma',
+    contact: `Email: ${settings?.email || 'email.rajan001@gmail.com'} | Location: Kathmandu, Bagmati Prov, Nepal`,
     theme: 'Toggling visual theme...',
   };
 
@@ -77,13 +77,13 @@ export default function Hero({ settings }: HeroProps) {
   return (
     <section className="hero container reveal" id="about">
       <div className="status-badge" style={{ marginBottom: '2rem', alignSelf: 'flex-start' }}>
-        <span className="dot"></span> {settings?.availabilityBadgeText || 'Open to remote & local full-stack roles'}
+        <span className="dot"></span> {settings?.availabilityBadgeText || 'Available for Full-Stack & Backend Engineering Roles'}
       </div>
 
       <div className="hero-grid">
         <div className="hero-main">
           <div className="hero-title-group">
-            <span className="hero-role">{settings?.role || 'Software & Web Engineer'}</span>
+            <span className="hero-role">{settings?.role || 'Full-Stack Software Engineer'}</span>
             <h1 className="text-huge">
               RAJAN<br />SHARMA
             </h1>
@@ -132,7 +132,7 @@ export default function Hero({ settings }: HeroProps) {
       <div className="hero-quick-facts">
         <div className="fact-item">
           <span className="label">Location</span>
-          <span>{settings?.location || 'Kohalpur, Nepal'} (UTC +5:45)</span>
+          <span>Kathmandu, Bagmati Prov, Nepal (UTC +5:45)</span>
         </div>
         <div className="fact-item">
           <span className="label">Core Stack</span>
@@ -146,7 +146,7 @@ export default function Hero({ settings }: HeroProps) {
 
       <div className="hero-actions">
         <a href="#work" className="btn btn-primary">
-          View Portfolio
+          View Featured Works
         </a>
         <button onClick={handlePrint} className="btn btn-outline" type="button">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

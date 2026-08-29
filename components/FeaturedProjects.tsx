@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { ExternalLink, Github } from 'lucide-react';
+import { ExternalLink, Github, ChevronDown } from 'lucide-react';
 import { Project } from '@/lib/types';
 
 interface FeaturedProjectsProps {
@@ -11,6 +11,7 @@ interface FeaturedProjectsProps {
 
 export default function FeaturedProjects({ projects, onOpenModal }: FeaturedProjectsProps) {
   const [activeFilter, setActiveFilter] = useState('all');
+  const [visibleCount, setVisibleCount] = useState(4);
 
   const filterTabs = [
     { label: 'All Systems', value: 'all' },
@@ -22,19 +23,41 @@ export default function FeaturedProjects({ projects, onOpenModal }: FeaturedProj
     if (activeFilter === 'all') return true;
     const type = (p.type || '').toLowerCase();
     if (activeFilter === 'saas') {
-      return type.includes('saas') || type.includes('fullstack') || type.includes('internal') || type.includes('developer');
+      return (
+        type.includes('saas') ||
+        type.includes('fullstack') ||
+        type.includes('internal') ||
+        type.includes('developer')
+      );
     }
     if (activeFilter === 'client') {
-      return type.includes('client') || type.includes('wordpress') || type.includes('cms') || type.includes('education');
+      return (
+        type.includes('client') ||
+        type.includes('wordpress') ||
+        type.includes('cms') ||
+        type.includes('education')
+      );
     }
     return type === activeFilter;
   });
 
+  const displayedProjects = filteredProjects.slice(0, visibleCount);
+  const hasMore = visibleCount < filteredProjects.length;
+
+  const handleLoadMore = () => {
+    setVisibleCount((prev) => prev + 4);
+  };
+
+  const handleFilterChange = (val: string) => {
+    setActiveFilter(val);
+    setVisibleCount(4); // Reset to first 4 on filter change
+  };
+
   return (
     <section id="work" className="section container reveal">
       <div className="section-header">
-        <span className="section-num">03</span>
-        <h2 className="section-title">Featured Works</h2>
+        <span className="section-num">01</span>
+        <h2 className="section-title">Featured Works & Case Studies</h2>
       </div>
 
       <div className="project-filters">
@@ -42,7 +65,7 @@ export default function FeaturedProjects({ projects, onOpenModal }: FeaturedProj
           <button
             key={tab.value}
             className={`filter-btn ${activeFilter === tab.value ? 'active' : ''}`}
-            onClick={() => setActiveFilter(tab.value)}
+            onClick={() => handleFilterChange(tab.value)}
           >
             {tab.label}
           </button>
@@ -50,7 +73,7 @@ export default function FeaturedProjects({ projects, onOpenModal }: FeaturedProj
       </div>
 
       <div className="projects-list">
-        {filteredProjects.map((project) => (
+        {displayedProjects.map((project) => (
           <article key={project.id} className="project-card">
             <div className="project-info">
               <h3 className="text-h2">{project.title.toUpperCase()}</h3>
@@ -143,6 +166,18 @@ export default function FeaturedProjects({ projects, onOpenModal }: FeaturedProj
           </article>
         ))}
       </div>
+
+      {hasMore && (
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '5rem' }}>
+          <button
+            onClick={handleLoadMore}
+            className="btn btn-outline"
+            style={{ padding: '1rem 3rem', display: 'flex', alignItems: 'center', gap: '8px' }}
+          >
+            Load More Projects ({filteredProjects.length - visibleCount} remaining) <ChevronDown size={16} />
+          </button>
+        </div>
+      )}
     </section>
   );
 }

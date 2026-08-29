@@ -1,0 +1,11 @@
+[
+  {
+    "id": "msg_sample_1",
+    "name": "Sarah Jenkins",
+    "email": "sarah.j@techrecruits.eu",
+    "message": "Hi Rajan, came across your Next.js and backend portfolio. We have an open Senior Full-Stack role in Europe (Remote) and would love to connect.",
+    "createdAt": "2026-08-29T14:30:00.000Z",
+    "read": false,
+    "ip": "185.220.101.5"
+  }
+]

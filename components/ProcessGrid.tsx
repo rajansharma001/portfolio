@@ -25,9 +25,9 @@ export default function ProcessGrid() {
   ];
 
   return (
-    <section className="section container reveal" style={{ paddingTop: 0 }}>
-      <div className="section-header" style={{ borderBottom: 'none', marginBottom: '2rem' }}>
-        <span className="section-num">02</span>
+    <section className="section container reveal">
+      <div className="section-header">
+        <span className="section-num">04</span>
         <h2 className="section-title">Engineering Methodology</h2>
       </div>
 

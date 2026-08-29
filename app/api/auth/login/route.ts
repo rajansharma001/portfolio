@@ -1,21 +1,55 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AUTH_COOKIE_NAME, generateToken, getAdminPassword } from '@/lib/auth';
+import { AUTH_COOKIE_NAME, authenticateAdmin, generateSessionToken } from '@/lib/auth';
+import { checkRateLimit, recordFailedAttempt, resetRateLimit } from '@/lib/rate-limiter';
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { password } = body;
+    const forwardedFor = req.headers.get('x-forwarded-for');
+    const ip = forwardedFor ? forwardedFor.split(',')[0].trim() : '127.0.0.1';
 
-    if (!password || password !== getAdminPassword()) {
+    // 1. Check IP brute-force rate limit (max 5 failed attempts per 15 minutes)
+    const rateCheck = checkRateLimit(`login:${ip}`, {
+      windowMs: 15 * 60 * 1000,
+      maxAttempts: 5,
+      lockoutDurationMs: 15 * 60 * 1000,
+    });
+
+    if (!rateCheck.allowed) {
       return NextResponse.json(
-        { error: 'Invalid admin password' },
-        { status: 401 }
+        { error: 'Invalid credentials.' },
+        { status: 429 }
       );
     }
 
-    const token = generateToken();
-    const response = NextResponse.json({ success: true, message: 'Authenticated successfully' });
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body.password !== 'string') {
+      recordFailedAttempt(`login:${ip}`);
+      return NextResponse.json({ error: 'Invalid credentials.' }, { status: 401 });
+    }
 
+    const { password } = body;
+
+    // 2. Constant-time password hash verification
+    const isValid = authenticateAdmin(password);
+
+    if (!isValid) {
+      recordFailedAttempt(`login:${ip}`);
+      // Security Rule 1: Always generic message, never reveal account or password specifics
+      return NextResponse.json({ error: 'Invalid credentials.' }, { status: 401 });
+    }
+
+    // 3. Reset rate limit on success
+    resetRateLimit(`login:${ip}`);
+
+    // 4. Create cryptographically signed HMAC session token
+    const token = await generateSessionToken();
+
+    const response = NextResponse.json({
+      success: true,
+      message: 'Authenticated successfully',
+    });
+
+    // 5. Set HttpOnly, SameSite=Lax, Secure cookie
     response.cookies.set({
       name: AUTH_COOKIE_NAME,
       value: token,
@@ -28,6 +62,6 @@ export async function POST(req: NextRequest) {
 
     return response;
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to authenticate' }, { status: 500 });
+    return NextResponse.json({ error: 'Invalid credentials.' }, { status: 500 });
   }
 }
