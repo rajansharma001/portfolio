@@ -21,9 +21,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
     }
 
-    const filename = file.name;
-    const mimeType = file.type;
-    const sizeBytes = file.size;
+    const filename = file.name || 'unknown';
+    const mimeType = file.type || 'application/octet-stream';
+    const sizeBytes = file.size || 0;
+
+    if (!file.name) {
+      console.warn("File object is missing 'name' property.");
+    }
 
     // 2. Strict File Validation
     const validation = validateUploadFile(
@@ -45,7 +49,9 @@ export async function POST(req: NextRequest) {
     const targetPath = path.resolve(UPLOAD_DIR, safeName);
 
     // Defense in depth: Verify target stays strictly inside UPLOAD_DIR
-    if (!targetPath.startsWith(path.resolve(UPLOAD_DIR))) {
+    const resolvedUploadDir = path.resolve(UPLOAD_DIR);
+    if (!targetPath.startsWith(resolvedUploadDir)) {
+      console.warn(`Path validation failed. targetPath: ${targetPath}, resolvedUploadDir: ${resolvedUploadDir}`);
       return NextResponse.json({ error: 'Invalid destination path' }, { status: 400 });
     }
 
@@ -56,7 +62,8 @@ export async function POST(req: NextRequest) {
 
     const publicUrl = `/uploads/${safeName}`;
     return NextResponse.json({ url: publicUrl, filename: safeName });
-  } catch (error) {
-    return NextResponse.json({ error: 'File upload processing failed.' }, { status: 500 });
+  } catch (error: any) {
+    console.error('UPLOAD ERROR:', error);
+    return NextResponse.json({ error: `File upload processing failed: ${error.message}` }, { status: 500 });
   }
 }

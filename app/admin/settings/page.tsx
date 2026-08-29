@@ -46,8 +46,17 @@ export default function AdminSettingsPage() {
 
       const result = await res.json();
       if (res.ok && result.url) {
-        setSettings({ ...settings, resumeUrl: result.url });
-        setMessage({ type: 'success', text: 'Resume PDF uploaded and updated successfully!' });
+        const newSettings = { ...settings, resumeUrl: result.url };
+        setSettings(newSettings);
+        
+        // Auto-save the new resume URL to the database
+        await fetch('/api/settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newSettings),
+        });
+        
+        setMessage({ type: 'success', text: 'Resume PDF uploaded and saved successfully!' });
       } else {
         setMessage({ type: 'error', text: result.error || 'Resume PDF upload failed' });
       }
