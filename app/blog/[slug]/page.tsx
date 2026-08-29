@@ -103,7 +103,7 @@ export default function BlogPostDetailPage({ params }: Context) {
 
       <Header />
 
-      <main className="container" style={{ paddingTop: 'calc(var(--nav-height) + 3rem)', paddingBottom: '6rem', maxWidth: '880px', flex: 1 }}>
+      <main className="container" style={{ paddingTop: 'calc(var(--nav-height) + 3rem)', paddingBottom: '6rem', flex: 1 }}>
         {/* Back Link */}
         <div style={{ marginBottom: '2.5rem' }}>
           <Link

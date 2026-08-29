@@ -131,7 +131,7 @@ export default function FeaturedProjects({ projects, onOpenModal }: FeaturedProj
               tabIndex={0}
               onKeyDown={(e) => e.key === 'Enter' && onOpenModal(project)}
             >
-              {project.thumbnail ? (
+              {project.thumbnail && !project.thumbnail.includes('unsplash') ? (
                 <div className="project-thumb" style={{ backgroundImage: `url('${project.thumbnail}')` }} />
               ) : (
                 <div className="project-placeholder">
