@@ -1,57 +1,79 @@
 import React from 'react';
-import { Server, Layout, Database, Wrench } from 'lucide-react';
 import { SkillsMap } from '@/lib/types';
 
 interface SkillsGridProps {
-  skills: SkillsMap;
+  skills?: SkillsMap;
 }
 
-const CATEGORY_ICONS: Record<string, { icon: React.ReactNode, color: string }> = {
-  Backend: { icon: <Server size={18} color="#22c55e" />, color: 'rgba(34, 197, 94, 0.1)' },
-  Frontend: { icon: <Layout size={18} color="#3b82f6" />, color: 'rgba(59, 130, 246, 0.1)' },
-  Database: { icon: <Database size={18} color="#c084fc" />, color: 'rgba(192, 132, 252, 0.1)' },
-  Tools: { icon: <Wrench size={18} color="#f97316" />, color: 'rgba(249, 115, 22, 0.1)' },
-  'Tools & Others': { icon: <Wrench size={18} color="#f97316" />, color: 'rgba(249, 115, 22, 0.1)' },
-};
-
 export default function SkillsGrid({ skills }: SkillsGridProps) {
-  const categories = ['Backend', 'Frontend', 'Database', 'Tools'];
+  const defaultCategories = [
+    {
+      title: 'Frontend Development',
+      list: [
+        'JavaScript (ES6+)',
+        'TypeScript',
+        'React / Next.js',
+        'Tailwind CSS / Shadcn',
+        'HTML5 / CSS Modules',
+      ],
+    },
+    {
+      title: 'Backend & Databases',
+      list: [
+        'Node.js / Express',
+        'REST API Architecture',
+        'PostgreSQL / Prisma',
+        'MongoDB / Mongoose',
+        'JWT & OAuth',
+      ],
+    },
+    {
+      title: 'CMS & Design',
+      list: [
+        'WordPress',
+        'Elementor Interface Design',
+        'PHP Basics',
+        'UI/UX Design Systems',
+      ],
+    },
+    {
+      title: 'DevOps & Tools',
+      list: [
+        'Git / GitHub',
+        'Linux Server Administration',
+        'cPanel Deployment',
+        'Postman / API Testing',
+      ],
+    },
+  ];
+
+  // Map dynamic skills if available
+  const categoriesToRender = skills && Object.keys(skills).length > 0
+    ? Object.entries(skills).map(([key, items]) => ({
+        title: key,
+        list: items,
+      }))
+    : defaultCategories;
 
   return (
-    <section id="skills" className="section">
-      <div className="container">
-        <div className="section-header">
-          <span className="section-tag" style={{ color: 'var(--accent)', fontSize: '0.9rem' }}>TECHNICAL SKILLS</span>
-          <p className="section-subtitle" style={{ display: 'inline-block', marginLeft: '1rem', margin: 0 }}>
-            Technologies and tools I use to build scalable solutions.
-          </p>
-        </div>
+    <section id="skills" className="section container reveal">
+      <div className="section-header">
+        <span className="section-num">04</span>
+        <h2 className="section-title">Technical Capabilities</h2>
+      </div>
 
+      <div className="skills-container">
         <div className="skills-grid">
-          {categories.map((category) => {
-            const list = skills[category] || skills['Tools & Others'] || [];
-            const meta = CATEGORY_ICONS[category] || CATEGORY_ICONS['Backend'];
-
-            return (
-              <div key={category} className="skill-card">
-                <div className="skill-header">
-                  <div className="skill-icon-wrap" style={{ background: meta.color }}>
-                    {meta.icon}
-                  </div>
-                  <span className="skill-title">{category === 'Tools' ? 'Tools & Others' : category}</span>
-                </div>
-
-                <div className="skill-list">
-                  {list.map((skill) => (
-                    <div key={skill} className="skill-item">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" fill="var(--text-secondary)"></circle></svg>
-                      <span style={{ color: 'var(--text-primary)' }}>{skill}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
+          {categoriesToRender.map((col, idx) => (
+            <div key={idx} className="skill-col">
+              <h4>{col.title}</h4>
+              <ul className="skill-list">
+                {col.list.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
       </div>
     </section>

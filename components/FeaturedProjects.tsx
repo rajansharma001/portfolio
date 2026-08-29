@@ -1,89 +1,147 @@
-import React from 'react';
-import { Github, ExternalLink, ArrowRight } from 'lucide-react';
+"use client";
+
+import React, { useState } from 'react';
+import { ExternalLink, Github } from 'lucide-react';
 import { Project } from '@/lib/types';
 
 interface FeaturedProjectsProps {
   projects: Project[];
-  onOpenModal: (p: Project) => void;
+  onOpenModal: (project: Project) => void;
 }
 
 export default function FeaturedProjects({ projects, onOpenModal }: FeaturedProjectsProps) {
-  const featured = projects.filter((p) => p.featured).slice(0, 2);
+  const [activeFilter, setActiveFilter] = useState('all');
+
+  const filterTabs = [
+    { label: 'All Systems', value: 'all' },
+    { label: 'Full-Stack Apps', value: 'saas' },
+    { label: 'Web Systems', value: 'client' },
+  ];
+
+  const filteredProjects = projects.filter((p) => {
+    if (activeFilter === 'all') return true;
+    const type = (p.type || '').toLowerCase();
+    if (activeFilter === 'saas') {
+      return type.includes('saas') || type.includes('fullstack') || type.includes('internal') || type.includes('developer');
+    }
+    if (activeFilter === 'client') {
+      return type.includes('client') || type.includes('wordpress') || type.includes('cms') || type.includes('education');
+    }
+    return type === activeFilter;
+  });
 
   return (
-    <section id="projects" className="section">
-      <div className="container">
-        <div className="section-header">
-          <span className="section-tag">Featured Projects</span>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-            <div>
-              <h2 className="section-title">Featured Case Studies</h2>
-              <p className="section-subtitle">
-                High-impact solutions built with modern technologies.
-              </p>
-            </div>
-            <a href="#" className="nav-link" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-primary)' }}>
-              View all projects <ArrowRight size={14} />
-            </a>
-          </div>
-        </div>
+    <section id="work" className="section container reveal">
+      <div className="section-header">
+        <span className="section-num">03</span>
+        <h2 className="section-title">Featured Works</h2>
+      </div>
 
-        <div className="featured-grid">
-          {featured.map((project, idx) => (
-            <div key={project.id} className="project-card">
-              <div className="project-img-wrapper" style={{ backgroundImage: `url('${project.thumbnail}')`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
-                <div className="project-img-overlay-badges">
-                  <span className="badge-tag badge-purple">SaaS</span>
-                  <span className="badge-tag badge-green">Featured</span>
-                </div>
+      <div className="project-filters">
+        {filterTabs.map((tab) => (
+          <button
+            key={tab.value}
+            className={`filter-btn ${activeFilter === tab.value ? 'active' : ''}`}
+            onClick={() => setActiveFilter(tab.value)}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="projects-list">
+        {filteredProjects.map((project) => (
+          <article key={project.id} className="project-card">
+            <div className="project-info">
+              <h3 className="text-h2">{project.title.toUpperCase()}</h3>
+              <p className="project-desc">{project.description}</p>
+
+              <div className="tag-group">
+                {(project.techStack || []).map((tech) => (
+                  <span key={tech} className="tag">
+                    {tech}
+                  </span>
+                ))}
               </div>
 
-              <div className="project-content">
-                <h3 className="project-title">{project.title}</h3>
-                <p className="project-desc">{project.description}</p>
+              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                <button
+                  type="button"
+                  className="btn btn-primary btn-sm open-modal-btn"
+                  onClick={() => onOpenModal(project)}
+                >
+                  Inspect Specs
+                </button>
 
-                <div className="impact-strip">
-                  <div className="impact-strip-accent" />
-                  <ul style={{ margin: 0, paddingLeft: '1.2rem', color: 'var(--text-secondary)', fontSize: '0.9rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                    {(project.impact || project.tagline).split('|').map((point, i) => (
-                      <li key={i}>{point.trim()}</li>
-                    ))}
-                  </ul>
-                </div>
+                {project.liveUrl && (
+                  <a
+                    href={project.liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-outline btn-sm"
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+                  >
+                    Live Demo <ExternalLink size={12} />
+                  </a>
+                )}
 
-                <div className="project-techs">
-                  {project.techStack.slice(0, 4).map((tech) => (
-                    <span key={tech} className="tech-pill">{tech}</span>
-                  ))}
-                </div>
-
-                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                  <button onClick={() => onOpenModal(project)} className="btn btn-primary" style={{ flex: 1 }}>
-                    Case Study
-                  </button>
-                  
-                  {project.liveUrl && (
-                    <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="btn btn-secondary" style={{ flex: 1 }}>
-                      Live Demo <ExternalLink size={14} />
-                    </a>
-                  )}
-                  
-                  {project.githubUrl && (
-                    <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="btn btn-secondary" style={{ padding: '0.6rem' }} title={project.backendGithubUrl ? "Frontend Repo" : "GitHub Repo"}>
-                      <Github size={18} />
-                    </a>
-                  )}
-                  
-                  {project.backendGithubUrl && (
-                    <a href={project.backendGithubUrl} target="_blank" rel="noopener noreferrer" className="btn btn-secondary" style={{ padding: '0.6rem' }} title="Backend Repo">
-                      <Github size={18} />
-                    </a>
-                  )}
-                </div>
+                {project.githubUrl && (
+                  <a
+                    href={project.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-outline btn-sm"
+                    style={{ padding: '0.5rem 0.75rem' }}
+                    title="Source Code"
+                  >
+                    <Github size={14} />
+                  </a>
+                )}
               </div>
             </div>
-          ))}
-        </div>
+
+            <div
+              className="project-visual open-modal-btn"
+              onClick={() => onOpenModal(project)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && onOpenModal(project)}
+            >
+              {project.thumbnail && !project.thumbnail.includes('unsplash') ? (
+                <div
+                  style={{
+                    width: '88%',
+                    height: '75%',
+                    border: '1px solid var(--border-color)',
+                    backgroundImage: `url('${project.thumbnail}')`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundColor: 'var(--bg-primary)',
+                  }}
+                />
+              ) : (
+                <div
+                  style={{
+                    width: '80%',
+                    height: '60%',
+                    border: '2px solid var(--border-color)',
+                    background: 'var(--bg-primary)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: '1rem',
+                    gap: '1rem',
+                  }}
+                >
+                  <div style={{ height: '20px', width: '40%', background: 'var(--border-color)' }}></div>
+                  <div style={{ flexGrow: 1, display: 'flex', gap: '1rem' }}>
+                    <div style={{ width: '30%', background: 'var(--border-color)', opacity: 0.5 }}></div>
+                    <div style={{ width: '70%', background: 'var(--border-color)', opacity: 0.2 }}></div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </article>
+        ))}
       </div>
     </section>
   );

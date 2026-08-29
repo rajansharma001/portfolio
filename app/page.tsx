@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { Github, ExternalLink, FileText } from 'lucide-react';
+import React, { useEffect, useState, useRef } from 'react';
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
-import FeaturedProjects from '@/components/FeaturedProjects';
-import ProjectCard from '@/components/ProjectCard';
-import SkillsGrid from '@/components/SkillsGrid';
+import Marquee from '@/components/Marquee';
 import ExperienceTimeline from '@/components/ExperienceTimeline';
+import ProcessGrid from '@/components/ProcessGrid';
+import FeaturedProjects from '@/components/FeaturedProjects';
+import SkillsGrid from '@/components/SkillsGrid';
 import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
 import Modal from '@/components/Modal';
@@ -20,10 +20,12 @@ export default function HomePage() {
   const [experience, setExperience] = useState<ExperienceItem[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
 
-  const [activeFilter, setActiveFilter] = useState('All');
-  const [visibleCount, setVisibleCount] = useState(6);
+  const cursorRef = useRef<HTMLDivElement>(null);
 
+  // 1. Fetch CMS data & track page view
   useEffect(() => {
     async function fetchData() {
       try {
@@ -54,123 +56,127 @@ export default function HomePage() {
     fetchData();
   }, []);
 
-  if (loading || !settings) {
+  // 2. Custom Cursor & Hover Effects
+  useEffect(() => {
+    const cursor = cursorRef.current;
+    if (!cursor) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      cursor.style.left = `${e.clientX}px`;
+      cursor.style.top = `${e.clientY}px`;
+    };
+
+    const handleMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (
+        target?.closest('a, button, input, textarea, .filter-btn, .project-card, .faq-question, .project-visual, .open-modal-btn')
+      ) {
+        cursor.classList.add('hover');
+      } else {
+        cursor.classList.remove('hover');
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseover', handleMouseOver);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseover', handleMouseOver);
+    };
+  }, [loading]);
+
+  // 3. Scroll Progress Indicator
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (totalHeight > 0) {
+        const progress = (window.scrollY / totalHeight) * 100;
+        setScrollProgress(progress);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // 4. Scroll Reveal Animations
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const revealEls = document.querySelectorAll('.reveal');
+    revealEls.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, [loading, projects, experience]);
+
+  const handleShowToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 3500);
+  };
+
+  if (loading) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--bg-main)', color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>
-        <div>Loading Portfolio...</div>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '100vh',
+          backgroundColor: 'var(--bg-primary)',
+          color: 'var(--accent)',
+          fontFamily: 'var(--font-mono)',
+          fontSize: '1rem',
+          fontWeight: 700,
+        }}
+      >
+        <span>INITIALIZING SYSTEM...</span>
       </div>
     );
   }
 
-  // Filter out featured 2 projects for the small grid
-  const featuredSlugs = ['restroos', 'tripnest'];
-  let moreProjects = projects.filter((p) => !featuredSlugs.includes(p.slug.toLowerCase()));
-  
-  if (activeFilter !== 'All') {
-    moreProjects = moreProjects.filter(p => p.type === activeFilter);
-  }
-
-  const filterTabs = ['All', 'SaaS', 'Client', 'Personal', 'WordPress'];
-
-  const displayedProjects = moreProjects.slice(0, visibleCount);
-
   return (
-    <div>
+    <>
+      {/* Scroll Progress Bar */}
+      <div id="scroll-progress" style={{ width: `${scrollProgress}%` }} />
+
+      {/* Interactive Custom Cursor */}
+      <div className="cursor-dot" id="cursor" ref={cursorRef} />
+
+      {/* Global Toast Notification */}
+      <div id="toast" className={toastMessage ? 'show' : ''}>
+        {toastMessage || 'Message Sent Successfully'}
+      </div>
+
       <Header />
 
       <main>
-        {/* Hero Section */}
         <Hero settings={settings} />
-
-        {/* Featured Projects (RestroOS & TripNest) */}
-        <FeaturedProjects projects={projects} onOpenModal={(p) => setSelectedProject(p)} />
-
-        {/* More Projects (Grid with Filters) */}
-        <section className="section" style={{ paddingTop: '1rem' }}>
-          <div className="container">
-            <div className="section-header">
-              <span className="section-tag" style={{ color: 'var(--text-secondary)' }}>MORE PROJECTS</span>
-              <div className="filters-row">
-                {filterTabs.map(tab => (
-                  <button 
-                    key={tab} 
-                    className={`filter-btn ${activeFilter === tab ? 'active' : ''}`}
-                    onClick={() => {
-                      setActiveFilter(tab);
-                      setVisibleCount(6);
-                    }}
-                  >
-                    {tab}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="small-projects-grid">
-              {displayedProjects.map((project) => (
-                <div key={project.id} className="small-project-card">
-                  <div className="small-img-wrapper" style={{ backgroundImage: `url('${project.thumbnail}')`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
-                  </div>
-                  
-                  <div className="small-project-content">
-                    <h4 className="small-title">{project.title}</h4>
-                    <p className="small-desc">{project.description}</p>
-                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
-                      <button onClick={() => setSelectedProject(project)} className="btn btn-primary btn-sm" style={{ flex: 1, padding: '0.4rem' }}>
-                        <FileText size={14} /> Case Study
-                      </button>
-                      
-                      {project.liveUrl && (
-                        <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-sm" style={{ padding: '0.4rem 0.6rem' }} title="Live Demo">
-                          <ExternalLink size={14} />
-                        </a>
-                      )}
-                      
-                      {project.githubUrl && (
-                        <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-sm" style={{ padding: '0.4rem 0.6rem' }} title={project.backendGithubUrl ? "Frontend Repo" : "GitHub Repo"}>
-                          <Github size={14} />
-                        </a>
-                      )}
-                      
-                      {project.backendGithubUrl && (
-                        <a href={project.backendGithubUrl} target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-sm" style={{ padding: '0.4rem 0.6rem' }} title="Backend Repo">
-                          <Github size={14} />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {visibleCount < moreProjects.length && (
-              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '3rem' }}>
-                <button 
-                  onClick={() => setVisibleCount(prev => prev + 6)} 
-                  className="btn btn-secondary"
-                  style={{ padding: '0.8rem 2rem' }}
-                >
-                  Load More Projects
-                </button>
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* Technical Skills Matrix */}
-        <SkillsGrid skills={skills} />
-
-        {/* Experience Timeline */}
+        <Marquee />
         <ExperienceTimeline experience={experience} settings={settings} />
-
-        {/* Contact Section */}
-        <ContactSection settings={settings} />
+        <ProcessGrid />
+        <FeaturedProjects projects={projects} onOpenModal={(p) => setSelectedProject(p)} />
+        <SkillsGrid skills={skills} />
+        <ContactSection settings={settings} onShowToast={handleShowToast} />
       </main>
 
       <Footer />
 
-      {/* Case Study Preview Modal */}
+      {/* Architectural Project Spec Modal */}
       <Modal project={selectedProject} onClose={() => setSelectedProject(null)} />
-    </div>
+    </>
   );
 }
