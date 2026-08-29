@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import AdminLayout from '@/components/AdminLayout';
-import { Save, Upload, FileText, CheckCircle2, ExternalLink, RefreshCw } from 'lucide-react';
+import { Save, Upload, FileText, CheckCircle2, ExternalLink, ShieldCheck, KeyRound, Lock } from 'lucide-react';
 import { PortfolioSettings } from '@/lib/types';
 import Alert from '@/components/Alert';
 
@@ -11,6 +11,11 @@ export default function AdminSettingsPage() {
   const [saving, setSaving] = useState(false);
   const [uploadingPdf, setUploadingPdf] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+
+  // Password change state
+  const [pwData, setPwData] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+  const [changingPw, setChangingPw] = useState(false);
+  const [pwMessage, setPwMessage] = useState({ type: '', text: '' });
 
   useEffect(() => {
     fetch('/api/settings')
@@ -67,11 +72,50 @@ export default function AdminSettingsPage() {
       });
 
       if (!res.ok) throw new Error('Failed to update settings');
-      setMessage({ type: 'success', text: 'Settings saved successfully!' });
+      setMessage({ type: 'success', text: 'Settings saved successfully in MongoDB Atlas!' });
     } catch (err: any) {
       setMessage({ type: 'error', text: err.message });
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPwMessage({ type: '', text: '' });
+
+    if (pwData.newPassword !== pwData.confirmPassword) {
+      setPwMessage({ type: 'error', text: 'New password and confirm password do not match.' });
+      return;
+    }
+
+    if (pwData.newPassword.length < 6) {
+      setPwMessage({ type: 'error', text: 'New password must be at least 6 characters.' });
+      return;
+    }
+
+    setChangingPw(true);
+    try {
+      const res = await fetch('/api/auth/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          currentPassword: pwData.currentPassword,
+          newPassword: pwData.newPassword,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setPwMessage({ type: 'success', text: 'Password successfully updated and hashed in MongoDB Atlas!' });
+        setPwData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+      } else {
+        setPwMessage({ type: 'error', text: data.error || 'Failed to update password.' });
+      }
+    } catch {
+      setPwMessage({ type: 'error', text: 'Network error. Please try again.' });
+    } finally {
+      setChangingPw(false);
     }
   };
 
@@ -87,9 +131,9 @@ export default function AdminSettingsPage() {
     <AdminLayout>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
         <div>
-          <h1 style={{ fontSize: '28px', fontWeight: '800', letterSpacing: '-0.02em' }}>Profile & Resume Settings</h1>
+          <h1 style={{ fontSize: '28px', fontWeight: '800', letterSpacing: '-0.02em' }}>Profile & Security Settings</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginTop: '6px' }}>
-            Manage profile metadata, resume PDF document, and contact information.
+            Manage profile metadata, resume document, and secure admin password credentials.
           </p>
         </div>
 
@@ -101,101 +145,181 @@ export default function AdminSettingsPage() {
       <Alert type={message.type as 'error' | 'success' | 'warning'} message={message.text} />
 
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
-        {/* Main Settings Form */}
-        <form onSubmit={handleSave} className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <h2 style={{ fontSize: '18px', fontWeight: '700', borderBottom: '1px solid var(--border)', paddingBottom: '12px' }}>
-            Identity & Contact Details
-          </h2>
+        {/* Left Column: Profile Form + Security Password Box */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          {/* Main Settings Form */}
+          <form onSubmit={handleSave} className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: '700', borderBottom: '1px solid var(--border)', paddingBottom: '12px' }}>
+              Identity & Contact Details
+            </h2>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div className="form-group">
+                <label className="form-label">Full Name</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={settings.name}
+                  onChange={(e) => setSettings({ ...settings, name: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Role Title</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={settings.role}
+                  onChange={(e) => setSettings({ ...settings, role: e.target.value })}
+                  required
+                />
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div className="form-group">
+                <label className="form-label">Email Address</label>
+                <input
+                  type="email"
+                  className="form-input"
+                  value={settings.email}
+                  onChange={(e) => setSettings({ ...settings, email: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Phone Number</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={settings.phone}
+                  onChange={(e) => setSettings({ ...settings, phone: e.target.value })}
+                />
+              </div>
+            </div>
+
             <div className="form-group">
-              <label className="form-label">Full Name</label>
+              <label className="form-label">Location</label>
               <input
                 type="text"
                 className="form-input"
-                value={settings.name}
-                onChange={(e) => setSettings({ ...settings, name: e.target.value })}
+                value={settings.location}
+                onChange={(e) => setSettings({ ...settings, location: e.target.value })}
                 required
               />
             </div>
 
             <div className="form-group">
-              <label className="form-label">Role Title</label>
-              <input
-                type="text"
+              <label className="form-label">Professional Bio / Summary</label>
+              <textarea
                 className="form-input"
-                value={settings.role}
-                onChange={(e) => setSettings({ ...settings, role: e.target.value })}
-                required
-              />
-            </div>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-            <div className="form-group">
-              <label className="form-label">Email Address</label>
-              <input
-                type="email"
-                className="form-input"
-                value={settings.email}
-                onChange={(e) => setSettings({ ...settings, email: e.target.value })}
+                rows={3}
+                value={settings.bio}
+                onChange={(e) => setSettings({ ...settings, bio: e.target.value })}
+                placeholder="Brief summary of your background and core focus..."
                 required
               />
             </div>
 
+            <h2 style={{ fontSize: '18px', fontWeight: '700', borderBottom: '1px solid var(--border)', paddingBottom: '12px', marginTop: '12px' }}>
+              Terminal Snippet
+            </h2>
+
             <div className="form-group">
-              <label className="form-label">Phone Number</label>
-              <input
-                type="text"
+              <label className="form-label">Interactive Hero Terminal Code Block</label>
+              <textarea
                 className="form-input"
-                value={settings.phone}
-                onChange={(e) => setSettings({ ...settings, phone: e.target.value })}
+                rows={6}
+                style={{ fontFamily: 'var(--font-mono)', fontSize: '13px' }}
+                value={settings.codeSnippet}
+                onChange={(e) => setSettings({ ...settings, codeSnippet: e.target.value })}
               />
             </div>
+
+            <button type="submit" disabled={saving} className="btn btn-primary" style={{ width: '100%', marginTop: '8px' }}>
+              {saving ? 'Saving...' : 'Save Settings'}
+            </button>
+          </form>
+
+          {/* Change Admin Password Card */}
+          <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '12px' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <KeyRound size={20} color="var(--accent)" /> Admin Security & Password
+              </h2>
+              <span style={{ fontSize: '12px', color: 'var(--status-success)', display: 'flex', alignItems: 'center', gap: '4px', fontFamily: 'var(--font-mono)' }}>
+                <ShieldCheck size={14} /> PBKDF2 SHA-512 Active
+              </span>
+            </div>
+
+            <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border-light)', borderRadius: '6px', padding: '12px 16px', fontSize: '13px' }}>
+              <div style={{ color: 'var(--text-dim)', marginBottom: '2px' }}>Registered Admin Account</div>
+              <div style={{ fontWeight: '700', color: '#ffffff', fontFamily: 'var(--font-mono)' }}>email.rajan001@gmail.com</div>
+            </div>
+
+            <Alert type={pwMessage.type as 'error' | 'success' | 'warning'} message={pwMessage.text} />
+
+            <form onSubmit={handlePasswordChange} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div className="form-group">
+                <label className="form-label">Current Password</label>
+                <input
+                  type="password"
+                  className="form-input"
+                  value={pwData.currentPassword}
+                  onChange={(e) => setPwData({ ...pwData, currentPassword: e.target.value })}
+                  placeholder="Enter current password"
+                  required
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                <div className="form-group">
+                  <label className="form-label">New Password</label>
+                  <input
+                    type="password"
+                    className="form-input"
+                    value={pwData.newPassword}
+                    onChange={(e) => setPwData({ ...pwData, newPassword: e.target.value })}
+                    placeholder="Min 6 characters"
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Confirm New Password</label>
+                  <input
+                    type="password"
+                    className="form-input"
+                    value={pwData.confirmPassword}
+                    onChange={(e) => setPwData({ ...pwData, confirmPassword: e.target.value })}
+                    placeholder="Re-type new password"
+                    required
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={changingPw}
+                className="btn btn-outline"
+                style={{
+                  width: '100%',
+                  marginTop: '4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  borderColor: 'var(--accent)',
+                  color: '#ffffff',
+                }}
+              >
+                <Lock size={14} /> {changingPw ? 'Updating Password...' : 'Update & Encrypt New Password'}
+              </button>
+            </form>
           </div>
-
-          <div className="form-group">
-            <label className="form-label">Location</label>
-            <input
-              type="text"
-              className="form-input"
-              value={settings.location}
-              onChange={(e) => setSettings({ ...settings, location: e.target.value })}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Professional Bio / Summary</label>
-            <textarea
-              className="form-input"
-              rows={3}
-              value={settings.bio}
-              onChange={(e) => setSettings({ ...settings, bio: e.target.value })}
-              placeholder="Brief summary of your background and core focus..."
-              required
-            />
-          </div>
-
-          <h2 style={{ fontSize: '18px', fontWeight: '700', borderBottom: '1px solid var(--border)', paddingBottom: '12px', marginTop: '12px' }}>
-            Terminal Snippet
-          </h2>
-
-          <div className="form-group">
-            <label className="form-label">Interactive Hero Terminal Code Block</label>
-            <textarea
-              className="form-input"
-              rows={6}
-              style={{ fontFamily: 'var(--font-mono)', fontSize: '13px' }}
-              value={settings.codeSnippet}
-              onChange={(e) => setSettings({ ...settings, codeSnippet: e.target.value })}
-            />
-          </div>
-
-          <button type="submit" disabled={saving} className="btn btn-primary" style={{ width: '100%', marginTop: '8px' }}>
-            {saving ? 'Saving...' : 'Save Settings'}
-          </button>
-        </form>
+        </div>
 
         {/* Sidebar: Resume PDF Upload & Status */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -261,11 +385,11 @@ export default function AdminSettingsPage() {
           </div>
 
           <div className="card">
-            <h3 style={{ fontSize: '15px', fontWeight: '700', marginBottom: '12px' }}>Quick Tips</h3>
+            <h3 style={{ fontSize: '15px', fontWeight: '700', marginBottom: '12px' }}>Security Standards</h3>
             <ul style={{ fontSize: '13px', color: 'var(--text-secondary)', paddingLeft: '1.25rem', lineHeight: '1.6' }}>
-              <li style={{ marginBottom: '6px' }}>Uploading a new resume will automatically replace the existing PDF file.</li>
-              <li style={{ marginBottom: '6px' }}>Keep your role title and location concise for optimal recruiter visibility.</li>
-              <li>Terminal commands update instantly when you save changes.</li>
+              <li style={{ marginBottom: '6px' }}>Passwords are hashed using 100,000 rounds of PBKDF2 with SHA-512.</li>
+              <li style={{ marginBottom: '6px' }}>Every password update generates a cryptographically unique 16-byte salt.</li>
+              <li>Plaintext passwords are never saved in database or returned in API responses.</li>
             </ul>
           </div>
         </div>

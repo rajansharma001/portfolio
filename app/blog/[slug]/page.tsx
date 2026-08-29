@@ -46,8 +46,11 @@ export default function BlogPostDetailPage({ params }: Context) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
         <Header />
-        <main className="container" style={{ paddingTop: 'calc(var(--nav-height) + 5rem)', textAlign: 'center', flex: 1 }}>
-          <div style={{ fontFamily: 'var(--font-mono)', color: 'var(--accent)' }}>LOADING ARTICLE...</div>
+        <main className="container" style={{ paddingTop: 'calc(var(--nav-height) + 5rem)', textAlign: 'center', flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ padding: '3rem', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', maxWidth: '420px', width: '100%', fontFamily: 'var(--font-mono)' }}>
+            <div style={{ color: 'var(--accent)', fontSize: '0.9rem', marginBottom: '6px' }}>▸ DECRYPTING ARTICLE STREAM...</div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Connecting to MongoDB cluster</div>
+          </div>
         </main>
         <Footer />
       </div>

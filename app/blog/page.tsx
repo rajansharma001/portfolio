@@ -87,8 +87,9 @@ export default function BlogListingPage() {
 
         {/* Posts Grid */}
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '4rem', fontFamily: 'var(--font-mono)', color: 'var(--accent)' }}>
-            LOADING ARTICLES...
+          <div style={{ textAlign: 'center', padding: '5rem 2rem', fontFamily: 'var(--font-mono)', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)' }}>
+            <div style={{ color: 'var(--accent)', fontSize: '0.9rem', marginBottom: '8px' }}>▸ FETCHING TECHNICAL ARTICLES FROM MONGODB...</div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Retrieving system breakdowns & architecture notes</div>
           </div>
         ) : filteredPosts.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '4rem', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)' }}>

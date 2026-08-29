@@ -11,6 +11,7 @@ import ProcessGrid from '@/components/ProcessGrid';
 import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
 import Modal from '@/components/Modal';
+import LoadingScreen from '@/components/LoadingScreen';
 import { Project, SkillsMap, ExperienceItem, PortfolioSettings } from '@/lib/types';
 
 export default function HomePage() {
@@ -25,7 +26,7 @@ export default function HomePage() {
 
   const cursorRef = useRef<HTMLDivElement>(null);
 
-  // 1. Fetch dynamic data & track visitor view
+  // 1. Fetch dynamic data from MongoDB & track visitor view
   useEffect(() => {
     async function fetchData() {
       try {
@@ -49,7 +50,9 @@ export default function HomePage() {
       } catch (err) {
         console.error('Failed to load portfolio data:', err);
       } finally {
-        setLoading(false);
+        setTimeout(() => {
+          setLoading(false);
+        }, 500);
       }
     }
 
@@ -84,42 +87,32 @@ export default function HomePage() {
       window.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseover', handleMouseOver);
     };
-  }, [loading]);
+  }, []);
 
-  // 3. Top Scroll Progress Indicator
+  // 3. Scroll Progress Indicator & Reveal Animations
   useEffect(() => {
     const handleScroll = () => {
-      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-      if (totalHeight > 0) {
-        const progress = (window.scrollY / totalHeight) * 100;
-        setScrollProgress(progress);
-      }
+      const totalScroll = document.documentElement.scrollTop || document.body.scrollTop;
+      const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scroll = windowHeight > 0 ? (totalScroll / windowHeight) * 100 : 0;
+      setScrollProgress(scroll);
+
+      // Section reveal animation triggers
+      const reveals = document.querySelectorAll('.reveal');
+      const windowHeightPx = window.innerHeight;
+      reveals.forEach((element) => {
+        const elementTop = element.getBoundingClientRect().top;
+        if (elementTop < windowHeightPx - 100) {
+          element.classList.add('active');
+        }
+      });
     };
 
     window.addEventListener('scroll', handleScroll);
+    handleScroll();
+
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // 4. Scroll Reveal Animations
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('active');
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    const revealEls = document.querySelectorAll('.reveal');
-    revealEls.forEach((el) => observer.observe(el));
-
-    return () => observer.disconnect();
-  }, [loading, projects, experience]);
+  }, [loading]);
 
   const handleShowToast = (msg: string) => {
     setToastMessage(msg);
@@ -129,23 +122,7 @@ export default function HomePage() {
   };
 
   if (loading) {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: '100vh',
-          backgroundColor: 'var(--bg-primary)',
-          color: 'var(--accent)',
-          fontFamily: 'var(--font-mono)',
-          fontSize: '1rem',
-          fontWeight: 700,
-        }}
-      >
-        <span>INITIALIZING SECURE ENVIRONMENT...</span>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (
