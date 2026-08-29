@@ -7,9 +7,12 @@ import { SettingModel } from '../models/Setting';
 import { AnalyticsModel } from '../models/Analytics';
 import { AdminAuthModel } from '../models/AdminAuth';
 
-const MONGODB_URI =
-  process.env.MONGODB_URI ||
-  'mongodb+srv://emailrajan001_db_user:9rZFc6cZXNf2CwAH@cluster0.wkzewhu.mongodb.net/portfolio?retryWrites=true&w=majority&appName=Cluster0';
+const MONGODB_URI = process.env.MONGODB_URI;
+
+if (!MONGODB_URI) {
+  console.error('Error: MONGODB_URI is not defined in your environment variables.');
+  process.exit(1);
+}
 
 const projects = [
   {
