@@ -82,7 +82,7 @@ export interface SectionVisibility {
 export const DEFAULT_VISIBILITY: SectionVisibility = {
   showHero: true,
   showAvailabilityBadge: true,
-  showMarquee: false,
+  showMarquee: true,
   showProjects: true,
   showSkills: true,
   showExperience: true,

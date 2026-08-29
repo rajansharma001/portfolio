@@ -17,11 +17,8 @@ export default function Hero({ settings, visibility }: HeroProps) {
   const lastName = nameParts.slice(1).join(' ') || 'SHARMA';
   
   const [terminalHistory, setTerminalHistory] = useState([
-    { type: 'input', text: 'whoami' },
-    { type: 'output', text: settings?.role || 'Full-Stack Software Engineer' },
-    { type: 'input', text: 'cat status.txt' },
-    { type: 'output', text: settings?.availabilityBadgeText || 'Available for Roles' },
-    { type: 'output', text: 'System ready.' }
+    { type: 'input', text: 'help' },
+    { type: 'output', text: 'Available commands:\n  whoami     - Display name and role\n  skills     - List core technical stack\n  experience - Show engineering background\n  contact    - Display email address\n  clear      - Clear terminal output' }
   ]);
   const [terminalInput, setTerminalInput] = useState('');
   const terminalEndRef = useRef<HTMLDivElement>(null);
@@ -54,7 +51,7 @@ export default function Hero({ settings, visibility }: HeroProps) {
       setTerminalInput('');
       return;
     } else if (cmd === 'help') {
-      newHistory.push({ type: 'output', text: 'Available commands: whoami, skills, experience, contact, clear' });
+      newHistory.push({ type: 'output', text: 'Available commands:\n  whoami     - Display name and role\n  skills     - List core technical stack\n  experience - Show engineering background\n  contact    - Display email address\n  clear      - Clear terminal output' });
     } else if (cmd === 'skills') {
       newHistory.push({ type: 'output', text: 'Next.js, TypeScript, Node.js, Express, PostgreSQL, MongoDB' });
     } else if (cmd === 'experience') {
@@ -83,30 +80,6 @@ export default function Hero({ settings, visibility }: HeroProps) {
             <p className="hero-headline">
               {settings?.headline || 'Building production-grade web systems, REST APIs & scalable backends.'}
             </p>
-          </div>
-
-          <div className="hero-quick-facts">
-            <div className="fact-item">
-              <MapPin size={14} className="fact-icon" />
-              <div>
-                <span className="fact-label">Location</span>
-                <span className="fact-value">{settings?.location || 'Kathmandu, Nepal'}</span>
-              </div>
-            </div>
-            <div className="fact-item">
-              <Layers size={14} className="fact-icon" />
-              <div>
-                <span className="fact-label">Core Stack</span>
-                <span className="fact-value">Next.js / Node.js / PostgreSQL / MongoDB</span>
-              </div>
-            </div>
-            <div className="fact-item">
-              <Cpu size={14} className="fact-icon" />
-              <div>
-                <span className="fact-label">Focus</span>
-                <span className="fact-value">Scalable Architecture & Web Systems</span>
-              </div>
-            </div>
           </div>
 
           <div className="hero-actions">
@@ -138,7 +111,7 @@ export default function Hero({ settings, visibility }: HeroProps) {
               {terminalHistory.map((line, idx) => (
                 <div key={idx} className={`terminal-line ${line.type}`}>
                   {line.type === 'input' && <span className="prompt">~/guest {`>`}&nbsp;</span>}
-                  <span className="content">{line.text}</span>
+                  <span className="content" style={{ whiteSpace: 'pre-wrap' }}>{line.text}</span>
                 </div>
               ))}
               
@@ -155,6 +128,30 @@ export default function Hero({ settings, visibility }: HeroProps) {
               </form>
               <div ref={terminalEndRef} />
             </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="hero-quick-facts" style={{ marginTop: '2rem' }}>
+        <div className="fact-item">
+          <MapPin size={14} className="fact-icon" />
+          <div>
+            <span className="fact-label">Location</span>
+            <span className="fact-value">{settings?.location || 'Kathmandu, Bagmati Prov, Nepal'}</span>
+          </div>
+        </div>
+        <div className="fact-item">
+          <Layers size={14} className="fact-icon" />
+          <div>
+            <span className="fact-label">Core Stack</span>
+            <span className="fact-value">Next.js / Node.js / PostgreSQL / MongoDB</span>
+          </div>
+        </div>
+        <div className="fact-item">
+          <Cpu size={14} className="fact-icon" />
+          <div>
+            <span className="fact-label">Focus</span>
+            <span className="fact-value">Scalable Architecture & Web Systems</span>
           </div>
         </div>
       </div>
