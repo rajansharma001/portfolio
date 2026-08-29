@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
 import crypto from 'crypto';
+import { connectToDatabase } from '@/lib/mongodb';
+import { MessageModel } from '@/models/Message';
 import { checkRateLimit, recordFailedAttempt } from '@/lib/rate-limiter';
 import { sanitizeInput, isValidEmail } from '@/lib/security';
-
-const messagesFile = path.join(process.cwd(), 'data', 'messages.json');
 
 export async function POST(req: NextRequest) {
   try {
@@ -54,39 +52,23 @@ export async function POST(req: NextRequest) {
     const cleanMessage = sanitizeInput(message);
     const cleanEmail = email.trim().toLowerCase();
 
-    // Create message record
-    const newMessage = {
+    await connectToDatabase();
+
+    await MessageModel.create({
       id: `msg_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`,
       name: cleanName,
       email: cleanEmail,
       message: cleanMessage,
       createdAt: new Date().toISOString(),
       read: false,
-      ip: ip.slice(0, 45),
-    };
-
-    // Store in data/messages.json
-    let messages = [];
-    try {
-      if (fs.existsSync(messagesFile)) {
-        const raw = fs.readFileSync(messagesFile, 'utf-8');
-        messages = JSON.parse(raw);
-      }
-    } catch {
-      messages = [];
-    }
-
-    messages.unshift(newMessage);
-    // Keep max 500 messages
-    messages = messages.slice(0, 500);
-
-    fs.writeFileSync(messagesFile, JSON.stringify(messages, null, 2));
+    });
 
     return NextResponse.json({
       success: true,
       message: 'Message delivered successfully.',
     });
   } catch (error) {
+    console.error('MongoDB Contact error:', error);
     return NextResponse.json({ error: 'An error occurred while sending your message.' }, { status: 500 });
   }
 }

@@ -1,29 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readJsonData, writeJsonData } from '@/lib/json-db';
-
-const FILE_NAME = 'analytics.json';
-
-export interface VisitRecord {
-  ip: string;
-  country: string;
-  city: string;
-  flag: string;
-  path: string;
-  userAgent: string;
-  timestamp: string;
-}
-
-export interface AnalyticsData {
-  totalViews: number;
-  uniqueVisitors: number;
-  visits: VisitRecord[];
-}
+import { connectToDatabase } from '@/lib/mongodb';
+import { AnalyticsModel, IVisitRecord } from '@/models/Analytics';
 
 export async function GET() {
   try {
-    const data = await readJsonData<AnalyticsData>(FILE_NAME);
-    return NextResponse.json(data || { totalViews: 0, uniqueVisitors: 0, visits: [] });
-  } catch {
+    await connectToDatabase();
+    let analytics = await AnalyticsModel.findOne({ key: 'global_analytics' }).lean();
+
+    if (!analytics) {
+      analytics = await AnalyticsModel.create({
+        key: 'global_analytics',
+        totalViews: 0,
+        uniqueVisitors: 0,
+        visits: [],
+      });
+    }
+
+    return NextResponse.json(analytics);
+  } catch (error) {
+    console.error('MongoDB Analytics GET error:', error);
     return NextResponse.json({ totalViews: 0, uniqueVisitors: 0, visits: [] });
   }
 }
@@ -73,20 +68,9 @@ export async function POST(req: NextRequest) {
       flag = '🇳🇵';
     }
 
-    // 3. Thread-safe atomic read & update
-    let analytics: AnalyticsData;
-    try {
-      analytics = await readJsonData<AnalyticsData>(FILE_NAME);
-      if (!analytics || typeof analytics.totalViews !== 'number') {
-        analytics = { totalViews: 0, uniqueVisitors: 0, visits: [] };
-      }
-    } catch {
-      analytics = { totalViews: 0, uniqueVisitors: 0, visits: [] };
-    }
+    await connectToDatabase();
 
-    const isUnique = !analytics.visits.some((v) => v.ip === ip);
-
-    const newRecord: VisitRecord = {
+    const newRecord: IVisitRecord = {
       ip,
       country,
       city,
@@ -96,18 +80,35 @@ export async function POST(req: NextRequest) {
       timestamp: new Date().toISOString(),
     };
 
-    analytics.totalViews += 1;
-    if (isUnique) {
-      analytics.uniqueVisitors += 1;
-    }
+    // Atomic update in MongoDB
+    const analytics = await AnalyticsModel.findOne({ key: 'global_analytics' });
+    const isUnique = !analytics || !(analytics.visits || []).some((v: IVisitRecord) => v.ip === ip);
 
-    // Keep last 100 visits
-    analytics.visits = [newRecord, ...(analytics.visits || [])].slice(0, 100);
+    const updated = await AnalyticsModel.findOneAndUpdate(
+      { key: 'global_analytics' },
+      {
+        $inc: {
+          totalViews: 1,
+          uniqueVisitors: isUnique ? 1 : 0,
+        },
+        $push: {
+          visits: {
+            $each: [newRecord],
+            $position: 0,
+            $slice: 100, // Keep last 100 visits
+          },
+        },
+      },
+      { new: true, upsert: true }
+    ).lean();
 
-    await writeJsonData(FILE_NAME, analytics);
-
-    return NextResponse.json({ success: true, totalViews: analytics.totalViews, uniqueVisitors: analytics.uniqueVisitors });
+    return NextResponse.json({
+      success: true,
+      totalViews: updated.totalViews,
+      uniqueVisitors: updated.uniqueVisitors,
+    });
   } catch (error) {
+    console.error('MongoDB Analytics track error:', error);
     return NextResponse.json({ success: false }, { status: 500 });
   }
 }

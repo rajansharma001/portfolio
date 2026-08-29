@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readJsonData, writeJsonData } from '@/lib/json-db';
-import { Project } from '@/lib/types';
+import { connectToDatabase } from '@/lib/mongodb';
+import { ProjectModel, IProject } from '@/models/Project';
 import { verifyRequestAuth } from '@/lib/auth';
-
-const FILE_NAME = 'projects.json';
 
 type Context = {
   params: Promise<{ slug: string }>;
@@ -11,9 +9,12 @@ type Context = {
 
 export async function GET(req: NextRequest, { params }: Context) {
   try {
+    await connectToDatabase();
     const { slug } = await params;
-    const projects = await readJsonData<Project[]>(FILE_NAME);
-    const project = projects.find((p) => p.slug === slug || p.id === slug);
+
+    const project = await ProjectModel.findOne({
+      $or: [{ slug }, { id: slug }],
+    }).lean();
 
     if (!project) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
@@ -31,24 +32,23 @@ export async function PUT(req: NextRequest, { params }: Context) {
   }
 
   try {
+    await connectToDatabase();
     const { slug } = await params;
-    const updates = (await req.json()) as Partial<Project>;
-    const projects = await readJsonData<Project[]>(FILE_NAME);
-    const index = projects.findIndex((p) => p.slug === slug || p.id === slug);
+    const updates = (await req.json()) as Partial<IProject>;
 
-    if (index === -1) {
+    const updated = await ProjectModel.findOneAndUpdate(
+      { $or: [{ slug }, { id: slug }] },
+      { $set: updates },
+      { new: true }
+    ).lean();
+
+    if (!updated) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }
 
-    projects[index] = {
-      ...projects[index],
-      ...updates,
-    };
-
-    await writeJsonData(FILE_NAME, projects);
-    return NextResponse.json(projects[index]);
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to update project' }, { status: 500 });
+    return NextResponse.json(updated);
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message || 'Failed to update project' }, { status: 500 });
   }
 }
 
@@ -58,17 +58,19 @@ export async function DELETE(req: NextRequest, { params }: Context) {
   }
 
   try {
+    await connectToDatabase();
     const { slug } = await params;
-    const projects = await readJsonData<Project[]>(FILE_NAME);
-    const filtered = projects.filter((p) => p.slug !== slug && p.id !== slug);
 
-    if (filtered.length === projects.length) {
+    const deleted = await ProjectModel.findOneAndDelete({
+      $or: [{ slug }, { id: slug }],
+    });
+
+    if (!deleted) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }
 
-    await writeJsonData(FILE_NAME, filtered);
-    return NextResponse.json({ success: true, message: 'Project deleted' });
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to delete project' }, { status: 500 });
+    return NextResponse.json({ success: true, message: 'Project deleted successfully' });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message || 'Failed to delete project' }, { status: 500 });
   }
 }

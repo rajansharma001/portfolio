@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AUTH_COOKIE_NAME, authenticateAdmin, generateSessionToken } from '@/lib/auth';
+import { AUTH_COOKIE_NAME, authenticateAdminAsync, generateSessionToken } from '@/lib/auth';
 import { checkRateLimit, recordFailedAttempt, resetRateLimit } from '@/lib/rate-limiter';
 
 export async function POST(req: NextRequest) {
@@ -29,12 +29,11 @@ export async function POST(req: NextRequest) {
 
     const { password } = body;
 
-    // 2. Constant-time password hash verification
-    const isValid = authenticateAdmin(password);
+    // 2. Constant-time password hash verification against MongoDB
+    const isValid = await authenticateAdminAsync(password);
 
     if (!isValid) {
       recordFailedAttempt(`login:${ip}`);
-      // Security Rule 1: Always generic message, never reveal account or password specifics
       return NextResponse.json({ error: 'Invalid credentials.' }, { status: 401 });
     }
 
@@ -62,6 +61,7 @@ export async function POST(req: NextRequest) {
 
     return response;
   } catch (error) {
+    console.error('Login error:', error);
     return NextResponse.json({ error: 'Invalid credentials.' }, { status: 500 });
   }
 }

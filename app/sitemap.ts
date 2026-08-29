@@ -1,11 +1,10 @@
 import { MetadataRoute } from 'next';
-import fs from 'fs';
-import path from 'path';
-import { BlogPost } from '@/lib/types';
+import { connectToDatabase } from '@/lib/mongodb';
+import { PostModel } from '@/models/Post';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rajansharma.dev';
-  
+
   const entries: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
@@ -22,22 +21,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ];
 
   try {
-    const postsPath = path.join(process.cwd(), 'data', 'posts.json');
-    if (fs.existsSync(postsPath)) {
-      const raw = fs.readFileSync(postsPath, 'utf-8');
-      const posts: BlogPost[] = JSON.parse(raw);
-      
-      posts.filter(p => p.published).forEach(post => {
-        entries.push({
-          url: `${baseUrl}/blog/${post.slug}`,
-          lastModified: new Date(post.publishedAt || Date.now()),
-          changeFrequency: 'weekly',
-          priority: 0.8,
-        });
+    await connectToDatabase();
+    const posts = await PostModel.find({ published: true }).lean();
+
+    posts.forEach((post: any) => {
+      entries.push({
+        url: `${baseUrl}/blog/${post.slug}`,
+        lastModified: new Date(post.publishedAt || Date.now()),
+        changeFrequency: 'weekly',
+        priority: 0.8,
       });
-    }
+    });
   } catch (e) {
-    console.error('Error generating sitemap posts:', e);
+    console.error('Error generating dynamic sitemap from MongoDB:', e);
   }
 
   return entries;

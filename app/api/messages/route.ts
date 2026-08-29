@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { connectToDatabase } from '@/lib/mongodb';
+import { MessageModel } from '@/models/Message';
 import { verifyRequestAuth } from '@/lib/auth';
-
-const messagesFile = path.join(process.cwd(), 'data', 'messages.json');
 
 export async function GET(req: NextRequest) {
   if (!verifyRequestAuth(req)) {
@@ -11,13 +9,11 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    if (!fs.existsSync(messagesFile)) {
-      return NextResponse.json([]);
-    }
-    const raw = fs.readFileSync(messagesFile, 'utf-8');
-    const messages = JSON.parse(raw);
+    await connectToDatabase();
+    const messages = await MessageModel.find({}).sort({ createdAt: -1 }).lean();
     return NextResponse.json(messages);
   } catch (err) {
+    console.error('MongoDB Messages GET error:', err);
     return NextResponse.json([], { status: 500 });
   }
 }

@@ -1,58 +1,56 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { connectToDatabase } from '@/lib/mongodb';
+import { MessageModel } from '@/models/Message';
 import { verifyRequestAuth } from '@/lib/auth';
 
-const messagesFile = path.join(process.cwd(), 'data', 'messages.json');
+type Context = {
+  params: Promise<{ id: string }>;
+};
 
-function getMessages() {
+export async function PATCH(req: NextRequest, { params }: Context) {
+  if (!verifyRequestAuth(req)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
-    if (fs.existsSync(messagesFile)) {
-      return JSON.parse(fs.readFileSync(messagesFile, 'utf-8'));
+    await connectToDatabase();
+    const { id } = await params;
+
+    const updated = await MessageModel.findOneAndUpdate(
+      { $or: [{ id }, { _id: id }] },
+      { $set: { read: true } },
+      { new: true }
+    ).lean();
+
+    if (!updated) {
+      return NextResponse.json({ error: 'Message not found' }, { status: 404 });
     }
-  } catch {}
-  return [];
+
+    return NextResponse.json({ success: true, message: updated });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message || 'Failed to update message' }, { status: 500 });
+  }
 }
 
-function saveMessages(messages: any[]) {
-  fs.writeFileSync(messagesFile, JSON.stringify(messages, null, 2));
-}
-
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(req: NextRequest, { params }: Context) {
   if (!verifyRequestAuth(req)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { id } = await params;
-  const messages = getMessages();
-  const index = messages.findIndex((m: any) => m.id === id);
+  try {
+    await connectToDatabase();
+    const { id } = await params;
 
-  if (index === -1) {
-    return NextResponse.json({ error: 'Message not found' }, { status: 404 });
+    const deleted = await MessageModel.findOneAndDelete({
+      $or: [{ id }, { _id: id }],
+    });
+
+    if (!deleted) {
+      return NextResponse.json({ error: 'Message not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message || 'Failed to delete message' }, { status: 500 });
   }
-
-  messages[index].read = true;
-  saveMessages(messages);
-
-  return NextResponse.json({ success: true, message: messages[index] });
-}
-
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  if (!verifyRequestAuth(req)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  const { id } = await params;
-  const messages = getMessages();
-  const filtered = messages.filter((m: any) => m.id !== id);
-
-  saveMessages(filtered);
-
-  return NextResponse.json({ success: true });
 }

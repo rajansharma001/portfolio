@@ -1,11 +1,10 @@
 import crypto from 'crypto';
-import fs from 'fs';
-import path from 'path';
 import { NextRequest } from 'next/server';
+import { connectToDatabase } from './mongodb';
+import { AdminAuthModel } from '@/models/AdminAuth';
 import { createSignedSessionToken, verifySignedSessionToken } from './crypto-token';
 
 export const AUTH_COOKIE_NAME = 'portfolio_admin_token';
-const authFile = path.join(process.cwd(), 'data', 'auth.json');
 
 /**
  * Hashes a plaintext password using PBKDF2 with a secure random salt.
@@ -26,7 +25,7 @@ export function verifyPassword(password: string, storedHash: string, salt: strin
     const computedHash = crypto
       .pbkdf2Sync(password, salt, 100000, 64, 'sha512')
       .toString('hex');
-    
+
     const a = Buffer.from(computedHash, 'hex');
     const b = Buffer.from(storedHash, 'hex');
     if (a.length !== b.length) return false;
@@ -37,34 +36,34 @@ export function verifyPassword(password: string, storedHash: string, salt: strin
 }
 
 /**
- * Retrieves the stored admin password hash & salt.
+ * Authenticates admin password against MongoDB Atlas credentials.
  */
-function getStoredAuth(): { hash: string; salt: string } {
-  try {
-    if (fs.existsSync(authFile)) {
-      const raw = fs.readFileSync(authFile, 'utf-8');
-      return JSON.parse(raw);
-    }
-  } catch {}
-
-  // Default initial credentials (admin) securely hashed
-  const defaultAuth = hashPassword(process.env.ADMIN_PASSWORD || 'admin');
-  try {
-    fs.writeFileSync(authFile, JSON.stringify(defaultAuth, null, 2));
-  } catch {}
-  return defaultAuth;
-}
-
-/**
- * Authenticates admin password.
- */
-export function authenticateAdmin(password: string): boolean {
+export async function authenticateAdminAsync(password: string): Promise<boolean> {
   if (typeof password !== 'string' || password.length === 0) {
     return false;
   }
 
-  const { hash, salt } = getStoredAuth();
-  return verifyPassword(password, hash, salt);
+  try {
+    await connectToDatabase();
+    let auth = await AdminAuthModel.findOne({ key: 'admin_credentials' }).lean();
+
+    if (!auth) {
+      const defaultCreds = hashPassword(process.env.ADMIN_PASSWORD || 'admin');
+      auth = await AdminAuthModel.create({
+        key: 'admin_credentials',
+        passwordHash: defaultCreds.hash,
+        salt: defaultCreds.salt,
+        lastUpdated: new Date().toISOString(),
+      });
+    }
+
+    return verifyPassword(password, auth.passwordHash, auth.salt);
+  } catch (error) {
+    console.error('MongoDB Auth lookup error:', error);
+    // Fallback comparison with env
+    const fallback = hashPassword(process.env.ADMIN_PASSWORD || 'admin');
+    return verifyPassword(password, fallback.hash, fallback.salt);
+  }
 }
 
 /**
@@ -76,17 +75,6 @@ export async function generateSessionToken(): Promise<string> {
 
 /**
  * Verifies that the incoming request has a valid signed session token.
- */
-export async function verifyRequestAuthAsync(req: NextRequest): Promise<boolean> {
-  const cookieToken = req.cookies.get(AUTH_COOKIE_NAME)?.value;
-  const headerToken = req.headers.get('x-admin-token');
-  const token = cookieToken || headerToken || undefined;
-
-  return await verifySignedSessionToken(token);
-}
-
-/**
- * Synchronous fallback verification for routes.
  */
 export function verifyRequestAuth(req: NextRequest): boolean {
   const cookieToken = req.cookies.get(AUTH_COOKIE_NAME)?.value;
