@@ -383,8 +383,9 @@ const posts = [
 ];
 
 async function seed() {
-  console.log('Connecting to MongoDB Atlas at', MONGODB_URI.split('@')[1] || 'Cluster');
-  await mongoose.connect(MONGODB_URI);
+  const uri = MONGODB_URI!;
+  console.log('Connecting to MongoDB Atlas at', uri.split('@')[1] || 'Cluster');
+  await mongoose.connect(uri);
   console.log('Connected to MongoDB Atlas!');
 
   // 1. Seed Projects

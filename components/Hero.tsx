@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import { PortfolioSettings } from '@/lib/types';
+import { Download } from 'lucide-react';
 
 interface HeroProps {
   settings?: PortfolioSettings | null;
@@ -14,16 +15,21 @@ interface TerminalLine {
 
 export default function Hero({ settings }: HeroProps) {
   const [lines, setLines] = useState<TerminalLine[]>([
-    { type: 'out', content: `Welcome! Type <span style="color:#ff6188;">'help'</span> to see available commands.` }
+    { type: 'out', content: `Welcome! Type <span style="color:#ff6188;">'help'</span> to see available commands.` },
   ]);
   const [inputVal, setInputVal] = useState('');
   const terminalBodyRef = useRef<HTMLDivElement>(null);
 
+  const rawName = settings?.name || 'RAJAN SHARMA';
+  const nameParts = rawName.toUpperCase().split(' ');
+  const firstName = nameParts[0] || 'RAJAN';
+  const lastName = nameParts.slice(1).join(' ') || 'SHARMA';
+
   const commands: Record<string, string> = {
     help: `Available commands: <span style="color:#ffbd2e">skills</span>, <span style="color:#ffbd2e">exp</span>, <span style="color:#ffbd2e">contact</span>, <span style="color:#ffbd2e">theme</span>, <span style="color:#ffbd2e">clear</span>`,
-    skills: 'Stack: Next.js | TypeScript | Node.js | Express | PostgreSQL | MongoDB | Tailwind',
+    skills: 'Stack: Next.js 16 | React 19 | TypeScript | Node.js | Express | PostgreSQL | MongoDB | Tailwind',
     exp: 'Experience: Full-Stack Engineer (Independent) | Ex-Data Entry (Souq Al Baladi) | CTEVT Diploma',
-    contact: `Email: ${settings?.email || 'email.rajan001@gmail.com'} | Location: Kathmandu, Bagmati Prov, Nepal`,
+    contact: `Email: ${settings?.email || 'email.rajan001@gmail.com'} | Location: ${settings?.location || 'Kathmandu, Bagmati Prov, Nepal'}`,
     theme: 'Toggling visual theme...',
   };
 
@@ -54,7 +60,7 @@ export default function Hero({ settings }: HeroProps) {
       } else {
         newLines.push({
           type: 'err',
-          content: `<span style="color:#ff5f56">Command not found: ${val}. Type 'help' for options.</span>`
+          content: `<span style="color:#ff5f56">Command not found: ${val}. Type 'help' for options.</span>`,
         });
         setLines(newLines);
       }
@@ -69,7 +75,9 @@ export default function Hero({ settings }: HeroProps) {
   };
 
   const handlePrint = () => {
-    if (typeof window !== 'undefined') {
+    if (settings?.resumeUrl) {
+      window.open(settings.resumeUrl, '_blank');
+    } else if (typeof window !== 'undefined') {
       window.print();
     }
   };
@@ -81,7 +89,9 @@ export default function Hero({ settings }: HeroProps) {
           <div className="hero-title-group">
             <span className="hero-role">{settings?.role || 'Full-Stack Software Engineer'}</span>
             <h1 className="text-huge">
-              RAJAN<br />SHARMA
+              {firstName}
+              <br />
+              {lastName}
             </h1>
           </div>
         </div>
@@ -128,11 +138,11 @@ export default function Hero({ settings }: HeroProps) {
       <div className="hero-quick-facts">
         <div className="fact-item">
           <span className="label">Location</span>
-          <span>Kathmandu, Bagmati Prov, Nepal (UTC +5:45)</span>
+          <span>{settings?.location || 'Kathmandu, Bagmati Prov, Nepal (UTC +5:45)'}</span>
         </div>
         <div className="fact-item">
           <span className="label">Core Stack</span>
-          <span>Next.js / Node.js / TypeScript</span>
+          <span>Next.js / Node.js / PostgreSQL / MongoDB</span>
         </div>
         <div className="fact-item">
           <span className="label">Engineering Focus</span>
@@ -144,13 +154,9 @@ export default function Hero({ settings }: HeroProps) {
         <a href="#work" className="btn btn-primary">
           View Featured Works
         </a>
-        <button onClick={handlePrint} className="btn btn-outline" type="button">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-            <polyline points="7 10 12 15 17 10"></polyline>
-            <line x1="12" y1="15" x2="12" y2="3"></line>
-          </svg>
-          Print CV
+        <button onClick={handlePrint} className="btn btn-outline" type="button" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+          <Download size={16} />
+          {settings?.resumeUrl ? 'Download CV' : 'Print CV'}
         </button>
       </div>
     </section>
