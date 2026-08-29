@@ -57,34 +57,41 @@ export default function Header() {
         </Link>
 
         <nav className={`nav-links ${mobileMenuOpen ? 'active' : ''}`} id="nav-links">
-          <a
-            href="#experience"
-            className="nav-item"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Experience
-          </a>
-          <a
-            href="#work"
+          <Link
+            href="/#work"
             className="nav-item"
             onClick={() => setMobileMenuOpen(false)}
           >
             Projects
-          </a>
-          <a
-            href="#skills"
+          </Link>
+          <Link
+            href="/#skills"
             className="nav-item"
             onClick={() => setMobileMenuOpen(false)}
           >
             Skills
-          </a>
-          <a
-            href="#contact"
+          </Link>
+          <Link
+            href="/#experience"
+            className="nav-item"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            Experience
+          </Link>
+          <Link
+            href="/blog"
+            className="nav-item"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            Journal
+          </Link>
+          <Link
+            href="/#contact"
             className="nav-item"
             onClick={() => setMobileMenuOpen(false)}
           >
             Contact
-          </a>
+          </Link>
         </nav>
 
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>

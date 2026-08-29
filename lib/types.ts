@@ -28,6 +28,21 @@ export interface ExperienceItem {
   highlights: string[];
 }
 
+export interface BlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  category: string;
+  tags: string[];
+  coverImage?: string;
+  published: boolean;
+  publishedAt: string;
+  readTimeMinutes: number;
+  views: number;
+}
+
 export interface SocialLink {
   id: string;
   name: string;

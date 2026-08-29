@@ -1,0 +1,30 @@
+[
+  {
+    "id": "post_1",
+    "slug": "scalable-full-stack-nextjs-nodejs-architecture",
+    "title": "Architecting Scalable Full-Stack Systems: From Schema to Production",
+    "excerpt": "A deep dive into modular REST architecture, database connection pooling, type-safe API boundaries, and SSR caching strategies with Next.js and Node.js.",
+    "content": "Building web applications that effortlessly scale beyond thousands of concurrent users requires disciplined architectural decisions right from day one.\n\n### 1. Separation of Concerns & Modular Layers\nIn production systems, avoid coupling business logic directly inside route handlers. A layered service pattern (Controller → Service → Repository) ensures testability, database portability, and clean boundaries.\n\n```typescript\n// Example: Repository Pattern with Type Safety\nexport async function getOrderWithItems(orderId: string): Promise<Order | null> {\n  return await db.query.orders.findFirst({\n    where: eq(orders.id, orderId),\n    with: { items: true, customer: true }\n  });\n}\n```\n\n### 2. Database Connection Pooling & Latency Optimization\nNode.js single-threaded event loop can easily bottleneck if database connections are exhausted during traffic spikes. Implement connection pooling (such as PgBouncer for PostgreSQL) and index hot query columns to maintain sub-50ms latency under high load.\n\n### 3. Edge Middleware & Intelligent Caching\nLeverage Next.js Incremental Static Regeneration (ISR) and Edge Caching for read-heavy public pages, while isolating mutation requests to secure, authenticated server-side handlers.\n\n### Key Takeaway\nA resilient full-stack architecture is not about overengineering—it's about predictability, clean data validation, and fail-safe security standards.",
+    "category": "Architecture",
+    "tags": ["Next.js", "Node.js", "PostgreSQL", "Scalability", "System Design"],
+    "coverImage": "/uploads/restroos.png",
+    "published": true,
+    "publishedAt": "2026-08-28T10:00:00.000Z",
+    "readTimeMinutes": 5,
+    "views": 42
+  },
+  {
+    "id": "post_2",
+    "slug": "production-security-nextjs-api-hardening",
+    "title": "Hardening Next.js & Node.js Applications for Production: A Security-First Guide",
+    "excerpt": "Essential security practices: cryptographic session cookies, brute-force mitigation, CSP headers, path traversal guards, and constant-time password verification.",
+    "content": "Security cannot be an afterthought in modern web applications. Every endpoint exposed to the internet will inevitably be scanned for vulnerabilities.\n\n### 1. Cryptographic HMAC Session Tokens\nAvoid storing sensitive user IDs or roles in client-accessible localStorage. Instead, use cryptographically signed HMAC tokens stored in `HttpOnly`, `SameSite=Lax`, and `Secure` cookies.\n\n### 2. Constant-Time Password Verification\nTiming attacks allow adversaries to guess valid hashes by measuring slight differences in comparison execution times. Always verify credentials with `crypto.timingSafeEqual`.\n\n```typescript\nimport crypto from 'crypto';\n\nexport function verifyHash(provided: string, expected: string): boolean {\n  const a = Buffer.from(provided, 'hex');\n  const b = Buffer.from(expected, 'hex');\n  if (a.length !== b.length) return false;\n  return crypto.timingSafeEqual(a, b);\n}\n```\n\n### 3. File Upload Guards & Path Traversal Prevention\nNever trust user-supplied filenames. Always generate unpredictable server-side UUID filenames and enforce MIME type checks alongside magic byte validation.",
+    "category": "Security",
+    "tags": ["Security", "Authentication", "TypeScript", "Node.js", "DevOps"],
+    "coverImage": "/uploads/tripnest.png",
+    "published": true,
+    "publishedAt": "2026-08-25T14:30:00.000Z",
+    "readTimeMinutes": 6,
+    "views": 38
+  }
+]
