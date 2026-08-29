@@ -3,8 +3,9 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { existsSync } from 'node:fs';
 
-export async function GET(req: NextRequest, { params }: { params: { filename: string } }) {
-  const filename = params.filename;
+export async function GET(req: NextRequest, { params }: { params: Promise<{ filename: string }> }) {
+  const resolvedParams = await params;
+  const filename = resolvedParams.filename;
   if (!filename) {
     return new NextResponse('File not found', { status: 404 });
   }
