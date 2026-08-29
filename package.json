@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@upstash/redis": "^1.38.3",
+    "cloudinary": "^2.11.0",
     "lucide-react": "^0.563.0",
     "mongoose": "^9.9.4",
     "next": "16.1.6",
