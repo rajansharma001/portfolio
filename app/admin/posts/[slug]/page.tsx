@@ -75,7 +75,15 @@ export default function EditPostPage({ params }: Context) {
       const result = await res.json();
       if (res.ok && result.url) {
         setFormData((prev) => ({ ...prev, coverImage: result.url }));
-        setMessage({ type: 'success', text: 'Cover image uploaded successfully!' });
+        
+        // Auto-save the new cover image to the database
+        await fetch(`/api/posts/${slug}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ coverImage: result.url }),
+        });
+
+        setMessage({ type: 'success', text: 'Cover image uploaded and saved successfully!' });
       } else {
         setMessage({ type: 'error', text: result.error || 'Image upload failed' });
       }

@@ -87,7 +87,15 @@ export default function EditProjectPage({ params }: Context) {
       const result = await res.json();
       if (res.ok && result.url) {
         setFormData((prev) => ({ ...prev, thumbnail: result.url }));
-        setMessage({ type: 'success', text: 'Thumbnail image uploaded successfully!' });
+        
+        // Auto-save the new thumbnail to the database
+        await fetch(`/api/projects/${slug}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ thumbnail: result.url }),
+        });
+
+        setMessage({ type: 'success', text: 'Thumbnail image uploaded and saved successfully!' });
       } else {
         setMessage({ type: 'error', text: result.error || 'Image upload failed' });
       }
