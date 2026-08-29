@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@upstash/redis": "^1.38.3",
     "lucide-react": "^0.563.0",
     "mongoose": "^9.9.4",
     "next": "16.1.6",

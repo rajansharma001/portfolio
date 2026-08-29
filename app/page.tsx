@@ -40,7 +40,7 @@ export default function HomePage() {
 
   const cursorRef = useRef<HTMLDivElement>(null);
 
-  // 1. Fetch dynamic data from MongoDB in background & track visitor view
+  // 1. Fetch dynamic data from high-speed cache/bundle endpoint & track visitor view
   useEffect(() => {
     async function fetchData() {
       try {
@@ -50,17 +50,14 @@ export default function HomePage() {
           body: JSON.stringify({ path: window.location.pathname }),
         }).catch(() => {});
 
-        const [resSettings, resProjects, resSkills, resExp] = await Promise.all([
-          fetch('/api/settings').then((r) => r.json()).catch(() => null),
-          fetch('/api/projects').then((r) => r.json()).catch(() => []),
-          fetch('/api/skills').then((r) => r.json()).catch(() => ({})),
-          fetch('/api/experience').then((r) => r.json()).catch(() => []),
-        ]);
-
-        if (resSettings && resSettings.name) setSettings(resSettings);
-        if (Array.isArray(resProjects) && resProjects.length > 0) setProjects(resProjects);
-        if (resSkills && Object.keys(resSkills).length > 0) setSkills(resSkills);
-        if (Array.isArray(resExp) && resExp.length > 0) setExperience(resExp);
+        const res = await fetch('/api/portfolio-data');
+        if (res.ok) {
+          const bundle = await res.json();
+          if (bundle.settings && bundle.settings.name) setSettings(bundle.settings);
+          if (Array.isArray(bundle.projects) && bundle.projects.length > 0) setProjects(bundle.projects);
+          if (bundle.skills && Object.keys(bundle.skills).length > 0) setSkills(bundle.skills);
+          if (Array.isArray(bundle.experience) && bundle.experience.length > 0) setExperience(bundle.experience);
+        }
       } catch (err) {
         console.error('Failed to load portfolio data:', err);
       }

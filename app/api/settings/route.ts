@@ -2,8 +2,21 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { SettingModel, ISetting } from '@/models/Setting';
 import { verifyRequestAuth } from '@/lib/auth';
+import { getCache, setCache, invalidateCache } from '@/lib/cache';
+
+const CACHE_KEY = 'global_site_settings';
 
 export async function GET() {
+  const cached = await getCache<any>(CACHE_KEY);
+  if (cached) {
+    return NextResponse.json(cached, {
+      headers: {
+        'X-Cache': 'HIT',
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+      },
+    });
+  }
+
   try {
     await connectToDatabase();
     let settings = await SettingModel.findOne({ key: 'global_settings' }).lean();
@@ -25,7 +38,14 @@ export async function GET() {
       });
     }
 
-    return NextResponse.json(settings);
+    await setCache(CACHE_KEY, settings, 300);
+
+    return NextResponse.json(settings, {
+      headers: {
+        'X-Cache': 'MISS',
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+      },
+    });
   } catch (error) {
     console.error('MongoDB Settings GET error:', error);
     return NextResponse.json({}, { status: 500 });
@@ -46,6 +66,10 @@ export async function POST(req: NextRequest) {
       { $set: updates },
       { new: true, upsert: true }
     ).lean();
+
+    // Invalidate caches
+    await invalidateCache(CACHE_KEY);
+    await invalidateCache('portfolio_full_bundle');
 
     return NextResponse.json(updated);
   } catch (error: any) {
