@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import AdminLayout from '@/components/AdminLayout';
-import { Save, Upload, FileText, CheckCircle2, ExternalLink, ShieldCheck, KeyRound, Lock } from 'lucide-react';
-import { PortfolioSettings } from '@/lib/types';
+import { Save, Upload, FileText, CheckCircle2, ExternalLink, ShieldCheck, KeyRound, Lock, Eye } from 'lucide-react';
+import { PortfolioSettings, DEFAULT_VISIBILITY } from '@/lib/types';
 import Alert from '@/components/Alert';
 
 export default function AdminSettingsPage() {
@@ -64,11 +64,18 @@ export default function AdminSettingsPage() {
 
     setSaving(true);
     setMessage({ type: '', text: '' });
+    
+    // Ensure sectionVisibility is included in payload
+    const payloadToSave = {
+      ...settings,
+      sectionVisibility: settings.sectionVisibility || DEFAULT_VISIBILITY
+    };
+
     try {
       const res = await fetch('/api/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(settings),
+        body: JSON.stringify(payloadToSave),
       });
 
       if (!res.ok) throw new Error('Failed to update settings');
@@ -127,13 +134,81 @@ export default function AdminSettingsPage() {
     );
   }
 
+  const vis = settings.sectionVisibility || DEFAULT_VISIBILITY;
+
+  const visibilityFields: { key: keyof typeof DEFAULT_VISIBILITY; label: string }[] = [
+    { key: 'showHero', label: 'Hero Section' },
+    { key: 'showAvailabilityBadge', label: 'Availability Badge' },
+    { key: 'showMarquee', label: 'Tech Stack Marquee' },
+    { key: 'showProjects', label: 'Projects Section' },
+    { key: 'showSkills', label: 'Skills Section' },
+    { key: 'showExperience', label: 'Experience Section' },
+    { key: 'showProcess', label: 'Process Section' },
+    { key: 'showContact', label: 'Contact Section' },
+    { key: 'showBlog', label: 'Blog in Navigation' },
+    { key: 'showScrollProgress', label: 'Scroll Progress Bar' },
+    { key: 'showFooter', label: 'Footer Section' },
+    { key: 'showResumeButton', label: 'Resume Download Button' },
+    { key: 'showClockWidget', label: 'Clock Widget' },
+    { key: 'showThemeToggle', label: 'Theme Toggle' },
+  ];
+
+  const handleVisibilityToggle = (key: keyof typeof DEFAULT_VISIBILITY) => {
+    setSettings({
+      ...settings,
+      sectionVisibility: {
+        ...vis,
+        [key]: !vis[key]
+      }
+    });
+  };
+
   return (
     <AdminLayout>
+      <style dangerouslySetInnerHTML={{ __html: `
+        .toggle-switch {
+          position: relative;
+          display: inline-block;
+          width: 44px;
+          height: 24px;
+          flex-shrink: 0;
+        }
+        .toggle-switch input {
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+        .toggle-slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background-color: var(--border-light);
+          transition: .3s;
+          border-radius: 24px;
+        }
+        .toggle-slider:before {
+          position: absolute;
+          content: "";
+          height: 18px;
+          width: 18px;
+          left: 3px;
+          bottom: 3px;
+          background-color: white;
+          transition: .3s;
+          border-radius: 50%;
+        }
+        .toggle-switch input:checked + .toggle-slider {
+          background-color: var(--accent);
+        }
+        .toggle-switch input:checked + .toggle-slider:before {
+          transform: translateX(20px);
+        }
+      `}} />
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
         <div>
           <h1 style={{ fontSize: '28px', fontWeight: '800', letterSpacing: '-0.02em' }}>Profile & Security Settings</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginTop: '6px' }}>
-            Manage profile metadata, resume document, and secure admin password credentials.
+            Manage profile metadata, site visibility, resume document, and secure admin password credentials.
           </p>
         </div>
 
@@ -223,25 +298,39 @@ export default function AdminSettingsPage() {
               />
             </div>
 
-            <h2 style={{ fontSize: '18px', fontWeight: '700', borderBottom: '1px solid var(--border)', paddingBottom: '12px', marginTop: '12px' }}>
-              Terminal Snippet
-            </h2>
-
-            <div className="form-group">
-              <label className="form-label">Interactive Hero Terminal Code Block</label>
-              <textarea
-                className="form-input"
-                rows={6}
-                style={{ fontFamily: 'var(--font-mono)', fontSize: '13px' }}
-                value={settings.codeSnippet}
-                onChange={(e) => setSettings({ ...settings, codeSnippet: e.target.value })}
-              />
-            </div>
-
             <button type="submit" disabled={saving} className="btn btn-primary" style={{ width: '100%', marginTop: '8px' }}>
               {saving ? 'Saving...' : 'Save Settings'}
             </button>
           </form>
+
+          {/* Section Visibility Controls Card */}
+          <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: '700', borderBottom: '1px solid var(--border)', paddingBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Eye size={20} color="var(--accent)" /> Section Visibility Controls
+            </h2>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+              Toggle the visibility of specific sections and elements across your portfolio. 
+              Don't forget to save changes above.
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              {visibilityFields.map((field) => (
+                <div key={field.key} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px', background: 'var(--bg-main)', borderRadius: '8px', border: '1px solid var(--border-light)' }}>
+                  <span style={{ fontSize: '0.95rem', fontWeight: '500', color: 'var(--text-primary)' }}>
+                    {field.label}
+                  </span>
+                  <label className="toggle-switch">
+                    <input 
+                      type="checkbox" 
+                      checked={vis[field.key] !== false} 
+                      onChange={() => handleVisibilityToggle(field.key)} 
+                    />
+                    <span className="toggle-slider"></span>
+                  </label>
+                </div>
+              ))}
+            </div>
+          </div>
 
           {/* Change Admin Password Card */}
           <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>

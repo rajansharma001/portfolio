@@ -1,0 +1,77 @@
+# Rajan Sharma — Full-Stack Software Engineer (Extended Profile)
+
+> Full-Stack Software Engineer based in Kathmandu, Nepal. Building production-grade web systems with Next.js, TypeScript, Node.js, Express, PostgreSQL, and MongoDB.
+
+## About
+- 16 production software systems engineered and deployed
+- Core expertise: LMS platforms, POS systems, tourism portals, geospatial data pipelines
+- Open to full-time engineering roles worldwide
+- Based in Kathmandu, Nepal (UTC+5:45)
+
+## Key Projects In-Depth
+
+### Advanced LMS — Full-Stack Learning Management System
+- Tech Stack: Next.js, React, TypeScript, Node.js, Express, MongoDB, JWT, Cloudinary
+- Features: Comprehensive course management, secure JWT authentication, media storage via Cloudinary, and interactive student dashboards.
+- Architecture: REST API backend coupled with a responsive Next.js frontend, utilizing Mongoose for schema validation.
+
+### RestroOS — Restaurant Management System & POS
+- Tech Stack: Next.js, Node.js, Prisma, PostgreSQL
+- Features: Real-time order tracking, inventory management, billing, and reporting.
+- Architecture: High-performance PostgreSQL database managed via Prisma ORM for type-safe data access.
+
+### Nexzen Tour — Tourism & Geospatial Platform
+- Tech Stack: Next.js, Node.js, PostgreSQL, OpenStreetMap, Valhalla
+- Features: Interactive maps, custom routing, and tour packages.
+- Architecture: Integrated geospatial routing engine (Valhalla) with OSM data.
+
+### OSM Nepal Pipeline — Geospatial Data Ingestion
+- Tech Stack: Node.js, Prisma, PostgreSQL, Overpass API
+- Features: Automated data ingestion for 77 districts in Nepal.
+- Architecture: Scripted data pipelines querying Overpass API, transforming and storing geospatial data efficiently.
+
+### Ambikeshori Travels — Production Travel Portal
+- Tech Stack: Next.js, MongoDB
+- Features: Booking engine, travel itineraries, and customer portal. Launched Feb 2026.
+
+### BMW Tours and Travels — Tourism Portal
+- Tech Stack: Next.js, MongoDB, cPanel
+- Features: Tour showcases, inquiries, and admin management.
+
+### LandBDevs — Engineering Consultancy Portal
+- Tech Stack: Next.js, Express
+- Features: Service listings, project portfolios, and contact workflows.
+
+### AI Job Hunter — Automated Job Application Platform
+- Tech Stack: Next.js, AI APIs
+- Features: Resume parsing, cover letter generation, and job matching using AI.
+
+### Japanese Learning Platform — JFT-Basic & JLPT N5
+- Tech Stack: React, TypeScript
+- Features: Flashcards, quizzes, and progress tracking for Japanese learners.
+
+### NEA Level 5 Quiz App
+- Tech Stack: React, Vite
+- Features: High-performance quiz application with real-time scoring.
+
+### Banau Clothing — E-Commerce
+- Tech Stack: WordPress, WooCommerce
+- Features: Online clothing store with payment gateway integration.
+
+### Custom WordPress News Portal
+- Tech Stack: WordPress, PHP
+- Features: Dynamic news categorized layout with high traffic handling.
+
+## Technical Stack Details
+- Frontend: Next.js 16, React 19, TypeScript, Tailwind CSS, TanStack Query
+- Backend: Node.js, Express.js, REST APIs, JWT, RBAC
+- Databases: PostgreSQL (Prisma), MongoDB (Mongoose)
+- Geospatial: OpenStreetMap, Overpass API, Valhalla Routing, OSRM
+- Security: PBKDF2, HMAC, Rate Limiting, Helmet, CORS
+- Cloud: Cloudinary, cPanel, Linux hosting
+
+## Contact
+- Email: email.rajan001@gmail.com
+- GitHub: https://github.com/rajansharma001
+- LinkedIn: https://linkedin.com/in/rajansharma001
+- Website: https://rajansharma.dev

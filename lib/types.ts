@@ -2,7 +2,7 @@ export interface Project {
   id: string;
   slug: string;
   title: string;
-  type: 'SaaS' | 'Client' | 'Personal' | 'WordPress';
+  type: string;
   tagline: string;
   impact: string;
   description: string;
@@ -14,6 +14,18 @@ export interface Project {
   featured: boolean;
   published: boolean;
   order: number;
+  details?: ProjectDetails;
+}
+
+export interface ProjectDetails {
+  role?: string;
+  duration?: string;
+  overview?: string;
+  problem?: string;
+  solution?: string;
+  features?: string[];
+  architecture?: string;
+  takeaways?: string;
 }
 
 export type SkillsMap = Record<string, string[]>;
@@ -50,18 +62,39 @@ export interface SocialLink {
   icon: string;
 }
 
-export interface HeroTechChip {
-  name: string;
-  iconText: string;
-  iconColor: string;
+export interface SectionVisibility {
+  showHero: boolean;
+  showAvailabilityBadge: boolean;
+  showMarquee: boolean;
+  showProjects: boolean;
+  showSkills: boolean;
+  showExperience: boolean;
+  showProcess: boolean;
+  showContact: boolean;
+  showBlog: boolean;
+  showScrollProgress: boolean;
+  showFooter: boolean;
+  showResumeButton: boolean;
+  showClockWidget: boolean;
+  showThemeToggle: boolean;
 }
 
-export interface HeroStat {
-  value: string;
-  label: string;
-  icon: 'calendar' | 'code' | 'server';
-  iconColor: string;
-}
+export const DEFAULT_VISIBILITY: SectionVisibility = {
+  showHero: true,
+  showAvailabilityBadge: true,
+  showMarquee: false,
+  showProjects: true,
+  showSkills: true,
+  showExperience: true,
+  showProcess: true,
+  showContact: true,
+  showBlog: true,
+  showScrollProgress: true,
+  showFooter: true,
+  showResumeButton: true,
+  showClockWidget: true,
+  showThemeToggle: true,
+};
 
 export interface PortfolioSettings {
   name: string;
@@ -75,7 +108,5 @@ export interface PortfolioSettings {
   resumeUrl: string;
   bio: string;
   codeSnippet: string;
-  heroTechChips: HeroTechChip[];
-  heroStats: HeroStat[];
-  whatIBring: string[];
+  sectionVisibility: SectionVisibility;
 }

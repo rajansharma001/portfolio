@@ -1,20 +1,38 @@
 import React from 'react';
 import Link from 'next/link';
+import { Github, Linkedin, Mail } from 'lucide-react';
+import { PortfolioSettings } from '@/lib/types';
 
-export default function Footer() {
+interface FooterProps {
+  settings?: PortfolioSettings | null;
+}
+
+export default function Footer({ settings }: FooterProps) {
   return (
-    <footer className="container site-footer">
-      <div>
-        <strong>RAJAN SHARMA</strong> — FULL-STACK ENGINEER
-      </div>
-      <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-        <Link href="/blog" style={{ textDecoration: 'underline' }}>
-          Journal
-        </Link>
-        <span>&copy; {new Date().getFullYear()} • KATHMANDU, NEPAL</span>
-      </div>
-      <div>
-        <a href="#header">Back To Top &uarr;</a>
+    <footer className="site-footer">
+      <div className="container footer-inner">
+        <div className="footer-brand">
+          <strong>{(settings?.name || 'Rajan Sharma').toUpperCase()}</strong>
+          <span className="footer-role">{settings?.role || 'Full-Stack Software Engineer'}</span>
+        </div>
+
+        <div className="footer-links">
+          <a href="https://github.com/rajansharma001" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+            <Github size={18} />
+          </a>
+          <a href="https://linkedin.com/in/rajansharma001" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+            <Linkedin size={18} />
+          </a>
+          <a href={`mailto:${settings?.email || 'email.rajan001@gmail.com'}`} aria-label="Email">
+            <Mail size={18} />
+          </a>
+        </div>
+
+        <div className="footer-meta">
+          <Link href="/blog">Blog</Link>
+          <span>&copy; {new Date().getFullYear()} &middot; Kathmandu, Nepal</span>
+          <a href="#header">Back to Top &uarr;</a>
+        </div>
       </div>
     </footer>
   );

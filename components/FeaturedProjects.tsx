@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { ExternalLink, Github, ChevronDown, Layers, Terminal } from 'lucide-react';
+import { ExternalLink, Github, ChevronDown } from 'lucide-react';
 import { Project } from '@/lib/types';
 
 interface FeaturedProjectsProps {
@@ -13,37 +13,56 @@ export default function FeaturedProjects({ projects, onOpenModal }: FeaturedProj
   const [activeFilter, setActiveFilter] = useState('all');
   const [visibleCount, setVisibleCount] = useState(4);
 
+  const getFilterCounts = () => {
+    const counts: Record<string, number> = { all: projects.length };
+    projects.forEach((p) => {
+      const type = (p.type || '').toLowerCase();
+      if (type.includes('full-stack') || type.includes('saas') || type.includes('backend')) {
+        counts['fullstack'] = (counts['fullstack'] || 0) + 1;
+      } else if (type.includes('client') || type.includes('commercial')) {
+        counts['client'] = (counts['client'] || 0) + 1;
+      } else if (type.includes('personal') || type.includes('education')) {
+        counts['personal'] = (counts['personal'] || 0) + 1;
+      } else if (type.includes('wordpress') || type.includes('cms')) {
+        counts['wordpress'] = (counts['wordpress'] || 0) + 1;
+      }
+    });
+    return counts;
+  };
+
+  const counts = getFilterCounts();
+
   const filterTabs = [
-    { label: `All Systems (${projects.length})`, value: 'all' },
-    { label: 'Full-Stack & SaaS', value: 'saas' },
-    { label: 'Client Platforms', value: 'client' },
-    { label: 'Personal & Labs', value: 'personal' },
-    { label: 'WordPress / CMS', value: 'wordpress' },
+    { label: `All (${counts.all || 0})`, value: 'all' },
+    { label: `Full-Stack (${counts.fullstack || 0})`, value: 'fullstack' },
+    { label: `Client (${counts.client || 0})`, value: 'client' },
+    { label: `Personal (${counts.personal || 0})`, value: 'personal' },
+    { label: `WordPress (${counts.wordpress || 0})`, value: 'wordpress' },
   ];
 
   const filteredProjects = projects.filter((p) => {
     if (activeFilter === 'all') return true;
     const type = (p.type || '').toLowerCase();
-    return type === activeFilter.toLowerCase();
+    if (activeFilter === 'fullstack') return type.includes('full-stack') || type.includes('saas') || type.includes('backend');
+    if (activeFilter === 'client') return type.includes('client') || type.includes('commercial');
+    if (activeFilter === 'personal') return type.includes('personal') || type.includes('education');
+    if (activeFilter === 'wordpress') return type.includes('wordpress') || type.includes('cms');
+    return true;
   });
 
   const displayedProjects = filteredProjects.slice(0, visibleCount);
   const hasMore = visibleCount < filteredProjects.length;
 
-  const handleLoadMore = () => {
-    setVisibleCount((prev) => prev + 4);
-  };
-
   const handleFilterChange = (val: string) => {
     setActiveFilter(val);
-    setVisibleCount(4); // Reset to first 4 on filter change
+    setVisibleCount(4);
   };
 
   return (
     <section id="work" className="section container reveal">
       <div className="section-header">
         <span className="section-num">01</span>
-        <h2 className="section-title">Featured Works & Case Studies</h2>
+        <h2 className="section-title">Featured Works</h2>
       </div>
 
       <div className="project-filters">
@@ -62,69 +81,43 @@ export default function FeaturedProjects({ projects, onOpenModal }: FeaturedProj
         {displayedProjects.map((project, idx) => (
           <article key={project.id || idx} className="project-card">
             <div className="project-info">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                <span className="tag" style={{ background: 'var(--text-primary)', color: 'var(--bg-primary)', fontWeight: '700', fontSize: '0.7rem' }}>
-                  {project.type || 'SYSTEM'}
-                </span>
-                {project.impact && (
-                  <span style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--accent)' }}>
-                    • Verified Architecture
-                  </span>
-                )}
+              <div className="project-meta">
+                <span className="project-type-tag">{project.type || 'Project'}</span>
               </div>
 
-              <h3 className="text-h2" style={{ fontSize: 'clamp(1.5rem, 3vw, 2.2rem)', lineHeight: '1.2', marginBottom: '12px' }}>
-                {project.title}
-              </h3>
+              <h3 className="project-title">{project.title}</h3>
 
-              <p className="project-desc" style={{ marginBottom: '1rem', color: 'var(--text-secondary)' }}>
-                {project.description}
-              </p>
+              <p className="project-desc">{project.description}</p>
 
               {project.impact && (
-                <div style={{ background: 'var(--bg-hover)', borderLeft: '2px solid var(--accent)', padding: '8px 12px', fontSize: '0.85rem', color: 'var(--text-primary)', marginBottom: '1.25rem', fontFamily: 'var(--font-mono)' }}>
+                <div className="project-impact">
                   {project.impact}
                 </div>
               )}
 
               <div className="tag-group">
                 {(project.techStack || []).map((tech) => (
-                  <span key={tech} className="tag">
-                    {tech}
-                  </span>
+                  <span key={tech} className="tag">{tech}</span>
                 ))}
               </div>
 
-              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+              <div className="project-actions">
                 <button
                   type="button"
-                  className="btn btn-primary btn-sm open-modal-btn"
+                  className="btn btn-primary btn-sm"
                   onClick={() => onOpenModal(project)}
                 >
-                  Inspect Specifications
+                  View Details
                 </button>
 
                 {project.liveUrl && (
-                  <a
-                    href={project.liveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn btn-outline btn-sm"
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
-                  >
+                  <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="btn btn-outline btn-sm">
                     Live Demo <ExternalLink size={12} />
                   </a>
                 )}
 
                 {project.githubUrl && (
-                  <a
-                    href={project.githubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn btn-outline btn-sm"
-                    style={{ padding: '0.5rem 0.75rem' }}
-                    title="Source Repository"
-                  >
+                  <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="btn btn-outline btn-sm btn-icon" title="Source Code">
                     <Github size={14} />
                   </a>
                 )}
@@ -132,42 +125,20 @@ export default function FeaturedProjects({ projects, onOpenModal }: FeaturedProj
             </div>
 
             <div
-              className="project-visual open-modal-btn"
+              className="project-visual"
               onClick={() => onOpenModal(project)}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => e.key === 'Enter' && onOpenModal(project)}
             >
               {project.thumbnail && !project.thumbnail.includes('unsplash') ? (
-                <div
-                  style={{
-                    width: '88%',
-                    height: '75%',
-                    border: '1px solid var(--border-color)',
-                    backgroundImage: `url('${project.thumbnail}')`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundColor: 'var(--bg-primary)',
-                    boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
-                  }}
-                />
+                <div className="project-thumb" style={{ backgroundImage: `url('${project.thumbnail}')` }} />
               ) : (
-                <div
-                  style={{
-                    width: '80%',
-                    height: '60%',
-                    border: '2px solid var(--border-color)',
-                    background: 'var(--bg-primary)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    padding: '1.5rem',
-                    gap: '1rem',
-                  }}
-                >
-                  <div style={{ height: '20px', width: '40%', background: 'var(--border-color)' }}></div>
-                  <div style={{ flexGrow: 1, display: 'flex', gap: '1rem' }}>
-                    <div style={{ width: '30%', background: 'var(--border-color)', opacity: 0.5 }}></div>
-                    <div style={{ width: '70%', background: 'var(--border-color)', opacity: 0.2 }}></div>
+                <div className="project-placeholder">
+                  <div className="placeholder-bar short" />
+                  <div className="placeholder-body">
+                    <div className="placeholder-sidebar" />
+                    <div className="placeholder-main" />
                   </div>
                 </div>
               )}
@@ -177,13 +148,9 @@ export default function FeaturedProjects({ projects, onOpenModal }: FeaturedProj
       </div>
 
       {hasMore && (
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '4rem' }}>
-          <button
-            onClick={handleLoadMore}
-            className="btn btn-outline"
-            style={{ padding: '1rem 3rem', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', fontWeight: '700' }}
-          >
-            Load More Projects ({filteredProjects.length - visibleCount} remaining) <ChevronDown size={16} />
+        <div className="load-more-wrapper">
+          <button onClick={() => setVisibleCount((prev) => prev + 4)} className="btn btn-outline btn-load-more">
+            Load More ({filteredProjects.length - visibleCount} remaining) <ChevronDown size={16} />
           </button>
         </div>
       )}

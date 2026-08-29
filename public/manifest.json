@@ -1,0 +1,13 @@
+{
+  "name": "Rajan Sharma — Full-Stack Software Engineer",
+  "short_name": "Rajan Sharma",
+  "description": "Full-Stack Software Engineer portfolio — Next.js, TypeScript, Node.js, PostgreSQL, MongoDB",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f4f0",
+  "theme_color": "#0055ff",
+  "icons": [
+    { "src": "/siteicon.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/siteicon.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

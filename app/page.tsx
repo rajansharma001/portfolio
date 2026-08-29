@@ -11,10 +11,10 @@ import ProcessGrid from '@/components/ProcessGrid';
 import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
 import Modal from '@/components/Modal';
-import { Project, SkillsMap, ExperienceItem, PortfolioSettings } from '@/lib/types';
+import { Project, SkillsMap, ExperienceItem, PortfolioSettings, SectionVisibility, DEFAULT_VISIBILITY } from '@/lib/types';
 
 export default function HomePage() {
-  const [settings, setSettings] = useState<PortfolioSettings | null>({
+  const [settings, setSettings] = useState<PortfolioSettings>({
     name: 'Rajan Sharma',
     role: 'Full-Stack Software Engineer',
     headline: 'Building production-grade web systems, REST APIs & scalable backends.',
@@ -25,10 +25,8 @@ export default function HomePage() {
     availabilityBadgeText: 'Available for Roles',
     resumeUrl: '/uploads/resume.pdf',
     bio: 'Full-Stack Software Engineer specializing in Next.js, TypeScript, Node.js, Express, PostgreSQL, and MongoDB architectures.',
-    codeSnippet: `// rajan.config.ts\nexport const engineer = {\n  name: "Rajan Sharma",\n  role: "Full-Stack Software Engineer",\n  location: "Kathmandu, Nepal",\n  stack: ["Next.js", "TypeScript", "Node.js", "Express", "PostgreSQL", "MongoDB"],\n  projects: 16,\n  status: "Available for Engineering Roles"\n};`,
-    heroTechChips: [],
-    heroStats: [],
-    whatIBring: [],
+    codeSnippet: '',
+    sectionVisibility: DEFAULT_VISIBILITY,
   });
 
   const [projects, setProjects] = useState<Project[]>([]);
@@ -38,9 +36,9 @@ export default function HomePage() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
 
-  const cursorRef = useRef<HTMLDivElement>(null);
+  const vis: SectionVisibility = settings.sectionVisibility || DEFAULT_VISIBILITY;
 
-  // 1. Fetch dynamic data from high-speed cache/bundle endpoint & track visitor view
+  // Fetch all data from cached bundle endpoint
   useEffect(() => {
     async function fetchData() {
       try {
@@ -53,7 +51,12 @@ export default function HomePage() {
         const res = await fetch('/api/portfolio-data');
         if (res.ok) {
           const bundle = await res.json();
-          if (bundle.settings && bundle.settings.name) setSettings(bundle.settings);
+          if (bundle.settings && bundle.settings.name) {
+            setSettings({
+              ...bundle.settings,
+              sectionVisibility: bundle.settings.sectionVisibility || DEFAULT_VISIBILITY,
+            });
+          }
           if (Array.isArray(bundle.projects) && bundle.projects.length > 0) setProjects(bundle.projects);
           if (bundle.skills && Object.keys(bundle.skills).length > 0) setSkills(bundle.skills);
           if (Array.isArray(bundle.experience) && bundle.experience.length > 0) setExperience(bundle.experience);
@@ -62,54 +65,33 @@ export default function HomePage() {
         console.error('Failed to load portfolio data:', err);
       }
     }
-
     fetchData();
   }, []);
 
-  // 2. Custom Cursor & Interactive Hover Effects
+  // Scroll progress & reveal animations
   useEffect(() => {
-    const cursor = cursorRef.current;
-    if (!cursor) return;
+    if (!vis.showScrollProgress) return;
 
-    const handleMouseMove = (e: MouseEvent) => {
-      cursor.style.left = `${e.clientX}px`;
-      cursor.style.top = `${e.clientY}px`;
-    };
-
-    const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement | null;
-      if (
-        target?.closest('a, button, input, textarea, .filter-btn, .project-card, .faq-question, .project-visual, .open-modal-btn')
-      ) {
-        cursor.classList.add('hover');
-      } else {
-        cursor.classList.remove('hover');
-      }
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseover', handleMouseOver);
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseover', handleMouseOver);
-    };
-  }, []);
-
-  // 3. Scroll Progress Indicator & Reveal Animations
-  useEffect(() => {
     const handleScroll = () => {
       const totalScroll = document.documentElement.scrollTop || document.body.scrollTop;
       const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
       const scroll = windowHeight > 0 ? (totalScroll / windowHeight) * 100 : 0;
       setScrollProgress(scroll);
+    };
 
-      // Section reveal animation triggers
+    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [vis.showScrollProgress]);
+
+  // Section reveal animations
+  useEffect(() => {
+    const handleScroll = () => {
       const reveals = document.querySelectorAll('.reveal');
-      const windowHeightPx = window.innerHeight;
+      const windowHeight = window.innerHeight;
       reveals.forEach((element) => {
         const elementTop = element.getBoundingClientRect().top;
-        if (elementTop < windowHeightPx - 100) {
+        if (elementTop < windowHeight - 80) {
           element.classList.add('active');
         }
       });
@@ -117,58 +99,52 @@ export default function HomePage() {
 
     window.addEventListener('scroll', handleScroll);
     handleScroll();
-
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const handleShowToast = (msg: string) => {
     setToastMessage(msg);
-    setTimeout(() => {
-      setToastMessage(null);
-    }, 4000);
+    setTimeout(() => setToastMessage(null), 4000);
   };
 
   return (
     <>
       {/* Scroll Progress Bar */}
-      <div id="scroll-progress" style={{ width: `${scrollProgress}%` }} />
+      {vis.showScrollProgress && (
+        <div id="scroll-progress" style={{ width: `${scrollProgress}%` }} />
+      )}
 
-      {/* Interactive Custom Cursor */}
-      <div className="cursor-dot" id="cursor" ref={cursorRef} />
-
-      {/* Global Toast Notification */}
+      {/* Toast Notification */}
       <div id="toast" className={toastMessage ? 'show' : ''}>
-        {toastMessage || 'Message Sent Successfully'}
+        {toastMessage || ''}
       </div>
 
-      <Header />
+      <Header visibility={vis} projectCount={projects.length} />
 
       <main>
-        {/* Hero Section */}
-        <Hero settings={settings} />
+        {vis.showHero && <Hero settings={settings} visibility={vis} />}
 
-        {/* Marquee Ticker */}
-        <Marquee />
+        {vis.showMarquee && <Marquee />}
 
-        {/* 01: Featured Works & Case Studies (Recruiter Priority #1: Proof of Work) */}
-        <FeaturedProjects projects={projects} onOpenModal={(p) => setSelectedProject(p)} />
+        {vis.showProjects && (
+          <FeaturedProjects projects={projects} onOpenModal={(p) => setSelectedProject(p)} />
+        )}
 
-        {/* 02: Technical Capabilities & Stack (Recruiter Priority #2: Skills Match) */}
-        <SkillsGrid skills={skills} />
+        {vis.showSkills && <SkillsGrid skills={skills} />}
 
-        {/* 03: Background & Experience (Recruiter Priority #3: Verified Career History) */}
-        <ExperienceTimeline experience={experience} settings={settings} />
+        {vis.showExperience && (
+          <ExperienceTimeline experience={experience} settings={settings} />
+        )}
 
-        {/* 04: Engineering Methodology (Recruiter Priority #4: Technical Process) */}
-        <ProcessGrid />
+        {vis.showProcess && <ProcessGrid />}
 
-        {/* 05: Contact & FAQ (Recruiter Priority #5: Inbound Hiring Inquiries) */}
-        <ContactSection settings={settings} onShowToast={handleShowToast} />
+        {vis.showContact && (
+          <ContactSection settings={settings} onShowToast={handleShowToast} />
+        )}
       </main>
 
-      <Footer />
+      {vis.showFooter && <Footer settings={settings} />}
 
-      {/* Architectural Project Spec Modal */}
       <Modal project={selectedProject} onClose={() => setSelectedProject(null)} />
     </>
   );

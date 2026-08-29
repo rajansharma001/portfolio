@@ -1,40 +1,77 @@
 import type { Metadata } from 'next';
 import './globals.css';
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rajansharma.dev';
+
 export const metadata: Metadata = {
-  title: 'Rajan Sharma | Backend-Focused Full Stack Developer',
+  metadataBase: new URL(baseUrl),
+  title: {
+    default: 'Rajan Sharma | Full-Stack Software Engineer',
+    template: '%s | Rajan Sharma',
+  },
   description:
-    'Backend-Focused Full Stack Developer building secure, scalable web applications with Node.js, TypeScript, PostgreSQL, Next.js, and React. Open to international opportunities.',
+    'Full-Stack Software Engineer building production-grade web systems with Next.js, TypeScript, Node.js, Express, PostgreSQL, and MongoDB. 16 shipped projects. Open to engineering roles worldwide.',
   keywords: [
     'Rajan Sharma',
-    'Backend Developer',
     'Full Stack Engineer',
-    'Node.js',
+    'Software Engineer',
+    'Backend Developer',
+    'Node.js Developer',
     'TypeScript',
     'Next.js',
     'PostgreSQL',
-    'Europe Software Engineer',
-    'React',
+    'MongoDB',
+    'React Developer',
+    'Nepal Software Engineer',
+    'Remote Software Engineer',
+    'REST API',
+    'LMS Developer',
+    'POS System Developer',
   ],
-  authors: [{ name: 'Rajan Sharma' }],
+  authors: [{ name: 'Rajan Sharma', url: baseUrl }],
+  creator: 'Rajan Sharma',
+  publisher: 'Rajan Sharma',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   openGraph: {
-    title: 'Rajan Sharma | Backend-Focused Full Stack Developer',
+    title: 'Rajan Sharma | Full-Stack Software Engineer',
     description:
-      'Backend-Focused Full Stack Developer building secure, scalable web applications with Node.js, TypeScript, PostgreSQL, Next.js, and React.',
+      'Full-Stack Software Engineer building production-grade web systems with Next.js, TypeScript, Node.js, Express, PostgreSQL, and MongoDB. 16 shipped projects.',
     type: 'website',
-    url: 'https://rajansharma.dev',
+    url: baseUrl,
     siteName: 'Rajan Sharma Portfolio',
+    locale: 'en_US',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Rajan Sharma | Backend-Focused Full Stack Developer',
+    title: 'Rajan Sharma | Full-Stack Software Engineer',
     description:
-      'Backend-Focused Full Stack Developer building secure, scalable web applications with Node.js, TypeScript, PostgreSQL, Next.js, and React.',
+      'Full-Stack Software Engineer — Next.js, TypeScript, Node.js, PostgreSQL, MongoDB. 16 shipped projects. Open to roles worldwide.',
+    creator: '@rajansharma001',
+  },
+  alternates: {
+    canonical: baseUrl,
   },
   icons: {
     icon: '/siteicon.png',
     shortcut: '/siteicon.png',
     apple: '/siteicon.png',
+  },
+  manifest: '/manifest.json',
+  other: {
+    'geo.region': 'NP-BA',
+    'geo.placename': 'Kathmandu',
+    'geo.position': '27.7172;85.3240',
+    'ICBM': '27.7172, 85.3240',
   },
 };
 
@@ -43,27 +80,43 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const jsonLd = {
+  const personJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: 'Rajan Sharma',
-    jobTitle: 'Backend-Focused Full Stack Developer',
+    jobTitle: 'Full-Stack Software Engineer',
     description:
-      'Backend-Focused Full Stack Developer building secure, scalable web applications with Node.js, TypeScript, PostgreSQL, Next.js, and React.',
-    email: 'sharmarajan4560@gmail.com',
+      'Full-Stack Software Engineer building production-grade web systems with Next.js, TypeScript, Node.js, Express, PostgreSQL, and MongoDB.',
+    email: 'email.rajan001@gmail.com',
+    url: baseUrl,
     sameAs: [
       'https://github.com/rajansharma001',
       'https://linkedin.com/in/rajansharma001',
     ],
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Kathmandu',
+      addressRegion: 'Bagmati',
+      addressCountry: 'NP',
+    },
+    alumniOf: {
+      '@type': 'EducationalOrganization',
+      name: 'Council for Technical Education and Vocational Training (CTEVT)',
+    },
     knowsAbout: [
-      'Node.js',
-      'TypeScript',
-      'Next.js',
-      'PostgreSQL',
-      'React',
-      'REST APIs',
-      'System Architecture',
+      'Next.js', 'TypeScript', 'Node.js', 'Express.js', 'PostgreSQL', 'MongoDB',
+      'React', 'REST APIs', 'JWT Authentication', 'System Architecture',
+      'OpenStreetMap', 'Prisma ORM', 'Cloudinary',
     ],
+  };
+
+  const websiteJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Rajan Sharma Portfolio',
+    url: baseUrl,
+    description: 'Portfolio of Rajan Sharma — Full-Stack Software Engineer based in Kathmandu, Nepal.',
+    author: { '@type': 'Person', name: 'Rajan Sharma' },
   };
 
   return (
@@ -79,7 +132,11 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/siteicon.png" />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
       </head>
       <body>{children}</body>

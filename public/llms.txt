@@ -1,0 +1,38 @@
+# Rajan Sharma — Full-Stack Software Engineer
+
+> Full-Stack Software Engineer based in Kathmandu, Nepal. Building production-grade web systems with Next.js, TypeScript, Node.js, Express, PostgreSQL, and MongoDB.
+
+## About
+- 16 production software systems engineered and deployed
+- Core expertise: LMS platforms, POS systems, tourism portals, geospatial data pipelines
+- Open to full-time engineering roles worldwide
+- Based in Kathmandu, Nepal (UTC+5:45)
+
+## Key Projects
+- Advanced LMS — Full-Stack Learning Management System (Next.js, React, TypeScript, Node.js, Express, MongoDB, JWT, Cloudinary)
+- RestroOS — Restaurant Management System & POS (Next.js, Node.js, Prisma, PostgreSQL)
+- Nexzen Tour — Tourism & Geospatial Platform (Next.js, Node.js, PostgreSQL, OpenStreetMap, Valhalla)
+- OSM Nepal Pipeline — Geospatial Data Ingestion for 77 districts (Node.js, Prisma, PostgreSQL, Overpass API)
+- Ambikeshori Travels — Production Travel Portal (Next.js, MongoDB, launched Feb 2026)
+- BMW Tours and Travels — Tourism Portal (Next.js, MongoDB, cPanel)
+- LandBDevs — Engineering Consultancy Portal (Next.js, Express)
+- AI Job Hunter — Automated Job Application Platform (Next.js, AI APIs)
+- Japanese Learning Platform — JFT-Basic & JLPT N5 (React, TypeScript)
+- NEA Level 5 Quiz App (React, Vite)
+- Banau Clothing — E-Commerce (WordPress, WooCommerce)
+- Custom WordPress News Portal (WordPress, PHP)
+- 4 Client Website Demos (Next.js, React, TypeScript)
+
+## Technical Stack
+- Frontend: Next.js 16, React 19, TypeScript, Tailwind CSS, TanStack Query
+- Backend: Node.js, Express.js, REST APIs, JWT, RBAC
+- Databases: PostgreSQL (Prisma), MongoDB (Mongoose)
+- Geospatial: OpenStreetMap, Overpass API, Valhalla Routing, OSRM
+- Security: PBKDF2, HMAC, Rate Limiting, Helmet, CORS
+- Cloud: Cloudinary, cPanel, Linux hosting
+
+## Contact
+- Email: email.rajan001@gmail.com
+- GitHub: https://github.com/rajansharma001
+- LinkedIn: https://linkedin.com/in/rajansharma001
+- Website: https://rajansharma.dev

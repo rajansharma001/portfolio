@@ -2,14 +2,21 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { SectionVisibility, DEFAULT_VISIBILITY } from '@/lib/types';
 
-export default function Header() {
-  const [timeStr, setTimeStr] = useState('NPT --:--:--');
+interface HeaderProps {
+  visibility?: SectionVisibility;
+  projectCount?: number;
+}
+
+export default function Header({ visibility, projectCount }: HeaderProps) {
+  const vis = visibility || DEFAULT_VISIBILITY;
+  const [timeStr, setTimeStr] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
-  // 1. Live Nepal Clock (UTC +5:45)
   useEffect(() => {
+    if (!vis.showClockWidget) return;
     function updateClock() {
       const now = new Date();
       const utc = now.getTime() + now.getTimezoneOffset() * 60000;
@@ -19,13 +26,11 @@ export default function Header() {
       const seconds = String(nepalTime.getSeconds()).padStart(2, '0');
       setTimeStr(`NPT ${hours}:${minutes}:${seconds}`);
     }
-
     updateClock();
     const interval = setInterval(updateClock, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [vis.showClockWidget]);
 
-  // 2. Initialize Theme
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
     if (savedTheme === 'dark') {
@@ -36,6 +41,16 @@ export default function Header() {
       setTheme('light');
     }
   }, []);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileMenuOpen]);
 
   const toggleTheme = () => {
     if (theme === 'dark') {
@@ -49,99 +64,76 @@ export default function Header() {
     }
   };
 
+  const closeMenu = () => setMobileMenuOpen(false);
+
+  const count = projectCount ?? 16;
+
   return (
-    <header className="site-header" id="header">
-      <div className="container nav-container">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-          <Link href="/" className="logo">
-            Rajan.
-          </Link>
-          <div className="availability-dot" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
-            <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#10b981', display: 'inline-block', boxShadow: '0 0 8px rgba(16,185,129,0.6)' }} />
-            <span className="availability-text">Open for Roles</span>
-          </div>
-        </div>
-
-        <nav className={`nav-links ${mobileMenuOpen ? 'active' : ''}`} id="nav-links">
-          <Link
-            href="/#work"
-            className="nav-item"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Projects (16)
-          </Link>
-          <Link
-            href="/#skills"
-            className="nav-item"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Skills
-          </Link>
-          <Link
-            href="/#experience"
-            className="nav-item"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Experience
-          </Link>
-          <Link
-            href="/blog"
-            className="nav-item"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Journal
-          </Link>
-          <Link
-            href="/#contact"
-            className="nav-item"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Contact
-          </Link>
-        </nav>
-
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <div className="clock-widget" id="live-clock">
-            {timeStr}
-          </div>
-
-          <button
-            className="theme-toggle"
-            id="theme-toggle"
-            onClick={toggleTheme}
-            aria-label="Toggle Theme"
-          >
-            {theme === 'dark' ? (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-              </svg>
-            ) : (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="5"></circle>
-                <line x1="12" y1="1" x2="12" y2="3"></line>
-                <line x1="12" y1="21" x2="12" y2="23"></line>
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                <line x1="1" y1="12" x2="3" y2="12"></line>
-                <line x1="21" y1="12" x2="23" y2="12"></line>
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-              </svg>
+    <>
+      <header className="site-header" id="header">
+        <div className="container nav-container">
+          <div className="nav-left">
+            <Link href="/" className="logo">Rajan.</Link>
+            {vis.showAvailabilityBadge && (
+              <div className="availability-badge">
+                <span className="status-dot" />
+                <span className="availability-text">Open for Roles</span>
+              </div>
             )}
-          </button>
+          </div>
 
-          <button
-            className="hamburger"
-            id="hamburger"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Menu"
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
+          <nav className={`nav-links ${mobileMenuOpen ? 'active' : ''}`}>
+            <Link href="/#work" className="nav-item" onClick={closeMenu}>
+              Projects{count > 0 ? ` (${count})` : ''}
+            </Link>
+            <Link href="/#skills" className="nav-item" onClick={closeMenu}>Skills</Link>
+            <Link href="/#experience" className="nav-item" onClick={closeMenu}>Experience</Link>
+            {vis.showBlog && (
+              <Link href="/blog" className="nav-item" onClick={closeMenu}>Blog</Link>
+            )}
+            <Link href="/#contact" className="nav-item" onClick={closeMenu}>Contact</Link>
+          </nav>
+
+          <div className="nav-right">
+            {vis.showClockWidget && timeStr && (
+              <div className="clock-widget">{timeStr}</div>
+            )}
+            {vis.showThemeToggle && (
+              <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle Theme">
+                {theme === 'dark' ? (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                  </svg>
+                ) : (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="5" />
+                    <line x1="12" y1="1" x2="12" y2="3" />
+                    <line x1="12" y1="21" x2="12" y2="23" />
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                    <line x1="1" y1="12" x2="3" y2="12" />
+                    <line x1="21" y1="12" x2="23" y2="12" />
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                  </svg>
+                )}
+              </button>
+            )}
+            <button
+              className={`hamburger ${mobileMenuOpen ? 'active' : ''}`}
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Menu"
+            >
+              <span /><span /><span />
+            </button>
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+
+      {/* Mobile Menu Backdrop */}
+      {mobileMenuOpen && (
+        <div className="mobile-backdrop" onClick={closeMenu} />
+      )}
+    </>
   );
 }

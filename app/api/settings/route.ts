@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { SettingModel, ISetting } from '@/models/Setting';
 import { verifyRequestAuth } from '@/lib/auth';
-import { getCache, setCache, invalidateCache } from '@/lib/cache';
+import { getCache, setCache, invalidateAllPortfolioCache } from '@/lib/cache';
 
 const CACHE_KEY = 'global_site_settings';
 
@@ -67,12 +67,12 @@ export async function POST(req: NextRequest) {
       { new: true, upsert: true }
     ).lean();
 
-    // Invalidate caches
-    await invalidateCache(CACHE_KEY);
-    await invalidateCache('portfolio_full_bundle');
+    // Invalidate caches (especially important for sectionVisibility changes)
+    await invalidateAllPortfolioCache();
 
     return NextResponse.json(updated);
   } catch (error: any) {
     return NextResponse.json({ error: error.message || 'Failed to update settings' }, { status: 500 });
   }
 }
+

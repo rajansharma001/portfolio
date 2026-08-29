@@ -80,7 +80,7 @@ export default function ContactSection({ settings, onShowToast }: ContactSection
             Frequently Asked
           </h3>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '2.5rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0', marginBottom: '2.5rem' }}>
             {faqs.map((faq, idx) => {
               const isActive = activeFaq === idx;
               return (
@@ -93,13 +93,7 @@ export default function ContactSection({ settings, onShowToast }: ContactSection
                   >
                     {faq.q} <span className="faq-icon">+</span>
                   </button>
-                  <div
-                    className="faq-answer"
-                    style={{
-                      maxHeight: isActive ? '200px' : '0px',
-                      paddingBottom: isActive ? '1.5rem' : '0px',
-                    }}
-                  >
+                  <div className="faq-answer">
                     <p>{faq.a}</p>
                   </div>
                 </div>
@@ -114,13 +108,14 @@ export default function ContactSection({ settings, onShowToast }: ContactSection
             <a
               href={`mailto:${settings?.email || 'email.rajan001@gmail.com'}`}
               style={{
-                fontSize: '1.1rem',
+                fontSize: '1rem',
                 fontFamily: 'var(--font-mono)',
-                color: 'var(--accent)',
+                color: 'var(--text-primary)',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
                 wordBreak: 'break-all',
+                fontWeight: 600
               }}
             >
               <Mail size={16} /> {settings?.email || 'email.rajan001@gmail.com'}
@@ -133,19 +128,19 @@ export default function ContactSection({ settings, onShowToast }: ContactSection
           <span className="label" style={{ marginBottom: '0.5rem', color: 'var(--accent)', display: 'block' }}>
             Inbound Hiring Inquiry
           </span>
-          <h2 className="text-h2" style={{ marginBottom: '1.5rem', fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)' }}>
+          <h2 className="text-h2" style={{ marginBottom: '2rem', fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}>
             Send a Direct Message
           </h2>
 
           <form className="contact-form" id="contact-form" onSubmit={handleSubmit}>
             {formError && (
-              <div style={{ color: '#ef4444', fontSize: '13px', background: 'rgba(239, 68, 68, 0.1)', padding: '10px 14px', border: '1px solid rgba(239, 68, 68, 0.2)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ color: '#ef4444', fontSize: '0.85rem', background: 'rgba(239, 68, 68, 0.1)', padding: '12px', border: '1px solid rgba(239, 68, 68, 0.2)', display: 'flex', alignItems: 'center', gap: '8px', borderRadius: 'var(--radius-sm)' }}>
                 <AlertCircle size={16} /> {formError}
               </div>
             )}
 
             {isSent && (
-              <div style={{ color: '#10b981', fontSize: '13px', background: 'rgba(16, 185, 129, 0.1)', padding: '10px 14px', border: '1px solid rgba(16, 185, 129, 0.2)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ color: '#10b981', fontSize: '0.85rem', background: 'rgba(16, 185, 129, 0.1)', padding: '12px', border: '1px solid rgba(16, 185, 129, 0.2)', display: 'flex', alignItems: 'center', gap: '8px', borderRadius: 'var(--radius-sm)' }}>
                 <CheckCircle2 size={16} /> Message delivered successfully! I will respond within 24 hours.
               </div>
             )}
@@ -192,7 +187,7 @@ export default function ContactSection({ settings, onShowToast }: ContactSection
               ></textarea>
             </div>
 
-            <button type="submit" className="btn btn-primary" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }} disabled={isSubmitting}>
+            <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '0.5rem' }} disabled={isSubmitting}>
               <Send size={16} />
               {isSubmitting ? 'Delivering Message...' : 'Send Message'}
             </button>

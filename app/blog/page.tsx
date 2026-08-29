@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BlogPost } from '@/lib/types';
-import { Clock, Search, ArrowRight, Tag, BookOpen } from 'lucide-react';
+import { Clock, Search, ArrowRight, BookOpen } from 'lucide-react';
 
 export default function BlogListingPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -35,32 +35,29 @@ export default function BlogListingPage() {
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (post.tags || []).some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()));
-
     const matchesCategory = selectedCategory === 'ALL' || post.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div className="page-wrapper">
       <Header />
 
-      <main className="container" style={{ paddingTop: 'calc(var(--nav-height) + 3rem)', paddingBottom: '6rem', flex: 1 }}>
+      <main className="container blog-main">
         {/* Page Header */}
-        <div style={{ marginBottom: '3rem', borderBottom: '2px solid var(--text-primary)', paddingBottom: '1.5rem' }}>
-          <span className="section-num" style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-            <BookOpen size={16} /> TECHNICAL WRITING & ARCHITECTURE NOTES
+        <div className="blog-header">
+          <span className="section-num">
+            <BookOpen size={16} /> Engineering Journal
           </span>
-          <h1 className="text-h2" style={{ textTransform: 'uppercase', letterSpacing: '-0.02em' }}>
-            Engineering Journal
-          </h1>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '1.125rem', marginTop: '8px', maxWidth: '700px' }}>
-            Articles, system breakdowns, database optimizations, and backend architecture insights by Rajan Sharma.
+          <h1 className="blog-title">Blog</h1>
+          <p className="blog-subtitle">
+            Technical writing, system breakdowns, and architecture insights.
           </p>
         </div>
 
         {/* Search & Category Tabs */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap', marginBottom: '3rem' }}>
-          <div className="project-filters" style={{ marginBottom: 0, borderBottom: 'none', paddingBottom: 0 }}>
+        <div className="blog-controls">
+          <div className="project-filters blog-filters">
             {categories.map((cat) => (
               <button
                 key={cat}
@@ -72,101 +69,66 @@ export default function BlogListingPage() {
             ))}
           </div>
 
-          <div style={{ position: 'relative', width: '280px' }}>
-            <Search size={14} style={{ position: 'absolute', left: '12px', top: '14px', color: 'var(--text-muted)' }} />
+          <div className="blog-search">
+            <Search size={14} className="search-icon" />
             <input
               type="text"
               className="form-input"
               placeholder="Search articles..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              style={{ paddingLeft: '34px', fontSize: '0.85rem', padding: '0.6rem 0.8rem 0.6rem 34px' }}
             />
           </div>
         </div>
 
         {/* Posts Grid */}
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '5rem 2rem', fontFamily: 'var(--font-mono)', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)' }}>
-            <div style={{ color: 'var(--accent)', fontSize: '0.9rem', marginBottom: '8px' }}>▸ FETCHING TECHNICAL ARTICLES FROM MONGODB...</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Retrieving system breakdowns & architecture notes</div>
+          <div className="blog-loading">
+            <div className="loading-skeleton" />
+            <div className="loading-skeleton" />
+            <div className="loading-skeleton" />
           </div>
         ) : filteredPosts.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '4rem', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)' }}>
-            <p style={{ color: 'var(--text-secondary)' }}>No articles found matching your criteria.</p>
+          <div className="blog-empty">
+            <p>No articles found matching your criteria.</p>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '2.5rem' }}>
+          <div className="blog-grid">
             {filteredPosts.map((post) => (
-              <article
-                key={post.id}
-                style={{
-                  border: '1px solid var(--border-color)',
-                  background: 'var(--bg-secondary)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  transition: 'border-color 0.2s',
-                }}
-              >
-                {/* Visual Thumbnail */}
-                <Link href={`/blog/${post.slug}`}>
+              <article key={post.id} className="blog-card">
+                <Link href={`/blog/${post.slug}`} className="blog-card-thumb">
                   <div
+                    className="blog-card-image"
                     style={{
-                      height: '180px',
-                      background: post.coverImage ? `url('${post.coverImage}') center/cover` : 'var(--bg-primary)',
-                      borderBottom: '1px solid var(--border-color)',
-                      position: 'relative',
+                      backgroundImage: post.coverImage ? `url('${post.coverImage}')` : undefined,
                     }}
                   >
-                    <div style={{ position: 'absolute', top: '12px', left: '12px' }}>
-                      <span className="tag" style={{ background: 'var(--text-primary)', color: 'var(--bg-primary)' }}>
-                        {post.category}
-                      </span>
-                    </div>
+                    <span className="blog-card-category">{post.category}</span>
                   </div>
                 </Link>
 
-                {/* Article Info */}
-                <div style={{ padding: '1.75rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '12px' }}>
+                <div className="blog-card-body">
+                  <div className="blog-card-meta">
                     <span>{new Date(post.publishedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Clock size={12} /> {post.readTimeMinutes} min read
+                    <span className="blog-card-read">
+                      <Clock size={12} /> {post.readTimeMinutes} min
                     </span>
                   </div>
 
-                  <h2 style={{ fontSize: '1.35rem', fontWeight: '800', lineHeight: '1.3', marginBottom: '12px' }}>
-                    <Link href={`/blog/${post.slug}`} style={{ color: 'var(--text-primary)' }}>
-                      {post.title}
-                    </Link>
+                  <h2 className="blog-card-title">
+                    <Link href={`/blog/${post.slug}`}>{post.title}</Link>
                   </h2>
 
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '1.5rem', flex: 1 }}>
-                    {post.excerpt}
-                  </p>
+                  <p className="blog-card-excerpt">{post.excerpt}</p>
 
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '1.5rem' }}>
+                  <div className="blog-card-tags">
                     {(post.tags || []).slice(0, 3).map((tag) => (
-                      <span key={tag} className="tag" style={{ fontSize: '0.65rem' }}>
-                        #{tag}
-                      </span>
+                      <span key={tag} className="tag">#{tag}</span>
                     ))}
                   </div>
 
-                  <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '1rem', marginTop: 'auto' }}>
-                    <Link
-                      href={`/blog/${post.slug}`}
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        fontWeight: '700',
-                        fontSize: '0.85rem',
-                        fontFamily: 'var(--font-mono)',
-                        color: 'var(--accent)',
-                        textTransform: 'uppercase',
-                      }}
-                    >
+                  <div className="blog-card-footer">
+                    <Link href={`/blog/${post.slug}`} className="blog-read-link">
                       Read Article <ArrowRight size={14} />
                     </Link>
                   </div>

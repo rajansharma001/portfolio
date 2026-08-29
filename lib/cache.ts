@@ -96,3 +96,14 @@ export async function invalidateCache(key: string): Promise<void> {
 export async function clearAllCache(): Promise<void> {
   memoryCache.clear();
 }
+
+/**
+ * Invalidate all core portfolio data caches (used on settings mutations to reflect visibility changes)
+ */
+export async function invalidateAllPortfolioCache(): Promise<void> {
+  const keys = ['portfolio_full_bundle', 'global_settings', 'projects_all', 'skills_all', 'experience_all'];
+  for (const key of keys) {
+    await invalidateCache(key);
+  }
+}
+

@@ -532,7 +532,23 @@ export async function ensureDatabaseSeeded() {
         availabilityBadgeText: 'Available for Roles',
         resumeUrl: '/uploads/resume.pdf',
         bio: 'Full-Stack Software Engineer specializing in Next.js, TypeScript, Node.js, Express, PostgreSQL, and MongoDB architectures.',
-        codeSnippet: `// rajan.config.ts\nexport const engineer = {\n  name: "Rajan Sharma",\n  role: "Full-Stack Software Engineer",\n  location: "Kathmandu, Nepal",\n  stack: ["Next.js", "TypeScript", "Node.js", "Express", "PostgreSQL", "MongoDB"],\n  projects: 16,\n  status: "Available for Engineering Roles"\n};`,
+        codeSnippet: '',
+        sectionVisibility: {
+          showHero: true,
+          showAvailabilityBadge: true,
+          showMarquee: false,
+          showProjects: true,
+          showSkills: true,
+          showExperience: true,
+          showProcess: true,
+          showContact: true,
+          showBlog: true,
+          showScrollProgress: true,
+          showFooter: true,
+          showResumeButton: true,
+          showClockWidget: true,
+          showThemeToggle: true,
+        },
       });
     }
 
