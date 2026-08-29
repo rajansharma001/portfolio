@@ -1824,3 +1824,113 @@ textarea.form-input { resize: vertical; min-height: 110px; }
     padding: 1.25rem;
   }
 }
+
+/* ==========================================================================
+   TERMINAL HERO
+   ========================================================================== */
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.hero-terminal {
+  width: 100%;
+}
+
+.terminal-window {
+  background-color: var(--dark-bg);
+  border: 1px solid var(--dark-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  height: 380px;
+}
+
+.terminal-header {
+  background-color: var(--dark-surface);
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--dark-border);
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.terminal-dots {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.terminal-dots .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.terminal-dots .dot.red { background-color: #ff5f56; }
+.terminal-dots .dot.yellow { background-color: #ffbd2e; }
+.terminal-dots .dot.green { background-color: #27c93f; }
+
+.terminal-title {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--dark-text-muted);
+  text-transform: uppercase;
+}
+
+.terminal-body {
+  padding: 1.25rem;
+  color: #a9dc76;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  flex-grow: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.terminal-line {
+  word-break: break-all;
+}
+
+.terminal-line.output {
+  color: #f8f8f2;
+}
+
+.terminal-line.error {
+  color: #ff6188;
+}
+
+.terminal-input-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.terminal-input-row input {
+  background: none;
+  border: none;
+  outline: none;
+  color: #f8f8f2;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  width: 100%;
+}
+
+.prompt {
+  color: #ff6188;
+  white-space: nowrap;
+}
+
+@media (max-width: 1024px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+}
