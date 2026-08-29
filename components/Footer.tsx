@@ -31,7 +31,9 @@ export default function Footer({ settings }: FooterProps) {
         <div className="footer-meta">
           <Link href="/blog">Blog</Link>
           <span>&copy; {new Date().getFullYear()} &middot; Kathmandu, Nepal</span>
-          <a href="#header">Back to Top &uarr;</a>
+          <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', color: 'inherit', textTransform: 'inherit', textDecoration: 'underline' }}>
+            Back to Top &uarr;
+          </button>
         </div>
       </div>
     </footer>
