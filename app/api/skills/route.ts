@@ -2,12 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { SkillModel } from '@/models/Skill';
 import { verifyRequestAuth } from '@/lib/auth';
+import { ensureDatabaseSeeded } from '@/lib/auto-seed';
 
 export async function GET() {
   try {
     await connectToDatabase();
+    await ensureDatabaseSeeded();
+
     const records = await SkillModel.find({}).lean();
-    
+
     // Convert array of categories to SkillsMap object: Record<string, string[]>
     const skillsMap: Record<string, string[]> = {};
     records.forEach((r: any) => {

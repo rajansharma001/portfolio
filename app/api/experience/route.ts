@@ -2,12 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { ExperienceModel, IExperience } from '@/models/Experience';
 import { verifyRequestAuth } from '@/lib/auth';
+import { ensureDatabaseSeeded } from '@/lib/auto-seed';
 
 export async function GET() {
   try {
     await connectToDatabase();
-    const items = await ExperienceModel.find({}).sort({ order: 1 }).lean();
-    return NextResponse.json(items);
+    await ensureDatabaseSeeded();
+
+    const experiences = await ExperienceModel.find({}).sort({ period: -1 }).lean();
+    return NextResponse.json(experiences);
   } catch (error) {
     console.error('MongoDB Experience GET error:', error);
     return NextResponse.json([], { status: 500 });
@@ -21,31 +24,25 @@ export async function POST(req: NextRequest) {
 
   try {
     await connectToDatabase();
-    const items = (await req.json()) as IExperience[];
+    const body = (await req.json()) as Partial<IExperience>;
 
-    if (!Array.isArray(items)) {
-      return NextResponse.json({ error: 'Invalid data format' }, { status: 400 });
+    if (!body.role || !body.company) {
+      return NextResponse.json({ error: 'Role and Company are required' }, { status: 400 });
     }
 
-    await ExperienceModel.deleteMany({});
+    const newExperience = await ExperienceModel.create({
+      id: `exp_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      role: body.role,
+      company: body.company,
+      period: body.period || '2024 — Present',
+      location: body.location || 'Nepal',
+      description: body.description || '',
+      highlights: Array.isArray(body.highlights) ? body.highlights : [],
+    });
 
-    const docsWithOrder = items.map((item, index) => ({
-      id: item.id || `exp_${Date.now()}_${index}`,
-      role: item.role,
-      company: item.company,
-      period: item.period,
-      location: item.location,
-      description: item.description || '',
-      highlights: Array.isArray(item.highlights) ? item.highlights : [],
-      order: index + 1,
-    }));
-
-    if (docsWithOrder.length > 0) {
-      await ExperienceModel.insertMany(docsWithOrder);
-    }
-
-    return NextResponse.json({ success: true });
+    return NextResponse.json(newExperience, { status: 201 });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Failed to update experience' }, { status: 500 });
+    console.error('MongoDB Experience create error:', error);
+    return NextResponse.json({ error: error.message || 'Failed to create experience milestone' }, { status: 500 });
   }
 }

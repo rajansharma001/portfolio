@@ -2,10 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { ProjectModel, IProject } from '@/models/Project';
 import { verifyRequestAuth } from '@/lib/auth';
+import { ensureDatabaseSeeded } from '@/lib/auto-seed';
 
 export async function GET(req: NextRequest) {
   try {
     await connectToDatabase();
+    await ensureDatabaseSeeded();
+
     const { searchParams } = new URL(req.url);
     const isAdminMode = searchParams.get('admin') === 'true' && verifyRequestAuth(req);
 
