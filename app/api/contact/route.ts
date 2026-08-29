@@ -29,7 +29,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
     }
 
-    const { name, email, message } = body;
+    const { name, email, message, website_url, captchaAnswer, captchaToken } = body;
+
+    // Honeypot check
+    if (website_url) {
+      return NextResponse.json({ success: true, message: 'Message delivered successfully.' });
+    }
+
+    if (!captchaAnswer || !captchaToken) {
+      return NextResponse.json({ error: 'Missing CAPTCHA.' }, { status: 400 });
+    }
+
+    const { verifyCaptcha } = await import('@/app/api/captcha/route');
+    const isValidCaptcha = verifyCaptcha(captchaToken, captchaAnswer);
+
+    if (!isValidCaptcha) {
+      return NextResponse.json({ error: 'Invalid CAPTCHA.' }, { status: 400 });
+    }
 
     // Strict input validation
     if (!name || typeof name !== 'string' || name.trim().length < 2 || name.trim().length > 100) {
@@ -50,7 +66,7 @@ export async function POST(req: NextRequest) {
     // Sanitize user inputs
     const cleanName = sanitizeInput(name);
     const cleanMessage = sanitizeInput(message);
-    const cleanEmail = email.trim().toLowerCase();
+    const cleanEmail = sanitizeInput(email).toLowerCase();
 
     await connectToDatabase();
 

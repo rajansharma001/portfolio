@@ -84,7 +84,7 @@ export default function Header({ visibility, projectCount }: HeaderProps) {
 
           <nav className={`nav-links ${mobileMenuOpen ? 'active' : ''}`}>
             <Link href="/#work" className="nav-item" onClick={closeMenu}>
-              Projects{count > 0 ? ` (${count})` : ''}
+              Projects
             </Link>
             <Link href="/#skills" className="nav-item" onClick={closeMenu}>Skills</Link>
             <Link href="/#experience" className="nav-item" onClick={closeMenu}>Experience</Link>

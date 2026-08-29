@@ -22,12 +22,29 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json().catch(() => null);
-    if (!body || typeof body.password !== 'string') {
+    if (!body || typeof body.password !== 'string' || typeof body.email !== 'string') {
       recordFailedAttempt(`login:${ip}`);
       return NextResponse.json({ error: 'Invalid credentials.' }, { status: 401 });
     }
 
-    const { password } = body;
+    const { email, password, captchaAnswer, captchaToken } = body;
+
+    if (email !== 'email.rajan001@gmail.com') {
+      recordFailedAttempt(`login:${ip}`);
+      return NextResponse.json({ error: 'Invalid credentials.' }, { status: 401 });
+    }
+
+    if (!captchaAnswer || !captchaToken) {
+      return NextResponse.json({ error: 'Missing CAPTCHA.' }, { status: 400 });
+    }
+
+    // Verify CAPTCHA
+    const { verifyCaptcha } = await import('@/app/api/captcha/route');
+    const isValidCaptcha = verifyCaptcha(captchaToken, captchaAnswer);
+
+    if (!isValidCaptcha) {
+      return NextResponse.json({ error: 'Invalid CAPTCHA.' }, { status: 400 });
+    }
 
     // 2. Constant-time password hash verification against MongoDB
     const isValid = await authenticateAdminAsync(password);

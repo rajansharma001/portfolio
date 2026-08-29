@@ -1,16 +1,38 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Lock, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import Alert from '@/components/Alert';
 
 export default function AdminLoginPage() {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [captchaQuestion, setCaptchaQuestion] = useState('');
+  const [captchaToken, setCaptchaToken] = useState('');
+  const [captchaAnswer, setCaptchaAnswer] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  const fetchCaptcha = async () => {
+    try {
+      const res = await fetch('/api/captcha');
+      const data = await res.json();
+      if (data.question && data.token) {
+        setCaptchaQuestion(data.question);
+        setCaptchaToken(data.token);
+        setCaptchaAnswer('');
+      }
+    } catch (err) {
+      console.error('Failed to fetch CAPTCHA', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchCaptcha();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,13 +43,14 @@ export default function AdminLoginPage() {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ email, password, captchaAnswer, captchaToken }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || 'Invalid password');
+        fetchCaptcha();
+        throw new Error(data.error || 'Invalid credentials');
       }
 
       router.push('/admin');
@@ -70,23 +93,46 @@ export default function AdminLoginPage() {
         </div>
 
         <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', margin: '0 0 1.5rem 0' }}>
-          Enter your admin password to manage portfolio content and projects.
+          Enter your admin credentials to manage portfolio content and projects.
         </p>
 
         <Alert type="error" message={error} />
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
+            <label className="form-label">Admin Email</label>
+            <input
+              type="email"
+              className="form-input"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="form-group">
             <label className="form-label">Admin Password</label>
             <input
               type="password"
               className="form-input"
-              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
+
+          {captchaQuestion && (
+            <div className="form-group">
+              <label className="form-label">Math CAPTCHA: {captchaQuestion} = ?</label>
+              <input
+                type="text"
+                className="form-input"
+                value={captchaAnswer}
+                onChange={(e) => setCaptchaAnswer(e.target.value)}
+                required
+              />
+            </div>
+          )}
 
           <button
             type="submit"

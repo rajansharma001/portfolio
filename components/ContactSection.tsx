@@ -11,10 +11,31 @@ interface ContactSectionProps {
 
 export default function ContactSection({ settings, onShowToast }: ContactSectionProps) {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', message: '', website_url: '' });
+  const [captchaQuestion, setCaptchaQuestion] = useState('');
+  const [captchaToken, setCaptchaToken] = useState('');
+  const [captchaAnswer, setCaptchaAnswer] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [isSent, setIsSent] = useState(false);
+
+  React.useEffect(() => {
+    fetchCaptcha();
+  }, []);
+
+  const fetchCaptcha = async () => {
+    try {
+      const res = await fetch('/api/captcha');
+      const data = await res.json();
+      if (data.question && data.token) {
+        setCaptchaQuestion(data.question);
+        setCaptchaToken(data.token);
+        setCaptchaAnswer('');
+      }
+    } catch (err) {
+      console.error('Failed to fetch CAPTCHA', err);
+    }
+  };
 
   const faqs = [
     {
@@ -45,7 +66,7 @@ export default function ContactSection({ settings, onShowToast }: ContactSection
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, captchaAnswer, captchaToken }),
       });
 
       const data = await res.json();
@@ -55,11 +76,14 @@ export default function ContactSection({ settings, onShowToast }: ContactSection
         if (onShowToast) {
           onShowToast('Message Sent Successfully!');
         }
-        setFormData({ name: '', email: '', message: '' });
+        setFormData({ name: '', email: '', message: '', website_url: '' });
+        fetchCaptcha();
       } else {
+        fetchCaptcha();
         setFormError(data.error || 'Failed to deliver message.');
       }
     } catch {
+      fetchCaptcha();
       setFormError('Network error. Please try again or email directly.');
     } finally {
       setIsSubmitting(false);
@@ -152,7 +176,6 @@ export default function ContactSection({ settings, onShowToast }: ContactSection
                 id="name"
                 className="form-input"
                 required
-                placeholder="e.g. Sarah Jenkins"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 disabled={isSubmitting}
@@ -166,10 +189,22 @@ export default function ContactSection({ settings, onShowToast }: ContactSection
                 id="email"
                 className="form-input"
                 required
-                placeholder="e.g. sarah@company.com"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 disabled={isSubmitting}
+              />
+            </div>
+
+            <div className="form-group" style={{ display: 'none', opacity: 0, position: 'absolute', left: '-9999px' }} aria-hidden="true">
+              <label htmlFor="website_url">Website</label>
+              <input
+                type="text"
+                id="website_url"
+                className="form-input"
+                tabIndex={-1}
+                autoComplete="off"
+                value={formData.website_url}
+                onChange={(e) => setFormData({ ...formData, website_url: e.target.value })}
               />
             </div>
 
@@ -179,13 +214,27 @@ export default function ContactSection({ settings, onShowToast }: ContactSection
                 id="message"
                 className="form-input"
                 required
-                placeholder="Describe your project, engineering role, or technical requirements..."
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 disabled={isSubmitting}
                 rows={4}
               ></textarea>
             </div>
+
+            {captchaQuestion && (
+              <div className="form-group">
+                <label htmlFor="captcha">Math CAPTCHA: {captchaQuestion} = ?</label>
+                <input
+                  type="text"
+                  id="captcha"
+                  className="form-input"
+                  required
+                  value={captchaAnswer}
+                  onChange={(e) => setCaptchaAnswer(e.target.value)}
+                  disabled={isSubmitting}
+                />
+              </div>
+            )}
 
             <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '0.5rem' }} disabled={isSubmitting}>
               <Send size={16} />
