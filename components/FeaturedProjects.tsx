@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { ExternalLink, Github, ChevronDown } from 'lucide-react';
+import { ExternalLink, Github, ChevronDown, Layers, Terminal } from 'lucide-react';
 import { Project } from '@/lib/types';
 
 interface FeaturedProjectsProps {
@@ -14,31 +14,17 @@ export default function FeaturedProjects({ projects, onOpenModal }: FeaturedProj
   const [visibleCount, setVisibleCount] = useState(4);
 
   const filterTabs = [
-    { label: 'All Systems', value: 'all' },
-    { label: 'Full-Stack Apps', value: 'saas' },
-    { label: 'Web Systems', value: 'client' },
+    { label: `All Systems (${projects.length})`, value: 'all' },
+    { label: 'Full-Stack & SaaS', value: 'saas' },
+    { label: 'Client Platforms', value: 'client' },
+    { label: 'Personal & Labs', value: 'personal' },
+    { label: 'WordPress / CMS', value: 'wordpress' },
   ];
 
   const filteredProjects = projects.filter((p) => {
     if (activeFilter === 'all') return true;
     const type = (p.type || '').toLowerCase();
-    if (activeFilter === 'saas') {
-      return (
-        type.includes('saas') ||
-        type.includes('fullstack') ||
-        type.includes('internal') ||
-        type.includes('developer')
-      );
-    }
-    if (activeFilter === 'client') {
-      return (
-        type.includes('client') ||
-        type.includes('wordpress') ||
-        type.includes('cms') ||
-        type.includes('education')
-      );
-    }
-    return type === activeFilter;
+    return type === activeFilter.toLowerCase();
   });
 
   const displayedProjects = filteredProjects.slice(0, visibleCount);
@@ -73,11 +59,33 @@ export default function FeaturedProjects({ projects, onOpenModal }: FeaturedProj
       </div>
 
       <div className="projects-list">
-        {displayedProjects.map((project) => (
-          <article key={project.id} className="project-card">
+        {displayedProjects.map((project, idx) => (
+          <article key={project.id || idx} className="project-card">
             <div className="project-info">
-              <h3 className="text-h2">{project.title.toUpperCase()}</h3>
-              <p className="project-desc">{project.description}</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                <span className="tag" style={{ background: 'var(--text-primary)', color: 'var(--bg-primary)', fontWeight: '700', fontSize: '0.7rem' }}>
+                  {project.type || 'SYSTEM'}
+                </span>
+                {project.impact && (
+                  <span style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--accent)' }}>
+                    • Verified Architecture
+                  </span>
+                )}
+              </div>
+
+              <h3 className="text-h2" style={{ fontSize: 'clamp(1.5rem, 3vw, 2.2rem)', lineHeight: '1.2', marginBottom: '12px' }}>
+                {project.title}
+              </h3>
+
+              <p className="project-desc" style={{ marginBottom: '1rem', color: 'var(--text-secondary)' }}>
+                {project.description}
+              </p>
+
+              {project.impact && (
+                <div style={{ background: 'var(--bg-hover)', borderLeft: '2px solid var(--accent)', padding: '8px 12px', fontSize: '0.85rem', color: 'var(--text-primary)', marginBottom: '1.25rem', fontFamily: 'var(--font-mono)' }}>
+                  {project.impact}
+                </div>
+              )}
 
               <div className="tag-group">
                 {(project.techStack || []).map((tech) => (
@@ -93,7 +101,7 @@ export default function FeaturedProjects({ projects, onOpenModal }: FeaturedProj
                   className="btn btn-primary btn-sm open-modal-btn"
                   onClick={() => onOpenModal(project)}
                 >
-                  Inspect Specs
+                  Inspect Specifications
                 </button>
 
                 {project.liveUrl && (
@@ -115,7 +123,7 @@ export default function FeaturedProjects({ projects, onOpenModal }: FeaturedProj
                     rel="noopener noreferrer"
                     className="btn btn-outline btn-sm"
                     style={{ padding: '0.5rem 0.75rem' }}
-                    title="Source Code"
+                    title="Source Repository"
                   >
                     <Github size={14} />
                   </a>
@@ -140,6 +148,7 @@ export default function FeaturedProjects({ projects, onOpenModal }: FeaturedProj
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     backgroundColor: 'var(--bg-primary)',
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
                   }}
                 />
               ) : (
@@ -151,7 +160,7 @@ export default function FeaturedProjects({ projects, onOpenModal }: FeaturedProj
                     background: 'var(--bg-primary)',
                     display: 'flex',
                     flexDirection: 'column',
-                    padding: '1rem',
+                    padding: '1.5rem',
                     gap: '1rem',
                   }}
                 >
@@ -168,11 +177,11 @@ export default function FeaturedProjects({ projects, onOpenModal }: FeaturedProj
       </div>
 
       {hasMore && (
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '5rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '4rem' }}>
           <button
             onClick={handleLoadMore}
             className="btn btn-outline"
-            style={{ padding: '1rem 3rem', display: 'flex', alignItems: 'center', gap: '8px' }}
+            style={{ padding: '1rem 3rem', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', fontWeight: '700' }}
           >
             Load More Projects ({filteredProjects.length - visibleCount} remaining) <ChevronDown size={16} />
           </button>

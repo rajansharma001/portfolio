@@ -52,9 +52,15 @@ export default function Header() {
   return (
     <header className="site-header" id="header">
       <div className="container nav-container">
-        <Link href="/" className="logo">
-          Rajan.
-        </Link>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+          <Link href="/" className="logo">
+            Rajan.
+          </Link>
+          <div className="availability-dot" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
+            <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#10b981', display: 'inline-block', boxShadow: '0 0 8px rgba(16,185,129,0.6)' }} />
+            <span className="availability-text">Open for Roles</span>
+          </div>
+        </div>
 
         <nav className={`nav-links ${mobileMenuOpen ? 'active' : ''}`} id="nav-links">
           <Link
@@ -62,7 +68,7 @@ export default function Header() {
             className="nav-item"
             onClick={() => setMobileMenuOpen(false)}
           >
-            Projects
+            Projects (16)
           </Link>
           <Link
             href="/#skills"

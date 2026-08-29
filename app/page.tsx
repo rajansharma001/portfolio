@@ -11,22 +11,36 @@ import ProcessGrid from '@/components/ProcessGrid';
 import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
 import Modal from '@/components/Modal';
-import LoadingScreen from '@/components/LoadingScreen';
 import { Project, SkillsMap, ExperienceItem, PortfolioSettings } from '@/lib/types';
 
 export default function HomePage() {
-  const [settings, setSettings] = useState<PortfolioSettings | null>(null);
+  const [settings, setSettings] = useState<PortfolioSettings | null>({
+    name: 'Rajan Sharma',
+    role: 'Full-Stack Software Engineer',
+    headline: 'Building production-grade web systems, REST APIs & scalable backends.',
+    location: 'Kathmandu, Bagmati Prov, Nepal (UTC +5:45)',
+    email: 'email.rajan001@gmail.com',
+    phone: '+977 9800000000',
+    isAvailableForHire: true,
+    availabilityBadgeText: 'Available for Roles',
+    resumeUrl: '/uploads/resume.pdf',
+    bio: 'Full-Stack Software Engineer specializing in Next.js, TypeScript, Node.js, Express, PostgreSQL, and MongoDB architectures.',
+    codeSnippet: `// rajan.config.ts\nexport const engineer = {\n  name: "Rajan Sharma",\n  role: "Full-Stack Software Engineer",\n  location: "Kathmandu, Nepal",\n  stack: ["Next.js", "TypeScript", "Node.js", "Express", "PostgreSQL", "MongoDB"],\n  projects: 16,\n  status: "Available for Engineering Roles"\n};`,
+    heroTechChips: [],
+    heroStats: [],
+    whatIBring: [],
+  });
+
   const [projects, setProjects] = useState<Project[]>([]);
   const [skills, setSkills] = useState<SkillsMap>({});
   const [experience, setExperience] = useState<ExperienceItem[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [loading, setLoading] = useState(true);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
 
   const cursorRef = useRef<HTMLDivElement>(null);
 
-  // 1. Fetch dynamic data from MongoDB & track visitor view
+  // 1. Fetch dynamic data from MongoDB in background & track visitor view
   useEffect(() => {
     async function fetchData() {
       try {
@@ -37,22 +51,18 @@ export default function HomePage() {
         }).catch(() => {});
 
         const [resSettings, resProjects, resSkills, resExp] = await Promise.all([
-          fetch('/api/settings').then((r) => r.json()),
-          fetch('/api/projects').then((r) => r.json()),
-          fetch('/api/skills').then((r) => r.json()),
-          fetch('/api/experience').then((r) => r.json()),
+          fetch('/api/settings').then((r) => r.json()).catch(() => null),
+          fetch('/api/projects').then((r) => r.json()).catch(() => []),
+          fetch('/api/skills').then((r) => r.json()).catch(() => ({})),
+          fetch('/api/experience').then((r) => r.json()).catch(() => []),
         ]);
 
-        setSettings(resSettings);
-        setProjects(resProjects || []);
-        setSkills(resSkills || {});
-        setExperience(resExp || []);
+        if (resSettings && resSettings.name) setSettings(resSettings);
+        if (Array.isArray(resProjects) && resProjects.length > 0) setProjects(resProjects);
+        if (resSkills && Object.keys(resSkills).length > 0) setSkills(resSkills);
+        if (Array.isArray(resExp) && resExp.length > 0) setExperience(resExp);
       } catch (err) {
         console.error('Failed to load portfolio data:', err);
-      } finally {
-        setTimeout(() => {
-          setLoading(false);
-        }, 500);
       }
     }
 
@@ -112,7 +122,7 @@ export default function HomePage() {
     handleScroll();
 
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [loading]);
+  }, []);
 
   const handleShowToast = (msg: string) => {
     setToastMessage(msg);
@@ -120,10 +130,6 @@ export default function HomePage() {
       setToastMessage(null);
     }, 4000);
   };
-
-  if (loading) {
-    return <LoadingScreen />;
-  }
 
   return (
     <>

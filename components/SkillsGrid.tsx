@@ -8,52 +8,30 @@ interface SkillsGridProps {
 export default function SkillsGrid({ skills }: SkillsGridProps) {
   const defaultCategories = [
     {
-      title: 'Frontend Development',
-      list: [
-        'JavaScript (ES6+)',
-        'TypeScript',
-        'React / Next.js',
-        'Tailwind CSS / Shadcn',
-        'HTML5 / CSS Modules',
-      ],
+      title: 'Frontend & Client Architecture',
+      list: ['Next.js 16 (App Router)', 'React 19', 'TypeScript', 'Tailwind CSS', 'TanStack Query', 'HTML5 / SCSS', 'Responsive UI/UX'],
     },
     {
-      title: 'Backend & Databases',
-      list: [
-        'Node.js / Express',
-        'REST API Architecture',
-        'PostgreSQL / Prisma',
-        'MongoDB / Mongoose',
-        'JWT & OAuth',
-      ],
+      title: 'Backend & Database Systems',
+      list: ['Node.js', 'Express.js', 'PostgreSQL (Prisma)', 'MongoDB (Mongoose)', 'RESTful API Architecture', 'JWT Authentication & RBAC', 'Zod Data Validation'],
     },
     {
-      title: 'CMS & Design',
-      list: [
-        'WordPress',
-        'Elementor Interface Design',
-        'PHP Basics',
-        'UI/UX Design Systems',
-      ],
+      title: 'Geospatial & Data Engineering',
+      list: ['OpenStreetMap Data Ingestion', 'Overpass API & Overpass Kumi', 'Valhalla Routing Engine', 'OSRM Fallback Integration', 'Bounding Box Spatial Queries', 'ETL Data Pipelines'],
     },
     {
-      title: 'DevOps & Tools',
-      list: [
-        'Git / GitHub',
-        'Linux Server Administration',
-        'cPanel Deployment',
-        'Postman / API Testing',
-      ],
+      title: 'Security, Cloud & DevOps',
+      list: ['Cloudinary Media Management', 'PBKDF2 Password Hashing', 'HMAC Session Security', 'Git & GitHub Workflows', 'cPanel & Linux Node Hosting', 'Rate Limiting & CORS Hardening'],
     },
   ];
 
-  // Map dynamic skills if available
-  const categoriesToRender = skills && Object.keys(skills).length > 0
-    ? Object.entries(skills).map(([key, items]) => ({
-        title: key,
-        list: items,
-      }))
-    : defaultCategories;
+  const categoriesToRender =
+    skills && Object.keys(skills).length > 0
+      ? Object.entries(skills).map(([key, items]) => ({
+          title: key,
+          list: items,
+        }))
+      : defaultCategories;
 
   return (
     <section id="skills" className="section container reveal">

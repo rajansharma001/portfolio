@@ -7,41 +7,42 @@ interface ExperienceTimelineProps {
 }
 
 export default function ExperienceTimeline({ experience }: ExperienceTimelineProps) {
-  // Fallback defaults if experience array is empty
   const defaultExperience: ExperienceItem[] = [
     {
       id: 'exp_1',
       role: 'Full-Stack Software Engineer',
-      company: 'Independent Engineer',
-      period: '2023 — Present',
+      company: 'Independent Engineering & Client Delivery',
+      period: '2024 — Present',
       location: 'Kathmandu, Nepal',
-      description: 'Architect and deploy production-ready full-stack applications with Next.js, TypeScript, and Node.js backend services.',
+      description: 'Architecting and deploying full-stack web applications, custom CMS solutions, and data pipelines.',
       highlights: [
-        'Architect and deploy production-ready full-stack applications with Next.js, TypeScript, and Node.js backend services.',
-        'Designed high-capacity business platforms including the NexZen Restro management suite and custom tour portals (Ambikeshori Travels).',
-        'Execute entire technical cycles: schema modeling, responsive interface design, authentication flows, and Linux/cPanel server deployment.',
+        'Built Advanced LMS with multi-role RBAC, email verification, Cloudinary storage, and audit logs.',
+        'Developed RestroOS restaurant management platform and high-performance POS system.',
+        'Engineered OpenStreetMap Nepal data ingestion pipeline covering all 77 districts with Prisma and PostgreSQL.',
+        'Launched production tourism portals (Ambikeshori Travels, BMW Tours) reducing client operational overhead.',
       ],
     },
     {
       id: 'exp_2',
       role: 'Data Entry Operator',
       company: 'Souq Al Baladi',
-      period: 'Jul 2023 — Jul 2025',
+      period: 'Nov 2022 — Dec 2024',
       location: 'Qatar',
-      description: 'Managed complex enterprise databases, maintaining zero-error records across large-scale daily inventory workflows.',
+      description: 'Managed enterprise retail inventory datasets, catalog updates, and operational record accuracy.',
       highlights: [
-        'Managed complex enterprise databases, maintaining zero-error records across large-scale daily inventory workflows.',
+        'Processed and maintained high-volume SKU databases with high precision and zero discrepancies.',
+        'Assisted in data hygiene, inventory reconciliation, and reporting workflows.',
       ],
     },
     {
       id: 'exp_3',
-      role: 'Computer Operator / IT Specialist',
-      company: 'Manakamana Trade Pvt. Ltd.',
-      period: '2022 — 2023',
+      role: 'Diploma in Electrical Engineering',
+      company: 'Council for Technical Education and Vocational Training (CTEVT)',
+      period: '2016 — 2019',
       location: 'Nepal',
-      description: 'Oversee network operations, hardware diagnosis, system maintenance, and staff technical support.',
+      description: 'Completed foundational engineering coursework in circuit design, logic systems, and technical mathematics.',
       highlights: [
-        'Oversee network operations, hardware diagnosis, system maintenance, and staff technical support.',
+        'Built strong analytical problem-solving foundation applied to software architecture and backend algorithms.',
       ],
     },
   ];
@@ -81,12 +82,12 @@ export default function ExperienceTimeline({ experience }: ExperienceTimelinePro
           <div className="side-box">
             <h3>Education</h3>
             <div className="edu-item">
-              <div className="edu-degree">Diploma in Computer Engineering</div>
-              <div className="edu-school">CTEVT (3-Year Technical Track)</div>
+              <div className="edu-degree">Diploma in Electrical Engineering</div>
+              <div className="edu-school">CTEVT (3-Year Technical Engineering Track)</div>
             </div>
             <div className="edu-item">
               <div className="edu-degree">Bachelor of Business Studies</div>
-              <div className="edu-school">Enrolled / Ongoing</div>
+              <div className="edu-school">Enrolled / Higher Education</div>
             </div>
           </div>
 
@@ -94,10 +95,10 @@ export default function ExperienceTimeline({ experience }: ExperienceTimelinePro
             <h3>Languages</h3>
             <ul className="job-bullets" style={{ paddingLeft: 0, listStyle: 'none' }}>
               <li style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                <strong>English</strong> <span>Professional</span>
+                <strong>English</strong> <span>Professional Proficiency</span>
               </li>
               <li style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                <strong>Nepali</strong> <span>Native</span>
+                <strong>Nepali</strong> <span>Native Speaker</span>
               </li>
               <li style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                 <strong>Hindi</strong> <span>Fluent</span>
