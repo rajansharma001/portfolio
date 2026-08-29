@@ -21,19 +21,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   try {
-    await connectToDatabase();
-    const posts = await PostModel.find({ published: true }).lean();
+    if (process.env.MONGODB_URI) {
+      await connectToDatabase();
+      const posts = await PostModel.find({ published: true }).lean();
 
-    posts.forEach((post: any) => {
-      entries.push({
-        url: `${baseUrl}/blog/${post.slug}`,
-        lastModified: new Date(post.publishedAt || Date.now()),
-        changeFrequency: 'weekly',
-        priority: 0.8,
+      posts.forEach((post: any) => {
+        entries.push({
+          url: `${baseUrl}/blog/${post.slug}`,
+          lastModified: new Date(post.publishedAt || Date.now()),
+          changeFrequency: 'weekly',
+          priority: 0.8,
+        });
       });
-    });
-  } catch (e) {
-    console.error('Error generating dynamic sitemap from MongoDB:', e);
+    }
+  } catch {
+    // Graceful fallback during isolated build steps
   }
 
   return entries;
