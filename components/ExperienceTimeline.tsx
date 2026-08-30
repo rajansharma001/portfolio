@@ -1,12 +1,12 @@
 import React from 'react';
-import { ExperienceItem, PortfolioSettings } from '@/lib/types';
+import { ExperienceItem, PortfolioSettings, DEFAULT_EDUCATION, DEFAULT_LANGUAGES } from '@/lib/types';
 
 interface ExperienceTimelineProps {
   experience: ExperienceItem[];
   settings?: PortfolioSettings | null;
 }
 
-export default function ExperienceTimeline({ experience }: ExperienceTimelineProps) {
+export default function ExperienceTimeline({ experience, settings }: ExperienceTimelineProps) {
   const defaultExperience: ExperienceItem[] = [
     {
       id: 'exp_1',
@@ -48,6 +48,8 @@ export default function ExperienceTimeline({ experience }: ExperienceTimelinePro
   ];
 
   const itemsToRender = experience && experience.length > 0 ? experience : defaultExperience;
+  const educationItems = settings?.education && settings.education.length > 0 ? settings.education : DEFAULT_EDUCATION;
+  const languageItems = settings?.languages && settings.languages.length > 0 ? settings.languages : DEFAULT_LANGUAGES;
 
   return (
     <section id="experience" className="section container reveal">
@@ -81,28 +83,23 @@ export default function ExperienceTimeline({ experience }: ExperienceTimelinePro
         <div className="side-col">
           <div className="side-box">
             <h3>Education</h3>
-            <div className="edu-item">
-              <div className="edu-degree">Diploma in Electrical Engineering</div>
-              <div className="edu-school">CTEVT (3-Year Technical Engineering Track)</div>
-            </div>
-            <div className="edu-item" style={{ opacity: 0.55, fontSize: '0.85em' }}>
-              <div className="edu-degree">Bachelor of Business Studies</div>
-              <div className="edu-school">Enrolled / Higher Education</div>
-            </div>
+            {educationItems.map((edu, idx) => (
+              <div key={idx} className="edu-item" style={edu.degree.includes('Business') ? { opacity: 0.55, fontSize: '0.85em' } : {}}>
+                <div className="edu-degree">{edu.degree}</div>
+                <div className="edu-school">{edu.school}</div>
+                {edu.note && <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>{edu.note}</div>}
+              </div>
+            ))}
           </div>
 
           <div className="side-box">
             <h3>Languages</h3>
             <ul className="job-bullets" style={{ paddingLeft: 0, listStyle: 'none' }}>
-              <li style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                <strong>English</strong> <span>Professional Proficiency</span>
-              </li>
-              <li style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                <strong>Nepali</strong> <span>Native Speaker</span>
-              </li>
-              <li style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                <strong>Hindi</strong> <span>Fluent</span>
-              </li>
+              {languageItems.map((lang, idx) => (
+                <li key={idx} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                  <strong>{lang.language}</strong> <span>{lang.proficiency}</span>
+                </li>
+              ))}
             </ul>
           </div>
         </div>

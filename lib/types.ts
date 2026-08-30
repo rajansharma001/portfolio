@@ -96,10 +96,106 @@ export const DEFAULT_VISIBILITY: SectionVisibility = {
   showThemeToggle: true,
 };
 
+export interface FAQItem {
+  id?: string;
+  q: string;
+  a: string;
+}
+
+export interface ProcessStep {
+  num: string;
+  title: string;
+  desc: string;
+}
+
+export interface EducationItem {
+  id?: string;
+  degree: string;
+  school: string;
+  note?: string;
+}
+
+export interface LanguageItem {
+  id?: string;
+  language: string;
+  proficiency: string;
+}
+
+export interface QuickFacts {
+  location: string;
+  coreStack: string;
+  focus: string;
+}
+
+export const DEFAULT_FAQS: FAQItem[] = [
+  {
+    q: 'Engineering Roles & Availability',
+    a: 'I am open to full-time remote engineering positions, hybrid roles, and contract architectural projects worldwide.',
+  },
+  {
+    q: 'Full-Stack Technical Scope',
+    a: 'From relational/document database schemas and REST APIs to reactive Next.js frontends and production deployment, I handle end-to-end technical delivery.',
+  },
+  {
+    q: 'Timezone & Collaboration',
+    a: 'Based in Kathmandu, Nepal (UTC+5:45), coordinating seamlessly with Asian, European, and US working schedules.',
+  },
+];
+
+export const DEFAULT_PROCESS_STEPS: ProcessStep[] = [
+  {
+    num: '01',
+    title: 'Analyze & Architect',
+    desc: 'Defining system requirements, database schema design, and technical feasibility for scalable infrastructure.',
+  },
+  {
+    num: '02',
+    title: 'Backend Engineering',
+    desc: 'Building secure REST APIs, authentication pipelines, and data ingestion services using Node.js & PostgreSQL.',
+  },
+  {
+    num: '03',
+    title: 'Frontend Integration',
+    desc: 'Connecting server actions to Next.js clients, optimizing caching layers, and ensuring responsive UI/UX.',
+  },
+  {
+    num: '04',
+    title: 'Deploy & Scale',
+    desc: 'CI/CD pipeline configuration, server provisioning, containerization, and post-launch monitoring.',
+  },
+];
+
+export const DEFAULT_EDUCATION: EducationItem[] = [
+  {
+    degree: 'Diploma in Electrical Engineering',
+    school: 'CTEVT (3-Year Technical Engineering Track)',
+    note: 'Engineering fundamentals, logic circuits & technical math.',
+  },
+  {
+    degree: 'Bachelor of Business Studies',
+    school: 'Enrolled / Higher Education',
+    note: 'Organizational strategy and business context.',
+  },
+];
+
+export const DEFAULT_LANGUAGES: LanguageItem[] = [
+  { language: 'English', proficiency: 'Professional Proficiency' },
+  { language: 'Nepali', proficiency: 'Native Speaker' },
+  { language: 'Hindi', proficiency: 'Fluent' },
+];
+
+export const DEFAULT_QUICK_FACTS: QuickFacts = {
+  location: 'Kathmandu, Bagmati Prov, Nepal',
+  coreStack: 'Next.js / Node.js / PostgreSQL / MongoDB',
+  focus: 'Scalable Architecture & Web Systems',
+};
+
 export interface PortfolioSettings {
   name: string;
   role: string;
   headline: string;
+  heroImpactText?: string;
+  quickFacts?: QuickFacts;
   location: string;
   email: string;
   phone: string;
@@ -109,4 +205,8 @@ export interface PortfolioSettings {
   bio: string;
   codeSnippet: string;
   sectionVisibility: SectionVisibility;
+  faqs?: FAQItem[];
+  processSteps?: ProcessStep[];
+  education?: EducationItem[];
+  languages?: LanguageItem[];
 }

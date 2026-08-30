@@ -83,7 +83,7 @@ export default function Hero({ settings, visibility }: HeroProps) {
               {settings?.headline || 'Building production-grade web systems, REST APIs & scalable backends.'}
             </p>
             <p className="hero-impact" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.85rem', color: 'var(--accent)', marginTop: '1rem', fontWeight: 600, letterSpacing: '0.02em' }}>
-              16 production systems shipped across LMS, POS, tourism & geospatial domains.
+              {settings?.heroImpactText || '16 production systems shipped across LMS, POS, tourism & geospatial domains.'}
             </p>
           </div>
 
@@ -142,21 +142,21 @@ export default function Hero({ settings, visibility }: HeroProps) {
           <MapPin size={14} className="fact-icon" />
           <div>
             <span className="fact-label">Location</span>
-            <span className="fact-value">{settings?.location || 'Kathmandu, Bagmati Prov, Nepal'}</span>
+            <span className="fact-value">{settings?.quickFacts?.location || settings?.location || 'Kathmandu, Bagmati Prov, Nepal'}</span>
           </div>
         </div>
         <div className="fact-item">
           <Layers size={14} className="fact-icon" />
           <div>
             <span className="fact-label">Core Stack</span>
-            <span className="fact-value">Next.js / Node.js / PostgreSQL / MongoDB</span>
+            <span className="fact-value">{settings?.quickFacts?.coreStack || 'Next.js / Node.js / PostgreSQL / MongoDB'}</span>
           </div>
         </div>
         <div className="fact-item">
           <Cpu size={14} className="fact-icon" />
           <div>
             <span className="fact-label">Focus</span>
-            <span className="fact-value">Scalable Architecture & Web Systems</span>
+            <span className="fact-value">{settings?.quickFacts?.focus || 'Scalable Architecture & Web Systems'}</span>
           </div>
         </div>
       </div>

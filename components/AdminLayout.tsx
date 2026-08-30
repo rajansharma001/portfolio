@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { FolderKanban, Cpu, Briefcase, Settings, LogOut, ArrowLeft, Mail, LayoutDashboard, BookOpen } from 'lucide-react';
+import { FolderKanban, Cpu, Briefcase, Settings, LogOut, ArrowLeft, Mail, LayoutDashboard, BookOpen, HelpCircle } from 'lucide-react';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -41,6 +41,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const navItems = [
     { label: 'Overview', href: '/admin', icon: <LayoutDashboard size={18} /> },
     { label: 'Messages', href: '/admin/messages', icon: <Mail size={18} />, badge: unreadCount },
+    { label: 'Content & FAQs', href: '/admin/content', icon: <HelpCircle size={18} /> },
     { label: 'Blog Articles', href: '/admin/posts', icon: <BookOpen size={18} /> },
     { label: 'Projects', href: '/admin/projects', icon: <FolderKanban size={18} /> },
     { label: 'Skills', href: '/admin/skills', icon: <Cpu size={18} /> },

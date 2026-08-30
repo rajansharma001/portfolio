@@ -1,28 +1,14 @@
 import React from 'react';
+import { PortfolioSettings, DEFAULT_PROCESS_STEPS } from '@/lib/types';
 
-export default function ProcessGrid() {
-  const steps = [
-    {
-      num: '01',
-      title: 'Analyze & Architect',
-      desc: 'Defining system requirements, database schema design, and technical feasibility for scalable infrastructure.',
-    },
-    {
-      num: '02',
-      title: 'Backend Engineering',
-      desc: 'Building secure REST APIs, authentication pipelines, and data ingestion services using Node.js & PostgreSQL.',
-    },
-    {
-      num: '03',
-      title: 'Frontend Integration',
-      desc: 'Connecting server actions to Next.js clients, optimizing caching layers, and ensuring responsive UI/UX.',
-    },
-    {
-      num: '04',
-      title: 'Deploy & Scale',
-      desc: 'CI/CD pipeline configuration, server provisioning, containerization, and post-launch monitoring.',
-    },
-  ];
+interface ProcessGridProps {
+  settings?: PortfolioSettings | null;
+}
+
+export default function ProcessGrid({ settings }: ProcessGridProps) {
+  const steps = settings?.processSteps && settings.processSteps.length > 0 
+    ? settings.processSteps 
+    : DEFAULT_PROCESS_STEPS;
 
   return (
     <section id="process" className="section container reveal">

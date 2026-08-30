@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { PortfolioSettings } from '@/lib/types';
+import { PortfolioSettings, DEFAULT_FAQS } from '@/lib/types';
 import { Mail, Send, CheckCircle2, AlertCircle } from 'lucide-react';
 
 interface ContactSectionProps {
@@ -37,20 +37,7 @@ export default function ContactSection({ settings, onShowToast }: ContactSection
     }
   };
 
-  const faqs = [
-    {
-      q: 'Engineering Roles & Availability',
-      a: 'I am open to full-time remote engineering positions, hybrid roles, and contract architectural projects worldwide.',
-    },
-    {
-      q: 'Full-Stack Technical Scope',
-      a: 'From relational/document database schemas and REST APIs to reactive Next.js frontends and production deployment, I handle end-to-end technical delivery.',
-    },
-    {
-      q: 'Timezone & Collaboration',
-      a: 'Based in Kathmandu, Nepal (UTC+5:45), coordinating seamlessly with Asian, European, and US working schedules.',
-    },
-  ];
+  const faqs = settings?.faqs && settings.faqs.length > 0 ? settings.faqs : DEFAULT_FAQS;
 
   const toggleFaq = (idx: number) => {
     setActiveFaq(activeFaq === idx ? null : idx);

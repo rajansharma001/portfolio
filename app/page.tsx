@@ -139,7 +139,7 @@ export default function HomePage() {
           <ExperienceTimeline experience={experience} settings={settings} />
         )}
 
-        {vis.showProcess && <ProcessGrid />}
+        {vis.showProcess && <ProcessGrid settings={settings} />}
 
         {vis.showContact && (
           <ContactSection settings={settings} onShowToast={handleShowToast} />

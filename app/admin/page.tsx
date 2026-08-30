@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import Link from 'next/link';
-import { Users, Eye, Globe, MapPin, ArrowUpRight, FolderKanban, Mail, FileText, Upload, CheckCircle2, Database, RefreshCw, AlertCircle } from 'lucide-react';
+import { Users, Eye, Globe, MapPin, ArrowUpRight, FolderKanban, Mail, FileText, Upload, CheckCircle2, Database, RefreshCw, AlertCircle, HelpCircle } from 'lucide-react';
 import { Project, SkillsMap, ExperienceItem, PortfolioSettings } from '@/lib/types';
 
 interface VisitRecord {
@@ -364,6 +364,14 @@ export default function AdminDashboardPage() {
               style={{ justifyContent: 'flex-start', padding: '12px', gap: '8px', fontSize: '13px' }}
             >
               Manage Skills ({Object.keys(skills).length} categories)
+            </Link>
+
+            <Link
+              href="/admin/content"
+              className="btn btn-outline"
+              style={{ justifyContent: 'flex-start', padding: '12px', gap: '8px', fontSize: '13px' }}
+            >
+              <HelpCircle size={16} /> Content & FAQs
             </Link>
 
             <Link
