@@ -73,7 +73,8 @@ export default function BlogListingPage() {
     <div className="page-wrapper">
       <Header />
 
-      <main className="container blog-main">
+      <main className="blog-main">
+        <div className="container">
         {/* Page Header */}
         <div className="blog-header">
           <span className="section-num">
@@ -246,6 +247,7 @@ export default function BlogListingPage() {
             </div>
           </aside>
 
+        </div>
         </div>
       </main>
 

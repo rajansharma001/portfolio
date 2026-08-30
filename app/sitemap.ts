@@ -4,7 +4,7 @@ import { PostModel } from '@/models/Post';
 import { ProjectModel } from '@/models/Project';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rajansharma.dev';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rajansharma.info.np';
 
   const entries: MetadataRoute.Sitemap = [
     {

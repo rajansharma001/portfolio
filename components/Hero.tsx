@@ -82,6 +82,9 @@ export default function Hero({ settings, visibility }: HeroProps) {
             <p className="hero-headline">
               {settings?.headline || 'Building production-grade web systems, REST APIs & scalable backends.'}
             </p>
+            <p className="hero-impact" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.85rem', color: 'var(--accent)', marginTop: '1rem', fontWeight: 600, letterSpacing: '0.02em' }}>
+              16 production systems shipped across LMS, POS, tourism & geospatial domains.
+            </p>
           </div>
 
           <div className="hero-actions">

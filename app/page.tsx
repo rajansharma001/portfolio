@@ -35,6 +35,7 @@ export default function HomePage() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   const vis: SectionVisibility = settings.sectionVisibility || DEFAULT_VISIBILITY;
 
@@ -63,6 +64,8 @@ export default function HomePage() {
         }
       } catch (err) {
         console.error('Failed to load portfolio data:', err);
+      } finally {
+        setLoading(false);
       }
     }
     fetchData();
@@ -127,7 +130,7 @@ export default function HomePage() {
         {vis.showMarquee && <Marquee />}
 
         {vis.showProjects && (
-          <FeaturedProjects projects={projects} onOpenModal={(p) => setSelectedProject(p)} />
+          <FeaturedProjects projects={projects} loading={loading} onOpenModal={(p) => setSelectedProject(p)} />
         )}
 
         {vis.showSkills && <SkillsGrid skills={skills} />}

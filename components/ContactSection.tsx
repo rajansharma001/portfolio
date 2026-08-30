@@ -127,7 +127,7 @@ export default function ContactSection({ settings, onShowToast }: ContactSection
 
           <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '1.5rem' }}>
             <span className="label" style={{ display: 'block', marginBottom: '0.5rem' }}>
-              Direct Electronic Mail
+              Email
             </span>
             <a
               href={`mailto:${settings?.email || 'email.rajan001@gmail.com'}`}

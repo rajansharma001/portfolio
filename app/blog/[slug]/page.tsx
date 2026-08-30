@@ -73,6 +73,8 @@ export default function BlogPostDetailPage({ params }: Context) {
     );
   }
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rajansharma.info.np';
+
   // Generate structured schema for search engines and AI bots
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -84,7 +86,7 @@ export default function BlogPostDetailPage({ params }: Context) {
     author: {
       '@type': 'Person',
       name: 'Rajan Sharma',
-      url: 'https://rajansharma.dev',
+      url: siteUrl,
     },
     publisher: {
       '@type': 'Person',
@@ -92,7 +94,7 @@ export default function BlogPostDetailPage({ params }: Context) {
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://rajansharma.dev/blog/${post.slug}`,
+      '@id': `${siteUrl}/blog/${post.slug}`,
     },
     keywords: post.tags ? post.tags.join(', ') : 'Software Engineering, Full Stack, Next.js',
   };

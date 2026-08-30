@@ -85,7 +85,7 @@ export default function ExperienceTimeline({ experience }: ExperienceTimelinePro
               <div className="edu-degree">Diploma in Electrical Engineering</div>
               <div className="edu-school">CTEVT (3-Year Technical Engineering Track)</div>
             </div>
-            <div className="edu-item">
+            <div className="edu-item" style={{ opacity: 0.55, fontSize: '0.85em' }}>
               <div className="edu-degree">Bachelor of Business Studies</div>
               <div className="edu-school">Enrolled / Higher Education</div>
             </div>

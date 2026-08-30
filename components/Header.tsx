@@ -78,6 +78,7 @@ export default function Header({ visibility, projectCount }: HeaderProps) {
               <div className="availability-badge">
                 <span className="status-dot" />
                 <span className="availability-text">Open for Roles</span>
+                <span style={{ fontSize: '0.6rem', color: 'var(--text-muted)', marginLeft: '4px', fontFamily: 'var(--font-mono)' }}>Aug 2026</span>
               </div>
             )}
           </div>
