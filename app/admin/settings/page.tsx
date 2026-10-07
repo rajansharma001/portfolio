@@ -228,7 +228,7 @@ export default function AdminSettingsPage() {
 
       <Alert type={message.type as 'error' | 'success' | 'warning'} message={message.text} />
 
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
         {/* Left Column: Profile Form + Security Password Box */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           {/* Main Settings Form */}
@@ -237,7 +237,7 @@ export default function AdminSettingsPage() {
               Identity & Contact Details
             </h2>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
               <div className="form-group">
                 <label className="form-label">Full Name</label>
                 <input
@@ -261,7 +261,7 @@ export default function AdminSettingsPage() {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
               <div className="form-group">
                 <label className="form-label">Email Address</label>
                 <input
@@ -322,7 +322,7 @@ export default function AdminSettingsPage() {
               Don't forget to save changes above.
             </p>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
               {visibilityFields.map((field) => (
                 <div key={field.key} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px', background: 'var(--bg-main)', borderRadius: '8px', border: '1px solid var(--border-light)' }}>
                   <span style={{ fontSize: '0.95rem', fontWeight: '500', color: 'var(--text-primary)' }}>
@@ -372,7 +372,7 @@ export default function AdminSettingsPage() {
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px' }}>
                 <div className="form-group">
                   <label className="form-label">New Password</label>
                   <input
