@@ -9,12 +9,11 @@ import {
   CheckCircle2,
   Cpu,
   Layers,
-  Sparkles,
-  AlertCircle,
   Clock,
   User,
   Workflow,
   ArrowRight,
+  ShieldCheck,
 } from 'lucide-react';
 
 interface ProjectModalProps {
@@ -67,7 +66,7 @@ export default function ProjectModal({ project, onClose, onOpenContact }: Projec
         left: 0,
         width: '100%',
         height: '100%',
-        background: 'rgba(0, 0, 0, 0.75)',
+        background: 'rgba(0, 0, 0, 0.8)',
         backdropFilter: 'blur(6px)',
         zIndex: 2000,
         display: 'flex',
@@ -86,10 +85,11 @@ export default function ProjectModal({ project, onClose, onOpenContact }: Projec
           overflowY: 'auto',
           background: 'var(--bg-secondary)',
           border: '1px solid var(--border-color)',
-          borderRadius: '12px',
-          padding: '2rem 2.25rem',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+          borderRadius: '4px',
+          padding: '2.25rem',
+          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4)',
           position: 'relative',
+          color: 'var(--text-primary)',
         }}
       >
         {/* Top Bar: Tags & Close Button */}
@@ -98,7 +98,7 @@ export default function ProjectModal({ project, onClose, onOpenContact }: Projec
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'flex-start',
-            marginBottom: '1.25rem',
+            marginBottom: '1.5rem',
             gap: '1rem',
           }}
         >
@@ -111,9 +111,10 @@ export default function ProjectModal({ project, onClose, onOpenContact }: Projec
                 textTransform: 'uppercase',
                 background: 'var(--bg-primary)',
                 border: '1px solid var(--border-color)',
-                padding: '3px 10px',
-                borderRadius: '4px',
-                color: 'var(--accent)',
+                padding: '4px 10px',
+                borderRadius: '2px',
+                color: 'var(--text-primary)',
+                letterSpacing: '0.04em',
               }}
             >
               {project.type || 'Full-Stack Architecture'}
@@ -125,33 +126,34 @@ export default function ProjectModal({ project, onClose, onOpenContact }: Projec
                   fontSize: '0.7rem',
                   fontWeight: '700',
                   textTransform: 'uppercase',
-                  background: 'var(--accent)',
-                  color: '#ffffff',
-                  padding: '3px 10px',
-                  borderRadius: '4px',
+                  background: 'var(--text-primary)',
+                  color: 'var(--bg-primary)',
+                  padding: '4px 10px',
+                  borderRadius: '2px',
+                  letterSpacing: '0.04em',
                 }}
               >
-                ★ Featured Case Study
+                Featured Case Study
               </span>
             )}
           </div>
 
           <button
             onClick={onClose}
-            aria-label="Close Case Study Modal"
+            aria-label="Close Modal"
             style={{
-              background: 'var(--bg-primary)',
+              background: 'transparent',
               border: '1px solid var(--border-color)',
-              borderRadius: '50%',
-              width: '34px',
-              height: '34px',
+              borderRadius: '2px',
+              width: '32px',
+              height: '32px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: 'var(--text-primary)',
               cursor: 'pointer',
               flexShrink: 0,
-              transition: 'background 0.2s',
+              transition: 'all 0.15s ease',
             }}
           >
             <X size={16} />
@@ -159,27 +161,27 @@ export default function ProjectModal({ project, onClose, onOpenContact }: Projec
         </div>
 
         {/* Project Title & Tagline */}
-        <div style={{ marginBottom: '1.5rem' }}>
+        <div style={{ marginBottom: '1.75rem' }}>
           <h2
             style={{
-              fontSize: 'clamp(1.5rem, 3vw, 2rem)',
+              fontSize: 'clamp(1.5rem, 3vw, 2.1rem)',
               fontWeight: '800',
-              letterSpacing: '-0.02em',
+              letterSpacing: '-0.03em',
               lineHeight: '1.2',
               color: 'var(--text-primary)',
-              marginBottom: '6px',
+              marginBottom: '8px',
             }}
           >
             {project.title}
           </h2>
           {project.tagline && (
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: '1.5' }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: '1.6' }}>
               {project.tagline}
             </p>
           )}
         </div>
 
-        {/* Meta Stats Row */}
+        {/* Monochrome Metadata Row */}
         <div
           style={{
             display: 'grid',
@@ -187,16 +189,16 @@ export default function ProjectModal({ project, onClose, onOpenContact }: Projec
             gap: '12px',
             padding: '14px 18px',
             background: 'var(--bg-primary)',
-            borderRadius: '8px',
+            borderRadius: '2px',
             border: '1px solid var(--border-color)',
             marginBottom: '1.75rem',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <User size={16} color="var(--accent)" />
+            <User size={16} color="var(--text-primary)" />
             <div>
               <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontFamily: 'var(--font-mono)', fontWeight: '700' }}>
-                Engineering Role
+                Role
               </div>
               <div style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-primary)' }}>
                 {details.role || 'Full-Stack Software Engineer'}
@@ -205,10 +207,10 @@ export default function ProjectModal({ project, onClose, onOpenContact }: Projec
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Clock size={16} color="var(--accent)" />
+            <Clock size={16} color="var(--text-primary)" />
             <div>
               <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontFamily: 'var(--font-mono)', fontWeight: '700' }}>
-                Project Scope
+                Scope
               </div>
               <div style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-primary)' }}>
                 {details.duration || 'Production Deployment'}
@@ -217,19 +219,19 @@ export default function ProjectModal({ project, onClose, onOpenContact }: Projec
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Sparkles size={16} color="#10b981" />
+            <ShieldCheck size={16} color="var(--text-primary)" />
             <div>
               <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontFamily: 'var(--font-mono)', fontWeight: '700' }}>
-                System Status
+                Status
               </div>
-              <div style={{ fontSize: '13px', fontWeight: '700', color: '#10b981' }}>
-                ● Deployed & Operational
+              <div style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-primary)' }}>
+                Deployed & Operational
               </div>
             </div>
           </div>
         </div>
 
-        {/* Action Buttons (CTAs for Leads & Demos) */}
+        {/* Action Buttons */}
         <div style={{ display: 'flex', gap: '10px', marginBottom: '2rem', flexWrap: 'wrap' }}>
           {project.liveUrl && (
             <a
@@ -247,19 +249,13 @@ export default function ProjectModal({ project, onClose, onOpenContact }: Projec
             type="button"
             onClick={handleDiscussProject}
             className="btn btn-outline btn-sm"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              borderColor: 'var(--accent)',
-              color: 'var(--accent)',
-            }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
           >
-            <MessageSquare size={14} /> Discuss Similar Build / Hire
+            <MessageSquare size={14} /> Discuss Project / Inquire
           </button>
         </div>
 
-        {/* Problem & Solution Symmetrical Grid */}
+        {/* Problem & Solution Grid (Monochrome) */}
         <div
           style={{
             display: 'grid',
@@ -268,60 +264,56 @@ export default function ProjectModal({ project, onClose, onOpenContact }: Projec
             marginBottom: '1.75rem',
           }}
         >
-          {/* Problem */}
+          {/* Engineering Challenge */}
           <div
             style={{
               padding: '16px 18px',
               background: 'var(--bg-primary)',
-              borderRadius: '8px',
+              borderRadius: '2px',
               border: '1px solid var(--border-color)',
-              borderLeft: '4px solid #ef4444',
+              borderLeft: '3px solid var(--text-primary)',
             }}
           >
             <h4
               style={{
-                fontSize: '13px',
+                fontSize: '12px',
                 fontWeight: '700',
                 marginBottom: '8px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                color: '#ef4444',
+                color: 'var(--text-primary)',
                 textTransform: 'uppercase',
                 fontFamily: 'var(--font-mono)',
+                letterSpacing: '0.04em',
               }}
             >
-              <AlertCircle size={15} /> Engineering Challenge
+              Engineering Challenge
             </h4>
             <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: '1.6', margin: 0 }}>
               {details.problem || project.description}
             </p>
           </div>
 
-          {/* Solution */}
+          {/* Architectural Solution */}
           <div
             style={{
               padding: '16px 18px',
               background: 'var(--bg-primary)',
-              borderRadius: '8px',
+              borderRadius: '2px',
               border: '1px solid var(--border-color)',
-              borderLeft: '4px solid #10b981',
+              borderLeft: '3px solid var(--text-primary)',
             }}
           >
             <h4
               style={{
-                fontSize: '13px',
+                fontSize: '12px',
                 fontWeight: '700',
                 marginBottom: '8px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                color: '#10b981',
+                color: 'var(--text-primary)',
                 textTransform: 'uppercase',
                 fontFamily: 'var(--font-mono)',
+                letterSpacing: '0.04em',
               }}
             >
-              <CheckCircle2 size={15} /> Architectural Solution
+              Architectural Solution
             </h4>
             <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: '1.6', margin: 0 }}>
               {details.solution || project.impact || 'Engineered with clean architectural patterns, type-safety, and optimized database indexing.'}
@@ -329,34 +321,36 @@ export default function ProjectModal({ project, onClose, onOpenContact }: Projec
           </div>
         </div>
 
-        {/* Architecture Flow Section */}
+        {/* System Architecture Flow */}
         <div
           style={{
             padding: '18px 20px',
             background: 'var(--bg-primary)',
-            borderRadius: '8px',
+            borderRadius: '2px',
             border: '1px solid var(--border-color)',
             marginBottom: '1.75rem',
           }}
         >
           <h4
             style={{
-              fontSize: '14px',
+              fontSize: '13px',
               fontWeight: '700',
               marginBottom: '12px',
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
               color: 'var(--text-primary)',
+              fontFamily: 'var(--font-mono)',
+              textTransform: 'uppercase',
             }}
           >
-            <Workflow size={16} color="var(--accent)" /> System Architecture & Data Pipeline
+            <Workflow size={15} color="var(--text-primary)" /> System Architecture & Data Flow
           </h4>
           <div
             style={{
               padding: '14px 16px',
               background: 'var(--bg-secondary)',
-              borderRadius: '6px',
+              borderRadius: '2px',
               border: '1px solid var(--border-color)',
               fontFamily: 'var(--font-mono)',
               fontSize: '12px',
@@ -368,11 +362,11 @@ export default function ProjectModal({ project, onClose, onOpenContact }: Projec
               <p style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{details.architecture}</p>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <div style={{ color: 'var(--accent)' }}>
-                  [Client UI / Next.js 16] &rarr; [JWT Auth Middleware / Zod Validation] &rarr; [Node.js REST API]
+                <div>
+                  [Client Interface / Next.js] &rarr; [JWT Middleware / Validation] &rarr; [Node.js REST Engine]
                 </div>
                 <div style={{ color: 'var(--text-muted)' }}>
-                  &darr; [Atomic Queries / Aggregation Pipeline] &rarr; [MongoDB / PostgreSQL] &rarr; [Cloud CDN Storage]
+                  &darr; [Atomic Queries / Aggregation Pipeline] &rarr; [MongoDB / PostgreSQL] &rarr; [Cloud Storage]
                 </div>
               </div>
             )}
@@ -385,23 +379,25 @@ export default function ProjectModal({ project, onClose, onOpenContact }: Projec
             style={{
               padding: '18px 20px',
               background: 'var(--bg-primary)',
-              borderRadius: '8px',
+              borderRadius: '2px',
               border: '1px solid var(--border-color)',
               marginBottom: '1.75rem',
             }}
           >
             <h4
               style={{
-                fontSize: '14px',
+                fontSize: '13px',
                 fontWeight: '700',
                 marginBottom: '14px',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
                 color: 'var(--text-primary)',
+                fontFamily: 'var(--font-mono)',
+                textTransform: 'uppercase',
               }}
             >
-              <Layers size={16} color="var(--accent)" /> Key Shipped Capabilities
+              <Layers size={15} color="var(--text-primary)" /> Key Shipped Capabilities
             </h4>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '10px' }}>
               {details.features?.map((feat, idx) => (
@@ -414,11 +410,11 @@ export default function ProjectModal({ project, onClose, onOpenContact }: Projec
                     fontSize: '13px',
                     padding: '8px 12px',
                     background: 'var(--bg-secondary)',
-                    borderRadius: '6px',
+                    borderRadius: '2px',
                     border: '1px solid var(--border-color)',
                   }}
                 >
-                  <CheckCircle2 size={15} color="#10b981" style={{ marginTop: '2px', flexShrink: 0 }} />
+                  <CheckCircle2 size={15} color="var(--text-primary)" style={{ marginTop: '2px', flexShrink: 0 }} />
                   <span style={{ color: 'var(--text-primary)' }}>{feat}</span>
                 </div>
               ))}
@@ -426,11 +422,11 @@ export default function ProjectModal({ project, onClose, onOpenContact }: Projec
           </div>
         )}
 
-        {/* Tech Stack Pills */}
+        {/* Tech Stack Pills (Monochrome) */}
         <div style={{ marginBottom: '1.75rem' }}>
           <h4
             style={{
-              fontSize: '13px',
+              fontSize: '12px',
               fontWeight: '700',
               marginBottom: '10px',
               display: 'flex',
@@ -439,9 +435,10 @@ export default function ProjectModal({ project, onClose, onOpenContact }: Projec
               color: 'var(--text-primary)',
               fontFamily: 'var(--font-mono)',
               textTransform: 'uppercase',
+              letterSpacing: '0.04em',
             }}
           >
-            <Cpu size={15} color="var(--accent)" /> Technologies Applied
+            <Cpu size={14} color="var(--text-primary)" /> Technologies Applied
           </h4>
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             {project.techStack?.map((tech, idx) => (
@@ -454,7 +451,7 @@ export default function ProjectModal({ project, onClose, onOpenContact }: Projec
                   padding: '4px 10px',
                   background: 'var(--bg-primary)',
                   border: '1px solid var(--border-color)',
-                  borderRadius: '4px',
+                  borderRadius: '2px',
                   color: 'var(--text-primary)',
                 }}
               >
@@ -464,15 +461,15 @@ export default function ProjectModal({ project, onClose, onOpenContact }: Projec
           </div>
         </div>
 
-        {/* Engineering Takeaways */}
+        {/* Engineering Takeaways (Monochrome) */}
         {details.takeaways && (
           <div
             style={{
               padding: '16px 18px',
               background: 'var(--bg-primary)',
-              borderLeft: '4px solid var(--accent)',
-              borderRadius: '6px',
-              marginBottom: '1.5rem',
+              borderLeft: '3px solid var(--text-primary)',
+              borderRadius: '2px',
+              marginBottom: '1.75rem',
             }}
           >
             <div
@@ -480,14 +477,15 @@ export default function ProjectModal({ project, onClose, onOpenContact }: Projec
                 fontSize: '11px',
                 fontWeight: '700',
                 textTransform: 'uppercase',
-                color: 'var(--accent)',
+                color: 'var(--text-primary)',
                 marginBottom: '4px',
                 fontFamily: 'var(--font-mono)',
+                letterSpacing: '0.04em',
               }}
             >
               Engineering Takeaway
             </div>
-            <p style={{ fontSize: '13px', color: 'var(--text-primary)', margin: 0, lineHeight: '1.6' }}>
+            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0, lineHeight: '1.6' }}>
               {details.takeaways}
             </p>
           </div>
@@ -506,7 +504,7 @@ export default function ProjectModal({ project, onClose, onOpenContact }: Projec
           }}
         >
           <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-            Interested in building a similar production system?
+            Interested in discussing system architecture or similar requirements?
           </span>
           <button
             type="button"
