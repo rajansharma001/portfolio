@@ -2090,8 +2090,8 @@ body:has(.admin-layout) {
   }
 
   .admin-header {
-    padding: 0 1rem;
-    height: 52px;
+    padding: 0 0.85rem;
+    height: 48px;
     background-color: #0f172a !important;
     border-bottom: 1px solid #243048;
     position: sticky;
@@ -2104,20 +2104,34 @@ body:has(.admin-layout) {
   }
 
   .admin-main {
-    padding: 1rem 1rem 70px 1rem;
+    padding: 0.75rem 0.75rem 70px 0.75rem;
     max-width: 100%;
     background-color: #060911 !important;
   }
 
+  .admin-main h1 {
+    font-size: 1.35rem !important;
+    line-height: 1.25 !important;
+  }
+
+  .admin-main p {
+    font-size: 0.825rem !important;
+    margin-top: 2px !important;
+  }
+
+  .admin-main > div:first-child {
+    margin-bottom: 1rem !important;
+  }
+
   .admin-layout .card {
-    padding: 1rem;
+    padding: 0.875rem;
   }
 
   .admin-layout .form-input,
   .admin-layout textarea.form-input,
   .admin-layout select.form-input {
     font-size: 16px !important; /* Prevents auto-zoom on iOS Safari */
-    padding: 0.65rem;
+    padding: 0.6rem;
   }
 }
 

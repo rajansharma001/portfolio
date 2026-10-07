@@ -73,6 +73,20 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { label: 'Settings & Resume', href: '/admin/settings', icon: <Settings size={18} /> },
   ];
 
+  const getPageTitle = (path: string) => {
+    if (path === '/admin') return 'Dashboard';
+    if (path.startsWith('/admin/planner')) return 'Daily Planner';
+    if (path.startsWith('/admin/analytics')) return 'Analytics';
+    if (path.startsWith('/admin/messages')) return 'Leads CRM';
+    if (path.startsWith('/admin/content')) return 'Content & FAQs';
+    if (path.startsWith('/admin/posts')) return 'Articles';
+    if (path.startsWith('/admin/projects')) return 'Projects';
+    if (path.startsWith('/admin/skills')) return 'Skills';
+    if (path.startsWith('/admin/experience')) return 'Experience';
+    if (path.startsWith('/admin/settings')) return 'Settings';
+    return 'Admin';
+  };
+
   return (
     <div className="admin-layout">
       {/* Desktop Sidebar */}
@@ -233,7 +247,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               <Menu size={20} />
             </button>
 
-            <div style={{ fontSize: '13px', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' }} className="header-status-text">
+            <span className="mobile-only" style={{ fontWeight: '800', fontSize: '15px', color: '#ffffff', letterSpacing: '-0.01em' }}>
+              {getPageTitle(pathname)}
+            </span>
+
+            <div style={{ fontSize: '13px', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' }} className="header-status-text desktop-only">
               PRODUCTION CMS • HARDENED
             </div>
           </div>
