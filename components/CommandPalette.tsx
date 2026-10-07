@@ -9,14 +9,14 @@ import {
   Cpu,
   Mail,
   Download,
-  Github,
   Linkedin,
   Sun,
   Moon,
   ArrowRight,
   Sparkles,
-  Command,
-  X,
+  MessageSquare,
+  DollarSign,
+  Calendar,
 } from 'lucide-react';
 import { Project, SkillsMap } from '@/lib/types';
 
@@ -31,7 +31,7 @@ interface CommandPaletteProps {
 
 interface PaletteItem {
   id: string;
-  category: 'Projects' | 'Blog' | 'Skills' | 'Actions';
+  category: 'Lead Actions' | 'Projects' | 'Blog' | 'Skills' | 'Preferences';
   title: string;
   subtitle?: string;
   icon: React.ReactNode;
@@ -94,63 +94,52 @@ export default function CommandPalette({
 
   // Build items list
   const allItems: PaletteItem[] = [
-    // Actions
+    // High-Converting Lead Generation Actions
     {
-      id: 'action-resume',
-      category: 'Actions',
+      id: 'lead-hire',
+      category: 'Lead Actions',
+      title: 'Discuss Engineering Role / Hire Me',
+      subtitle: 'Open full-time & contract inquiries',
+      icon: <Sparkles size={16} color="var(--accent)" />,
+      action: () => scrollTo('contact'),
+    },
+    {
+      id: 'lead-quote',
+      category: 'Lead Actions',
+      title: 'Request a Project Architecture Quote',
+      subtitle: 'Full-stack systems, POS, LMS & custom platforms',
+      icon: <DollarSign size={16} color="#10b981" />,
+      action: () => scrollTo('contact'),
+    },
+    {
+      id: 'lead-email',
+      category: 'Lead Actions',
+      title: 'Copy Direct Email Address',
+      subtitle: 'email.rajan001@gmail.com',
+      icon: <Mail size={16} color="#06b6d4" />,
+      action: copyEmail,
+    },
+    {
+      id: 'lead-resume',
+      category: 'Lead Actions',
       title: 'Download Resume / CV (PDF)',
-      subtitle: 'Open active CV document',
-      icon: <Download size={16} color="var(--accent)" />,
+      subtitle: 'Open current engineering resume',
+      icon: <Download size={16} color="#8b5cf6" />,
       action: () => {
         window.open('/uploads/resume.pdf', '_blank');
         onClose();
       },
     },
     {
-      id: 'action-email',
-      category: 'Actions',
-      title: 'Copy Email Address',
-      subtitle: 'email.rajan001@gmail.com',
-      icon: <Mail size={16} color="#10b981" />,
-      action: copyEmail,
-    },
-    {
-      id: 'action-theme',
-      category: 'Actions',
-      title: 'Toggle Dark / Light Theme',
-      subtitle: 'Switch theme palette',
-      icon: <Sun size={16} color="#f59e0b" />,
-      action: toggleTheme,
-    },
-    {
-      id: 'action-github',
-      category: 'Actions',
-      title: 'Open GitHub Profile',
-      subtitle: 'github.com/rajansharma001',
-      icon: <Github size={16} />,
-      action: () => {
-        window.open('https://github.com/rajansharma001', '_blank');
-        onClose();
-      },
-    },
-    {
       id: 'action-linkedin',
-      category: 'Actions',
-      title: 'Open LinkedIn Profile',
+      category: 'Lead Actions',
+      title: 'Connect on LinkedIn',
       subtitle: 'linkedin.com/in/rajansharma001',
       icon: <Linkedin size={16} color="#3b82f6" />,
       action: () => {
         window.open('https://linkedin.com/in/rajansharma001', '_blank');
         onClose();
       },
-    },
-    {
-      id: 'action-contact',
-      category: 'Actions',
-      title: 'Send Direct Message',
-      subtitle: 'Scroll to contact form & FAQs',
-      icon: <Sparkles size={16} color="var(--accent)" />,
-      action: () => scrollTo('contact'),
     },
 
     // Projects
@@ -186,13 +175,23 @@ export default function CommandPalette({
     {
       id: 'blog-main',
       category: 'Blog',
-      title: 'Engineering Journal / Articles',
-      subtitle: 'Read technical insights and architecture breakdowns',
+      title: 'Engineering Journal & Articles',
+      subtitle: 'Read technical breakdowns and system insights',
       icon: <BookOpen size={16} color="#06b6d4" />,
       action: () => {
         onClose();
         router.push('/blog');
       },
+    },
+
+    // Preferences
+    {
+      id: 'pref-theme',
+      category: 'Preferences',
+      title: 'Toggle Dark / Light Theme',
+      subtitle: 'Switch site color palette',
+      icon: <Sun size={16} color="#f59e0b" />,
+      action: toggleTheme,
     },
   ];
 
@@ -236,16 +235,38 @@ export default function CommandPalette({
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay active" onClick={onClose} style={{ display: 'flex', zIndex: 1200, alignItems: 'flex-start', paddingTop: '10vh' }}>
+    <div
+      className="modal-overlay active"
+      onClick={onClose}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        background: 'rgba(0, 0, 0, 0.75)',
+        backdropFilter: 'blur(6px)',
+        zIndex: 2100,
+        display: 'flex',
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+        paddingTop: '12vh',
+        paddingLeft: '1rem',
+        paddingRight: '1rem',
+      }}
+    >
       <div
         className="modal-content"
         onClick={(e) => e.stopPropagation()}
         style={{
+          width: '100%',
           maxWidth: '620px',
-          padding: 0,
+          background: 'var(--bg-secondary)',
+          border: '1px solid var(--border-color)',
           borderRadius: '12px',
           overflow: 'hidden',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.4)',
+          padding: 0,
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
         }}
       >
         {/* Search Input Bar */}
@@ -255,8 +276,8 @@ export default function CommandPalette({
             alignItems: 'center',
             gap: '12px',
             padding: '16px 20px',
-            borderBottom: '1px solid var(--border)',
-            background: 'var(--bg-primary)',
+            borderBottom: '1px solid var(--border-color)',
+            background: 'var(--bg-secondary)',
           }}
         >
           <Search size={18} color="var(--accent)" />
@@ -271,8 +292,9 @@ export default function CommandPalette({
               background: 'transparent',
               outline: 'none',
               flex: 1,
+              color: 'var(--text-primary)',
             }}
-            placeholder="Type a command or search projects, skills, articles..."
+            placeholder="Search projects, skills, lead actions (hire, quote, cv)..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -281,8 +303,8 @@ export default function CommandPalette({
               fontSize: '11px',
               fontFamily: 'var(--font-mono)',
               padding: '2px 6px',
-              background: 'var(--bg-main)',
-              border: '1px solid var(--border)',
+              background: 'var(--bg-primary)',
+              border: '1px solid var(--border-color)',
               borderRadius: '4px',
               color: 'var(--text-muted)',
             }}
@@ -316,11 +338,28 @@ export default function CommandPalette({
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', overflow: 'hidden' }}>
                     <div style={{ flexShrink: 0 }}>{item.icon}</div>
                     <div style={{ overflow: 'hidden' }}>
-                      <div style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      <div
+                        style={{
+                          fontSize: '13px',
+                          fontWeight: '700',
+                          color: 'var(--text-primary)',
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                        }}
+                      >
                         {item.title}
                       </div>
                       {item.subtitle && (
-                        <div style={{ fontSize: '11px', color: 'var(--text-secondary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        <div
+                          style={{
+                            fontSize: '11px',
+                            color: 'var(--text-secondary)',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
                           {item.subtitle}
                         </div>
                       )}
@@ -334,8 +373,9 @@ export default function CommandPalette({
                         fontFamily: 'var(--font-mono)',
                         padding: '2px 6px',
                         borderRadius: '4px',
-                        background: 'var(--bg-main)',
-                        color: 'var(--text-dim)',
+                        background: 'var(--bg-primary)',
+                        border: '1px solid var(--border-color)',
+                        color: 'var(--text-muted)',
                         textTransform: 'uppercase',
                       }}
                     >
@@ -348,7 +388,7 @@ export default function CommandPalette({
             })
           ) : (
             <div style={{ padding: '2.5rem 0', textAlign: 'center', color: 'var(--text-muted)', fontSize: '13px' }}>
-              No matching commands or projects found.
+              No matching actions or projects found.
             </div>
           )}
         </div>
@@ -360,10 +400,10 @@ export default function CommandPalette({
             justifyContent: 'space-between',
             alignItems: 'center',
             padding: '10px 18px',
-            background: 'var(--bg-main)',
-            borderTop: '1px solid var(--border)',
+            background: 'var(--bg-primary)',
+            borderTop: '1px solid var(--border-color)',
             fontSize: '11px',
-            color: 'var(--text-dim)',
+            color: 'var(--text-muted)',
             fontFamily: 'var(--font-mono)',
           }}
         >

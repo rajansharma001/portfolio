@@ -41,7 +41,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const navItems = [
     { label: 'Overview', href: '/admin', icon: <LayoutDashboard size={18} /> },
     { label: 'Visitor Analytics', href: '/admin/analytics', icon: <BarChart3 size={18} /> },
-    { label: 'Messages', href: '/admin/messages', icon: <Mail size={18} />, badge: unreadCount },
+    { label: 'Lead Pipeline & CRM', href: '/admin/messages', icon: <Mail size={18} />, badge: unreadCount },
     { label: 'Content & FAQs', href: '/admin/content', icon: <HelpCircle size={18} /> },
     { label: 'Blog Articles', href: '/admin/posts', icon: <BookOpen size={18} /> },
     { label: 'Projects', href: '/admin/projects', icon: <FolderKanban size={18} /> },

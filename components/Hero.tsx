@@ -135,8 +135,8 @@ Bio: ${settings?.bio || 'Building scalable web systems, REST APIs & resilient da
         type: 'output',
         text: `Email: ${settings?.email || 'email.rajan001@gmail.com'}
 Phone: ${settings?.phone || '+977 9800000000'}
-GitHub: https://github.com/rajansharma001
-LinkedIn: https://linkedin.com/in/rajansharma001`,
+LinkedIn: https://linkedin.com/in/rajansharma001
+Location: ${settings?.location || 'Kathmandu, Nepal'}`,
       });
     } else if (cmd === 'sudo hire-rajan' || cmd === 'hire-rajan' || cmd === 'hire') {
       triggerConfetti();

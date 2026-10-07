@@ -1,6 +1,5 @@
 import React from 'react';
 import { ExperienceItem, PortfolioSettings, DEFAULT_EDUCATION, DEFAULT_LANGUAGES } from '@/lib/types';
-import GitHubActivity from '@/components/GitHubActivity';
 
 interface ExperienceTimelineProps {
   experience: ExperienceItem[];
@@ -109,9 +108,6 @@ export default function ExperienceTimeline({ experience, settings }: ExperienceT
           </div>
         </div>
       </div>
-
-      {/* Live GitHub Commit Pulse Stream */}
-      <GitHubActivity />
     </section>
   );
 }

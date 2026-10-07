@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { ExternalLink, Github, ChevronDown } from 'lucide-react';
+import { ExternalLink, ChevronDown } from 'lucide-react';
 import { Project } from '@/lib/types';
 
 interface FeaturedProjectsProps {
@@ -143,18 +143,12 @@ export default function FeaturedProjects({ projects, loading, onOpenModal }: Fea
                   className="btn btn-primary btn-sm"
                   onClick={() => onOpenModal(project)}
                 >
-                  View Details
+                  Case Study
                 </button>
 
                 {project.liveUrl && (
                   <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="btn btn-outline btn-sm">
                     Live Demo <ExternalLink size={12} />
-                  </a>
-                )}
-
-                {project.githubUrl && (
-                  <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="btn btn-outline btn-sm btn-icon" title="Source Code">
-                    <Github size={14} />
                   </a>
                 )}
               </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Github, Linkedin, Mail } from 'lucide-react';
+import { Linkedin, Mail } from 'lucide-react';
 import { PortfolioSettings } from '@/lib/types';
 
 interface FooterProps {
@@ -17,9 +17,6 @@ export default function Footer({ settings }: FooterProps) {
         </div>
 
         <div className="footer-links">
-          <a href="https://github.com/rajansharma001" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
-            <Github size={18} />
-          </a>
           <a href="https://linkedin.com/in/rajansharma001" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
             <Linkedin size={18} />
           </a>

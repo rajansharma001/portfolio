@@ -3,7 +3,26 @@
 import React, { useEffect, useState } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import Link from 'next/link';
-import { Users, Eye, Globe, MapPin, ArrowUpRight, FolderKanban, Mail, FileText, Upload, CheckCircle2, Database, RefreshCw, AlertCircle, HelpCircle } from 'lucide-react';
+import {
+  Users,
+  Eye,
+  Globe,
+  MapPin,
+  ArrowUpRight,
+  FolderKanban,
+  Mail,
+  FileText,
+  Upload,
+  CheckCircle2,
+  Database,
+  RefreshCw,
+  Sparkles,
+  DollarSign,
+  UserCheck,
+  TrendingUp,
+  ChevronRight,
+  HelpCircle,
+} from 'lucide-react';
 import { Project, SkillsMap, ExperienceItem, PortfolioSettings } from '@/lib/types';
 
 interface VisitRecord {
@@ -22,13 +41,21 @@ interface AnalyticsData {
   visits: VisitRecord[];
 }
 
-interface ContactMessage {
+interface LeadMessage {
   id: string;
   name: string;
   email: string;
   message: string;
-  createdAt: string;
+  inquiryType?: string;
+  timeline?: string;
+  status?: 'new' | 'in_discussion' | 'quoted' | 'won' | 'archived';
+  priority?: 'normal' | 'high' | 'urgent';
+  notes?: string;
+  ip?: string;
+  country?: string;
+  flag?: string;
   read: boolean;
+  createdAt: string;
 }
 
 interface DbHealth {
@@ -47,7 +74,7 @@ export default function AdminDashboardPage() {
   const [skills, setSkills] = useState<SkillsMap>({});
   const [experience, setExperience] = useState<ExperienceItem[]>([]);
   const [settings, setSettings] = useState<PortfolioSettings | null>(null);
-  const [messages, setMessages] = useState<ContactMessage[]>([]);
+  const [messages, setMessages] = useState<LeadMessage[]>([]);
   const [analytics, setAnalytics] = useState<AnalyticsData>({ totalViews: 0, uniqueVisitors: 0, visits: [] });
   const [uploadingPdf, setUploadingPdf] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<string | null>(null);
@@ -164,6 +191,7 @@ export default function AdminDashboardPage() {
     .slice(0, 5);
 
   const unreadMessages = messages.filter((m) => !m.read);
+  const activeLeads = messages.filter((m) => m.status === 'in_discussion' || m.status === 'quoted');
 
   return (
     <AdminLayout>
@@ -171,7 +199,7 @@ export default function AdminDashboardPage() {
         <div>
           <h1 style={{ fontSize: '28px', fontWeight: '800', letterSpacing: '-0.02em' }}>Welcome back, Rajan 👋</h1>
           <p style={{ color: 'var(--text-muted)', marginTop: '6px' }}>
-            Production overview, recruiter inquiries, database connection health, and traffic analytics.
+            Production overview, lead generation pipeline, database connection health, and traffic intelligence.
           </p>
         </div>
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
@@ -248,32 +276,39 @@ export default function AdminDashboardPage() {
           <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Real-time page views</div>
         </div>
 
-        <div className="card" style={{ borderLeft: '4px solid var(--accent-emerald)' }}>
+        <div className="card" style={{ borderLeft: '4px solid #10b981' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
             <div className="form-label">Unique Visitors</div>
-            <Users size={18} color="var(--accent-emerald)" />
+            <Users size={18} color="#10b981" />
           </div>
           <div style={{ fontSize: '32px', fontWeight: '800', marginBottom: '4px' }}>{analytics.uniqueVisitors}</div>
-          <div style={{ fontSize: '12px', color: 'var(--accent-emerald)' }}>Recorded unique IPs</div>
+          <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Recorded unique IPs</div>
         </div>
 
         <div className="card" style={{ borderLeft: '4px solid #f59e0b' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <div className="form-label">Inbound Messages</div>
+            <div className="form-label">Total Inbound Leads</div>
             <Mail size={18} color="#f59e0b" />
           </div>
-          <div style={{ fontSize: '32px', fontWeight: '800', marginBottom: '4px' }}>{messages.length}</div>
-          <div style={{ fontSize: '12px', color: unreadMessages.length > 0 ? '#f59e0b' : 'var(--text-secondary)' }}>
-            {unreadMessages.length} Unread inquiries
+          <div style={{ fontSize: '32px', fontWeight: '800', marginBottom: '4px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span>{messages.length}</span>
+            {unreadMessages.length > 0 && (
+              <span style={{ fontSize: '12px', background: '#f59e0b', color: '#000', padding: '2px 8px', borderRadius: '12px', fontWeight: '700' }}>
+                {unreadMessages.length} NEW
+              </span>
+            )}
+          </div>
+          <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+            {activeLeads.length} active in pipeline
           </div>
         </div>
 
-        <div className="card" style={{ borderLeft: '4px solid var(--accent-cyan)' }}>
+        <div className="card" style={{ borderLeft: '4px solid #06b6d4' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <div className="form-label">Top Location</div>
-            <Globe size={18} color="var(--accent-cyan)" />
+            <div className="form-label">Top Visitor Origin</div>
+            <Globe size={18} color="#06b6d4" />
           </div>
-          <div style={{ fontSize: '22px', fontWeight: '800', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ fontSize: '20px', fontWeight: '800', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             {sortedLocations.length > 0 ? (
               <>
                 <span>{sortedLocations[0][1].flag}</span>
@@ -285,6 +320,76 @@ export default function AdminDashboardPage() {
           </div>
           <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Highest traffic origin</div>
         </div>
+      </div>
+
+      {/* Live Inbound Leads Pipeline Feed */}
+      <div className="card" style={{ marginBottom: '32px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+          <div>
+            <h3 style={{ fontSize: '17px', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Sparkles size={18} color="var(--accent)" /> Recent Inbound Leads & Inquiries
+            </h3>
+            <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+              Prospective clients, recruiters, and engineering opportunities
+            </p>
+          </div>
+          <Link href="/admin/messages" className="btn btn-outline btn-sm" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            Open Lead CRM <ArrowUpRight size={14} />
+          </Link>
+        </div>
+
+        {messages.length > 0 ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {messages.slice(0, 4).map((m) => (
+              <Link
+                key={m.id}
+                href="/admin/messages"
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '12px 16px',
+                  background: 'var(--bg-main)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '6px',
+                  textDecoration: 'none',
+                  color: 'inherit',
+                  transition: 'border-color 0.2s',
+                  borderLeft: !m.read ? '4px solid var(--accent)' : '4px solid var(--border)',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', overflow: 'hidden' }}>
+                  <span>{m.flag || '🌐'}</span>
+                  <div style={{ overflow: 'hidden' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontWeight: '700', fontSize: '14px', color: 'var(--text-primary)' }}>{m.name}</span>
+                      <span style={{ fontSize: '11px', color: 'var(--accent)' }}>({m.email})</span>
+                      {m.inquiryType && (
+                        <span style={{ fontSize: '10px', background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '1px 6px', borderRadius: '4px', color: 'var(--text-secondary)' }}>
+                          {m.inquiryType}
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: '2px' }}>
+                      {m.message}
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0, marginLeft: '12px' }}>
+                  <span style={{ fontSize: '11px', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' }}>
+                    {new Date(m.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}
+                  </span>
+                  <ChevronRight size={14} color="var(--text-dim)" />
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div style={{ padding: '2rem 0', textAlign: 'center', color: 'var(--text-muted)', fontSize: '13px' }}>
+            No incoming leads yet. Lead submissions from your Contact section will appear here in real-time.
+          </div>
+        )}
       </div>
 
       {/* Quick Actions & Resume Manager Row */}
@@ -355,7 +460,7 @@ export default function AdminDashboardPage() {
               className="btn btn-outline"
               style={{ justifyContent: 'flex-start', padding: '12px', gap: '8px', fontSize: '13px' }}
             >
-              <Mail size={16} /> Inquiries ({messages.length})
+              <Mail size={16} /> Lead CRM ({messages.length})
             </Link>
 
             <Link
@@ -379,7 +484,7 @@ export default function AdminDashboardPage() {
               className="btn btn-outline"
               style={{ justifyContent: 'flex-start', padding: '12px', gap: '8px', fontSize: '13px' }}
             >
-              Profile & Security
+              Profile & Visibility
             </Link>
           </div>
         </div>

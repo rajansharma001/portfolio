@@ -43,6 +43,7 @@ export default function HomePage() {
   const [skills, setSkills] = useState<SkillsMap>({});
   const [experience, setExperience] = useState<ExperienceItem[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [inquiryTopic, setInquiryTopic] = useState<string | undefined>(undefined);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -127,6 +128,18 @@ export default function HomePage() {
     setTimeout(() => setToastMessage(null), 4000);
   };
 
+  const handleDiscussFromModal = (projectName?: string) => {
+    if (projectName) {
+      setInquiryTopic(projectName);
+    }
+    setTimeout(() => {
+      const contactSection = document.getElementById('contact');
+      if (contactSection) {
+        contactSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
+  };
+
   return (
     <>
       {/* Scroll Progress Bar */}
@@ -172,13 +185,23 @@ export default function HomePage() {
 
         {vis.showProcess && <ProcessGrid settings={settings} />}
 
-        {vis.showContact && <ContactSection settings={settings} onShowToast={handleShowToast} />}
+        {vis.showContact && (
+          <ContactSection
+            settings={settings}
+            onShowToast={handleShowToast}
+            initialInquiryTopic={inquiryTopic}
+          />
+        )}
       </main>
 
       {vis.showFooter && <Footer settings={settings} />}
 
       {/* Interactive Case Study Modal */}
-      <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
+      <ProjectModal
+        project={selectedProject}
+        onClose={() => setSelectedProject(null)}
+        onOpenContact={handleDiscussFromModal}
+      />
 
       {/* Global Interactive Command Palette (Cmd + K) */}
       <CommandPalette
