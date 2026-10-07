@@ -16,9 +16,11 @@ export interface ISetting {
   phone: string;
   isAvailableForHire: boolean;
   availabilityBadgeText: string;
+  availabilityBadgeDate: string;
   resumeUrl: string;
   bio: string;
   codeSnippet: string;
+  marqueeItems: string[];
   sectionVisibility: {
     showHero: boolean;
     showAvailabilityBadge: boolean;
@@ -120,6 +122,7 @@ const SettingSchema = new Schema<ISetting>(
     phone: { type: String, default: '+977 9800000000' },
     isAvailableForHire: { type: Boolean, default: true },
     availabilityBadgeText: { type: String, default: 'Open for Roles' },
+    availabilityBadgeDate: { type: String, default: 'Oct 2026' },
     resumeUrl: { type: String, default: '/uploads/resume.pdf' },
     bio: {
       type: String,
@@ -129,6 +132,23 @@ const SettingSchema = new Schema<ISetting>(
     codeSnippet: {
       type: String,
       default: `// rajan.config.ts\nexport const engineer = {\n  name: "Rajan Sharma",\n  role: "Full-Stack Software Engineer",\n  location: "Kathmandu, Nepal",\n  focus: ["Scalable Architecture", "API Security", "High Performance Systems"],\n  status: "Available for Engineering Roles"\n};`,
+    },
+    marqueeItems: {
+      type: [String],
+      default: [
+        'NEXT.JS',
+        'REACT',
+        'TYPESCRIPT',
+        'NODE.JS',
+        'EXPRESS',
+        'POSTGRESQL',
+        'MONGODB',
+        'TAILWIND CSS',
+        'PRISMA',
+        'DOCKER',
+        'REST APIS',
+        'JWT RBAC',
+      ],
     },
     sectionVisibility: { type: SectionVisibilitySchema, default: () => ({}) },
     faqs: {

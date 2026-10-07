@@ -1,5 +1,6 @@
 import React from 'react';
 import { ExperienceItem, PortfolioSettings, DEFAULT_EDUCATION, DEFAULT_LANGUAGES } from '@/lib/types';
+import GitHubActivity from '@/components/GitHubActivity';
 
 interface ExperienceTimelineProps {
   experience: ExperienceItem[];
@@ -84,7 +85,11 @@ export default function ExperienceTimeline({ experience, settings }: ExperienceT
           <div className="side-box">
             <h3>Education</h3>
             {educationItems.map((edu, idx) => (
-              <div key={idx} className="edu-item" style={edu.degree.includes('Business') ? { opacity: 0.55, fontSize: '0.85em' } : {}}>
+              <div
+                key={idx}
+                className="edu-item"
+                style={edu.degree.includes('Business') ? { opacity: 0.55, fontSize: '0.85em' } : {}}
+              >
                 <div className="edu-degree">{edu.degree}</div>
                 <div className="edu-school">{edu.school}</div>
                 {edu.note && <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>{edu.note}</div>}
@@ -104,6 +109,9 @@ export default function ExperienceTimeline({ experience, settings }: ExperienceT
           </div>
         </div>
       </div>
+
+      {/* Live GitHub Commit Pulse Stream */}
+      <GitHubActivity />
     </section>
   );
 }

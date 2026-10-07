@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import Marquee from '@/components/Marquee';
@@ -10,19 +10,29 @@ import ExperienceTimeline from '@/components/ExperienceTimeline';
 import ProcessGrid from '@/components/ProcessGrid';
 import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
-import Modal from '@/components/Modal';
-import { Project, SkillsMap, ExperienceItem, PortfolioSettings, SectionVisibility, DEFAULT_VISIBILITY } from '@/lib/types';
+import ProjectModal from '@/components/ProjectModal';
+import CommandPalette from '@/components/CommandPalette';
+import {
+  Project,
+  SkillsMap,
+  ExperienceItem,
+  PortfolioSettings,
+  SectionVisibility,
+  DEFAULT_VISIBILITY,
+} from '@/lib/types';
 
 export default function HomePage() {
   const [settings, setSettings] = useState<PortfolioSettings>({
     name: 'Rajan Sharma',
     role: 'Full-Stack Software Engineer',
     headline: 'Building production-grade web systems, REST APIs & scalable backends.',
+    heroImpactText: '16 production systems shipped across LMS, POS, tourism & geospatial domains.',
     location: 'Kathmandu, Bagmati Prov, Nepal (UTC +5:45)',
     email: 'email.rajan001@gmail.com',
     phone: '+977 9800000000',
     isAvailableForHire: true,
-    availabilityBadgeText: 'Available for Roles',
+    availabilityBadgeText: 'Open for Roles',
+    availabilityBadgeDate: 'Oct 2026',
     resumeUrl: '/uploads/resume.pdf',
     bio: 'Full-Stack Software Engineer specializing in Next.js, TypeScript, Node.js, Express, PostgreSQL, and MongoDB architectures.',
     codeSnippet: '',
@@ -33,6 +43,7 @@ export default function HomePage() {
   const [skills, setSkills] = useState<SkillsMap>({});
   const [experience, setExperience] = useState<ExperienceItem[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -63,6 +74,18 @@ export default function HomePage() {
       }
     }
     fetchData();
+  }, []);
+
+  // Global Command Palette Shortcut Listener (Cmd+K / Ctrl+K)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsCommandPaletteOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   // Scroll progress & reveal animations
@@ -107,24 +130,38 @@ export default function HomePage() {
   return (
     <>
       {/* Scroll Progress Bar */}
-      {vis.showScrollProgress && (
-        <div id="scroll-progress" style={{ width: `${scrollProgress}%` }} />
-      )}
+      {vis.showScrollProgress && <div id="scroll-progress" style={{ width: `${scrollProgress}%` }} />}
 
       {/* Toast Notification */}
       <div id="toast" className={toastMessage ? 'show' : ''}>
         {toastMessage || ''}
       </div>
 
-      <Header visibility={vis} projectCount={projects.length} />
+      <Header
+        visibility={vis}
+        settings={settings}
+        projectCount={projects.length}
+        onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
+      />
 
       <main>
-        {vis.showHero && <Hero settings={settings} visibility={vis} />}
+        {vis.showHero && (
+          <Hero
+            settings={settings}
+            visibility={vis}
+            skills={skills}
+            projects={projects}
+          />
+        )}
 
-        {vis.showMarquee && <Marquee />}
+        {vis.showMarquee && <Marquee settings={settings} />}
 
         {vis.showProjects && (
-          <FeaturedProjects projects={projects} loading={loading} onOpenModal={(p) => setSelectedProject(p)} />
+          <FeaturedProjects
+            projects={projects}
+            loading={loading}
+            onOpenModal={(p) => setSelectedProject(p)}
+          />
         )}
 
         {vis.showSkills && <SkillsGrid skills={skills} />}
@@ -135,14 +172,23 @@ export default function HomePage() {
 
         {vis.showProcess && <ProcessGrid settings={settings} />}
 
-        {vis.showContact && (
-          <ContactSection settings={settings} onShowToast={handleShowToast} />
-        )}
+        {vis.showContact && <ContactSection settings={settings} onShowToast={handleShowToast} />}
       </main>
 
       {vis.showFooter && <Footer settings={settings} />}
 
-      <Modal project={selectedProject} onClose={() => setSelectedProject(null)} />
+      {/* Interactive Case Study Modal */}
+      <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
+
+      {/* Global Interactive Command Palette (Cmd + K) */}
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        projects={projects}
+        skills={skills}
+        onOpenProject={(p) => setSelectedProject(p)}
+        onShowToast={handleShowToast}
+      />
     </>
   );
 }

@@ -2,7 +2,18 @@
 
 import React, { useEffect, useState } from 'react';
 import AdminLayout from '@/components/AdminLayout';
-import { Save, Plus, Trash2, HelpCircle, Layers, GraduationCap, Languages, Sparkles } from 'lucide-react';
+import {
+  Save,
+  Plus,
+  Trash2,
+  HelpCircle,
+  Layers,
+  GraduationCap,
+  Languages,
+  Sparkles,
+  Sliders,
+  BadgeCheck,
+} from 'lucide-react';
 import {
   PortfolioSettings,
   FAQItem,
@@ -14,6 +25,7 @@ import {
   DEFAULT_EDUCATION,
   DEFAULT_LANGUAGES,
   DEFAULT_QUICK_FACTS,
+  DEFAULT_MARQUEE_ITEMS,
 } from '@/lib/types';
 import Alert from '@/components/Alert';
 
@@ -21,7 +33,8 @@ export default function AdminContentPage() {
   const [settings, setSettings] = useState<PortfolioSettings | null>(null);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
-  const [activeTab, setActiveTab] = useState<'faqs' | 'process' | 'hero' | 'education'>('faqs');
+  const [activeTab, setActiveTab] = useState<'faqs' | 'process' | 'hero' | 'marquee' | 'education'>('faqs');
+  const [newMarqueeTag, setNewMarqueeTag] = useState('');
 
   useEffect(() => {
     fetch('/api/settings')
@@ -34,7 +47,10 @@ export default function AdminContentPage() {
           education: data.education && data.education.length > 0 ? data.education : DEFAULT_EDUCATION,
           languages: data.languages && data.languages.length > 0 ? data.languages : DEFAULT_LANGUAGES,
           quickFacts: data.quickFacts || DEFAULT_QUICK_FACTS,
+          marqueeItems: data.marqueeItems && data.marqueeItems.length > 0 ? data.marqueeItems : DEFAULT_MARQUEE_ITEMS,
           heroImpactText: data.heroImpactText || '16 production systems shipped across LMS, POS, tourism & geospatial domains.',
+          availabilityBadgeText: data.availabilityBadgeText || 'Open for Roles',
+          availabilityBadgeDate: data.availabilityBadgeDate || 'Oct 2026',
         });
       });
   }, []);
@@ -54,7 +70,7 @@ export default function AdminContentPage() {
       });
 
       if (!res.ok) throw new Error('Failed to save content updates');
-      setMessage({ type: 'success', text: 'All content and FAQs successfully saved to database!' });
+      setMessage({ type: 'success', text: 'All content, FAQs & marquee settings successfully saved to database!' });
     } catch (err: any) {
       setMessage({ type: 'error', text: err.message || 'Error saving content.' });
     } finally {
@@ -102,6 +118,24 @@ export default function AdminContentPage() {
     if (!settings || !settings.processSteps) return;
     const updated = settings.processSteps.filter((_, i) => i !== index);
     setSettings({ ...settings, processSteps: updated });
+  };
+
+  // Marquee Tag Handlers
+  const handleAddMarqueeItem = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!settings || !newMarqueeTag.trim()) return;
+    const tag = newMarqueeTag.trim().toUpperCase();
+    const current = settings.marqueeItems || DEFAULT_MARQUEE_ITEMS;
+    if (!current.includes(tag)) {
+      setSettings({ ...settings, marqueeItems: [...current, tag] });
+    }
+    setNewMarqueeTag('');
+  };
+
+  const handleRemoveMarqueeItem = (itemToRemove: string) => {
+    if (!settings) return;
+    const updated = (settings.marqueeItems || DEFAULT_MARQUEE_ITEMS).filter((item) => item !== itemToRemove);
+    setSettings({ ...settings, marqueeItems: updated });
   };
 
   // Education Handlers
@@ -154,11 +188,11 @@ export default function AdminContentPage() {
 
   return (
     <AdminLayout>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h1 style={{ fontSize: '28px', fontWeight: '800', letterSpacing: '-0.02em' }}>Site Content & FAQs</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginTop: '6px' }}>
-            Customize website copy, FAQs, engineering methodology steps, hero quick facts, and background credentials.
+            Customize website copy, FAQs, engineering methodology steps, hero quick facts, tech marquee, and background credentials.
           </p>
         </div>
 
@@ -226,6 +260,25 @@ export default function AdminContentPage() {
           }}
         >
           <Sparkles size={16} /> Hero Facts & Metrics
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('marquee')}
+          style={{
+            padding: '10px 18px',
+            background: 'none',
+            border: 'none',
+            borderBottom: activeTab === 'marquee' ? '2px solid var(--accent)' : '2px solid transparent',
+            color: activeTab === 'marquee' ? 'var(--text-primary)' : 'var(--text-muted)',
+            fontWeight: activeTab === 'marquee' ? '700' : '500',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}
+        >
+          <Sliders size={16} /> Status & Marquee
         </button>
 
         <button
@@ -490,7 +543,115 @@ export default function AdminContentPage() {
         </div>
       )}
 
-      {/* Tab 4: Education & Languages */}
+      {/* Tab 4: Header Status & Tech Stack Marquee */}
+      {activeTab === 'marquee' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          {/* Header Availability Badge Controls */}
+          <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: '700', borderBottom: '1px solid var(--border)', paddingBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <BadgeCheck size={20} color="var(--accent)" /> Header Status & Freshness Signal
+            </h2>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+              Configure the active availability badge shown in the top navigation bar.
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div className="form-group">
+                <label className="form-label">Status Text</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={settings.availabilityBadgeText || ''}
+                  onChange={(e) => setSettings({ ...settings, availabilityBadgeText: e.target.value })}
+                  placeholder="Open for Roles"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Freshness / Active Date</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={settings.availabilityBadgeDate || ''}
+                  onChange={(e) => setSettings({ ...settings, availabilityBadgeDate: e.target.value })}
+                  placeholder="e.g. Oct 2026"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Marquee Technology Stack Manager */}
+          <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: '700', borderBottom: '1px solid var(--border)', paddingBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Sliders size={20} color="var(--accent)" /> Tech Stack Marquee Items
+            </h2>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+              Add, remove, or customize the animated ticker pills running across the top of the homepage.
+            </p>
+
+            {/* Add tag form */}
+            <form onSubmit={handleAddMarqueeItem} style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+              <input
+                type="text"
+                className="form-input"
+                style={{ maxWidth: '300px' }}
+                placeholder="e.g. DOCKER, GRAPHQL, REDIS"
+                value={newMarqueeTag}
+                onChange={(e) => setNewMarqueeTag(e.target.value)}
+              />
+              <button type="submit" className="btn btn-outline btn-sm" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Plus size={14} /> Add Marquee Pill
+              </button>
+            </form>
+
+            {/* Current Pills list */}
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '10px' }}>
+              {(settings.marqueeItems || DEFAULT_MARQUEE_ITEMS).map((item, idx) => (
+                <span
+                  key={idx}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '12px',
+                    fontWeight: '700',
+                    padding: '6px 12px',
+                    background: 'var(--bg-main)',
+                    border: '1px solid var(--border)',
+                    borderRadius: '6px',
+                    color: 'var(--text-primary)',
+                  }}
+                >
+                  {item}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveMarqueeItem(item)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: '#ef4444',
+                      padding: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                    title={`Remove ${item}`}
+                  >
+                    <Trash2 size={12} />
+                  </button>
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <button onClick={() => handleSave()} disabled={saving} className="btn btn-primary" style={{ marginTop: '12px' }}>
+            {saving ? 'Saving...' : 'Save Header & Marquee Settings'}
+          </button>
+        </div>
+      )}
+
+      {/* Tab 5: Education & Languages */}
       {activeTab === 'education' && (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
           {/* Education Manager */}

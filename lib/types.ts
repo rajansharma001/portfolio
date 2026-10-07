@@ -190,6 +190,21 @@ export const DEFAULT_QUICK_FACTS: QuickFacts = {
   focus: 'Scalable Architecture & Web Systems',
 };
 
+export const DEFAULT_MARQUEE_ITEMS: string[] = [
+  'NEXT.JS',
+  'REACT',
+  'TYPESCRIPT',
+  'NODE.JS',
+  'EXPRESS',
+  'POSTGRESQL',
+  'MONGODB',
+  'TAILWIND CSS',
+  'PRISMA',
+  'DOCKER',
+  'REST APIS',
+  'JWT RBAC',
+];
+
 export interface PortfolioSettings {
   name: string;
   role: string;
@@ -201,6 +216,7 @@ export interface PortfolioSettings {
   phone: string;
   isAvailableForHire: boolean;
   availabilityBadgeText: string;
+  availabilityBadgeDate?: string;
   resumeUrl: string;
   bio: string;
   codeSnippet: string;
@@ -209,4 +225,5 @@ export interface PortfolioSettings {
   processSteps?: ProcessStep[];
   education?: EducationItem[];
   languages?: LanguageItem[];
+  marqueeItems?: string[];
 }

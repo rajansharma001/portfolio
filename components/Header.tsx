@@ -2,18 +2,29 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { SectionVisibility, DEFAULT_VISIBILITY } from '@/lib/types';
+import { SectionVisibility, DEFAULT_VISIBILITY, PortfolioSettings } from '@/lib/types';
+import { Command, Search } from 'lucide-react';
 
 interface HeaderProps {
   visibility?: SectionVisibility;
+  settings?: PortfolioSettings | null;
   projectCount?: number;
+  onOpenCommandPalette?: () => void;
 }
 
-export default function Header({ visibility, projectCount }: HeaderProps) {
+export default function Header({
+  visibility,
+  settings,
+  projectCount,
+  onOpenCommandPalette,
+}: HeaderProps) {
   const vis = visibility || DEFAULT_VISIBILITY;
   const [timeStr, setTimeStr] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
+  const badgeText = settings?.availabilityBadgeText || 'Open for Roles';
+  const badgeDate = settings?.availabilityBadgeDate || 'Oct 2026';
 
   useEffect(() => {
     if (!vis.showClockWidget) return;
@@ -49,7 +60,9 @@ export default function Header({ visibility, projectCount }: HeaderProps) {
     } else {
       document.body.style.overflow = '';
     }
-    return () => { document.body.style.overflow = ''; };
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [mobileMenuOpen]);
 
   const toggleTheme = () => {
@@ -66,19 +79,28 @@ export default function Header({ visibility, projectCount }: HeaderProps) {
 
   const closeMenu = () => setMobileMenuOpen(false);
 
-  const count = projectCount ?? 16;
-
   return (
     <>
       <header className="site-header" id="header">
         <div className="container nav-container">
           <div className="nav-left">
-            <Link href="/" className="logo">Rajan.</Link>
+            <Link href="/" className="logo">
+              Rajan.
+            </Link>
             {vis.showAvailabilityBadge && (
               <div className="availability-badge">
                 <span className="status-dot" />
-                <span className="availability-text">Open for Roles</span>
-                <span style={{ fontSize: '0.6rem', color: 'var(--text-muted)', marginLeft: '4px', fontFamily: 'var(--font-mono)' }}>Aug 2026</span>
+                <span className="availability-text">{badgeText}</span>
+                <span
+                  style={{
+                    fontSize: '0.65rem',
+                    color: 'var(--text-muted)',
+                    marginLeft: '4px',
+                    fontFamily: 'var(--font-mono)',
+                  }}
+                >
+                  {badgeDate}
+                </span>
               </div>
             )}
           </div>
@@ -87,18 +109,63 @@ export default function Header({ visibility, projectCount }: HeaderProps) {
             <Link href="/#work" className="nav-item" onClick={closeMenu}>
               Projects
             </Link>
-            <Link href="/#skills" className="nav-item" onClick={closeMenu}>Skills</Link>
-            <Link href="/#experience" className="nav-item" onClick={closeMenu}>Experience</Link>
+            <Link href="/#skills" className="nav-item" onClick={closeMenu}>
+              Skills
+            </Link>
+            <Link href="/#experience" className="nav-item" onClick={closeMenu}>
+              Experience
+            </Link>
             {vis.showBlog && (
-              <Link href="/blog" className="nav-item" onClick={closeMenu}>Blog</Link>
+              <Link href="/blog" className="nav-item" onClick={closeMenu}>
+                Blog
+              </Link>
             )}
-            <Link href="/#contact" className="nav-item" onClick={closeMenu}>Contact</Link>
+            <Link href="/#contact" className="nav-item" onClick={closeMenu}>
+              Contact
+            </Link>
           </nav>
 
           <div className="nav-right">
-            {vis.showClockWidget && timeStr && (
-              <div className="clock-widget">{timeStr}</div>
+            {/* Command Palette Trigger */}
+            {onOpenCommandPalette && (
+              <button
+                type="button"
+                onClick={onOpenCommandPalette}
+                className="command-trigger-btn"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  background: 'var(--bg-main)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '6px',
+                  padding: '5px 10px',
+                  fontSize: '12px',
+                  fontFamily: 'var(--font-mono)',
+                  color: 'var(--text-secondary)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                }}
+                title="Open Command Palette (Cmd + K / Ctrl + K)"
+              >
+                <Search size={13} color="var(--accent)" />
+                <span className="cmd-text" style={{ fontSize: '11px' }}>Search</span>
+                <kbd
+                  style={{
+                    background: 'var(--bg-primary)',
+                    border: '1px solid var(--border)',
+                    borderRadius: '3px',
+                    padding: '1px 5px',
+                    fontSize: '10px',
+                  }}
+                >
+                  ⌘K
+                </kbd>
+              </button>
             )}
+
+            {vis.showClockWidget && timeStr && <div className="clock-widget">{timeStr}</div>}
+
             {vis.showThemeToggle && (
               <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle Theme">
                 {theme === 'dark' ? (
@@ -125,16 +192,16 @@ export default function Header({ visibility, projectCount }: HeaderProps) {
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Menu"
             >
-              <span /><span /><span />
+              <span />
+              <span />
+              <span />
             </button>
           </div>
         </div>
       </header>
 
       {/* Mobile Menu Backdrop */}
-      {mobileMenuOpen && (
-        <div className="mobile-backdrop" onClick={closeMenu} />
-      )}
+      {mobileMenuOpen && <div className="mobile-backdrop" onClick={closeMenu} />}
     </>
   );
 }

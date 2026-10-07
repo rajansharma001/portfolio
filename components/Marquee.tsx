@@ -1,19 +1,21 @@
 import React from 'react';
+import { PortfolioSettings, DEFAULT_MARQUEE_ITEMS } from '@/lib/types';
 
-export default function Marquee() {
-  const stack = [
-    'NEXT.JS',
-    'REACT',
-    'TYPESCRIPT',
-    'NODE.JS',
-    'EXPRESS',
-    'POSTGRESQL',
-    'MONGODB',
-    'TAILWIND CSS',
-  ];
+interface MarqueeProps {
+  settings?: PortfolioSettings | null;
+  items?: string[];
+}
+
+export default function Marquee({ settings, items }: MarqueeProps) {
+  const stack =
+    items && items.length > 0
+      ? items
+      : settings?.marqueeItems && settings.marqueeItems.length > 0
+      ? settings.marqueeItems
+      : DEFAULT_MARQUEE_ITEMS;
 
   return (
-    <div className="marquee-wrapper">
+    <div className="marquee-wrapper" aria-label="Technology Stack Marquee">
       <div className="marquee">
         {stack.map((item, idx) => (
           <span key={`m1-${idx}`}>{item}</span>
