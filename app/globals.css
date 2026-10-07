@@ -1769,16 +1769,26 @@ textarea.form-input {
 /* ==========================================================================
    ADMIN CMS DASHBOARD STYLES
    ========================================================================== */
+html:has(.admin-layout),
+body:has(.admin-layout) {
+  background-color: #060911 !important;
+  color: #ffffff !important;
+}
+
 .admin-layout {
+  --bg-primary: #060911;
+  --bg-secondary: #0f172a;
   --bg-main: #060911;
   --bg-sidebar: #090e18;
   --bg-surface: #0f172a;
   --bg-card: #0f172a;
   --bg-hover: #1e293b;
   --border: #243048;
+  --border-color: #243048;
   --border-light: #1e293b;
   --text-primary: #ffffff;
   --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
   --text-dim: #94a3b8;
   --accent: #3b82f6;
   --accent-hover: #2563eb;
@@ -2047,12 +2057,17 @@ textarea.form-input {
   display: none !important;
 }
 
+.mobile-only-btn {
+  display: none !important;
+}
+
 .desktop-only {
   display: flex !important;
 }
 
 @media (max-width: 768px) {
-  .mobile-only {
+  .mobile-only,
+  .mobile-only-btn {
     display: flex !important;
   }
 
@@ -2067,11 +2082,21 @@ textarea.form-input {
 
   .admin-layout {
     flex-direction: column;
+    background-color: #060911 !important;
+  }
+
+  .admin-main-wrapper {
+    background-color: #060911 !important;
   }
 
   .admin-header {
     padding: 0 1rem;
     height: 52px;
+    background-color: #0f172a !important;
+    border-bottom: 1px solid #243048;
+    position: sticky;
+    top: 0;
+    z-index: 100;
   }
 
   .header-status-text {
@@ -2081,6 +2106,7 @@ textarea.form-input {
   .admin-main {
     padding: 1rem 1rem 70px 1rem;
     max-width: 100%;
+    background-color: #060911 !important;
   }
 
   .admin-layout .card {
