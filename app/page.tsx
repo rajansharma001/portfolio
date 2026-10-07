@@ -43,12 +43,6 @@ export default function HomePage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        fetch('/api/analytics/track', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ path: window.location.pathname }),
-        }).catch(() => {});
-
         const res = await fetch('/api/portfolio-data');
         if (res.ok) {
           const bundle = await res.json();

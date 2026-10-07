@@ -103,7 +103,25 @@ export async function POST(req: NextRequest) {
 
     const timestampDate = new Date();
 
-    // 4. Create Detailed Visit Log in dedicated collection
+    // 4. Deduplicate burst hits (within 15 seconds from the same IP & Path)
+    const recentDuplicate = await VisitLogModel.findOne({
+      ip,
+      path: pagePath,
+      timestamp: { $gte: new Date(Date.now() - 15000) },
+    });
+
+    if (recentDuplicate) {
+      if (screenResolution && screenResolution !== 'Unknown' && recentDuplicate.screenResolution === 'Unknown') {
+        await VisitLogModel.findByIdAndUpdate(recentDuplicate._id, {
+          screenResolution,
+          referrer: clientReferrer.slice(0, 200),
+          referrerHost,
+        });
+      }
+      return NextResponse.json({ success: true, deduplicated: true });
+    }
+
+    // 5. Create Detailed Visit Log in dedicated collection
     await VisitLogModel.create({
       ip,
       country,
