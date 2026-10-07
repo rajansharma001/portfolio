@@ -472,7 +472,7 @@ ${selectedLead.notes || 'None'}`;
       </div>
 
       {/* Main CRM Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(320px, 1.2fr) minmax(360px, 1.8fr)', gap: '24px', alignItems: 'start' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px', alignItems: 'start' }}>
         {/* Leads Feed List */}
         <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
           <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border)', background: 'var(--bg-main)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

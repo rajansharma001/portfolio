@@ -58,7 +58,7 @@ export default function AdminPostsPage() {
 
   return (
     <AdminLayout>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h1 style={{ fontSize: '28px', fontWeight: '800', letterSpacing: '-0.02em' }}>Engineering Articles & Blog</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginTop: '6px' }}>
@@ -90,7 +90,7 @@ export default function AdminPostsPage() {
           <p style={{ color: 'var(--text-secondary)' }}>No articles found.</p>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '20px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
           {filteredPosts.map((post) => (
             <div
               key={post.id}

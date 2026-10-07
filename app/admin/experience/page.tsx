@@ -84,7 +84,7 @@ export default function AdminExperiencePage() {
 
   return (
     <AdminLayout>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h1 style={{ fontSize: '28px', fontWeight: '800', letterSpacing: '-0.02em' }}>Background & Experience</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginTop: '6px' }}>
@@ -92,7 +92,7 @@ export default function AdminExperiencePage() {
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '12px' }}>
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           <button onClick={handleAddItem} className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Plus size={16} /> Add Position
           </button>
@@ -129,7 +129,7 @@ export default function AdminExperiencePage() {
               </button>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
               <div className="form-group">
                 <label className="form-label">Role Title</label>
                 <input
@@ -155,7 +155,7 @@ export default function AdminExperiencePage() {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
               <div className="form-group">
                 <label className="form-label">Time Period</label>
                 <input

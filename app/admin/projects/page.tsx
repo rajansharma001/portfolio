@@ -150,7 +150,7 @@ export default function AdminProjectsPage() {
           <p style={{ color: 'var(--text-secondary)' }}>No projects found matching your query.</p>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '20px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
           {filteredProjects.map((project, idx) => (
             <div
               key={project.id}

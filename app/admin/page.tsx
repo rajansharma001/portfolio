@@ -397,7 +397,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Quick Actions & Resume Manager Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px', marginBottom: '32px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px', marginBottom: '32px' }}>
         {/* Resume Quick Upload Card */}
         <div className="card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
@@ -450,7 +450,7 @@ export default function AdminDashboardPage() {
         {/* Quick System Links */}
         <div className="card">
           <h3 style={{ fontSize: '16px', fontWeight: '700', marginBottom: '16px' }}>Quick Navigation</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px' }}>
             <Link
               href="/admin/planner"
               className="btn btn-outline"

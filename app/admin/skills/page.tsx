@@ -79,7 +79,7 @@ export default function AdminSkillsPage() {
 
   return (
     <AdminLayout>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h1 style={{ fontSize: '28px', fontWeight: '800', letterSpacing: '-0.02em' }}>Technical Capabilities</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginTop: '6px' }}>
@@ -96,10 +96,11 @@ export default function AdminSkillsPage() {
 
       {/* Add New Category Control */}
       <div className="card" style={{ marginBottom: '2rem', padding: '1.25rem' }}>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
           <input
             type="text"
             className="form-input"
+            style={{ flex: 1, minWidth: '220px' }}
             placeholder="New Category Name (e.g. Cloud & Infrastructure)"
             value={newCategoryName}
             onChange={(e) => setNewCategoryName(e.target.value)}
@@ -110,7 +111,7 @@ export default function AdminSkillsPage() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
         {Object.keys(skills).map((category) => (
           <div key={category} className="card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', borderBottom: '1px solid var(--border)', paddingBottom: '10px' }}>
