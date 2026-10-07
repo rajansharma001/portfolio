@@ -243,3 +243,258 @@ export interface PortfolioSettings {
   languages?: LanguageItem[];
   marqueeItems?: string[];
 }
+
+// -------------------------------------------------------------
+// Planner & Productivity Suite Types (Mobile-First Life Tracking)
+// -------------------------------------------------------------
+
+export interface SubtaskItem {
+  id: string;
+  title: string;
+  completed: boolean;
+}
+
+export interface TaskItem {
+  id: string;
+  title: string;
+  description?: string;
+  priority: 'urgent' | 'high' | 'medium' | 'low';
+  status: 'todo' | 'in_progress' | 'completed' | 'cancelled';
+  category: string;
+  dueDate?: string; // YYYY-MM-DD
+  dueTime?: string; // HH:mm
+  subtasks: SubtaskItem[];
+  estimatedMinutes?: number;
+  actualMinutes?: number;
+  recurring: 'none' | 'daily' | 'weekdays' | 'weekly';
+  completedAt?: string;
+  order: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface HabitItem {
+  id: string;
+  title: string;
+  emoji: string;
+  category: string;
+  targetDaysPerWeek: number;
+  timeOfDay: 'morning' | 'afternoon' | 'evening' | 'anytime';
+  completedDates: string[]; // ['YYYY-MM-DD', ...]
+  currentStreak: number;
+  bestStreak: number;
+  archived: boolean;
+  order: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ScheduleBlock {
+  id: string;
+  title: string;
+  startTime: string; // HH:mm (e.g. "07:00")
+  endTime: string; // HH:mm (e.g. "08:30")
+  type: 'deep_work' | 'client_meeting' | 'routine' | 'learning' | 'exercise' | 'break' | 'admin';
+  description?: string;
+  daysOfWeek: number[]; // 0=Sun, 1=Mon, ..., 6=Sat (empty or [0..6] for daily)
+  specificDate?: string; // YYYY-MM-DD
+  completedDates: string[]; // ['YYYY-MM-DD']
+  color: string;
+  order: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface QuickNote {
+  id: string;
+  title: string;
+  content: string;
+  category: string;
+  pinned: boolean;
+  color: 'default' | 'blue' | 'emerald' | 'amber' | 'purple' | 'rose';
+  tags: string[];
+  order: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DailySummaryStats {
+  date: string;
+  tasksTotal: number;
+  tasksCompleted: number;
+  tasksDueToday: number;
+  habitsTotal: number;
+  habitsCompletedToday: number;
+  completionScore: number; // 0-100%
+  activeScheduleBlock?: ScheduleBlock | null;
+  nextScheduleBlock?: ScheduleBlock | null;
+}
+
+export const DEFAULT_HABITS: Omit<HabitItem, 'createdAt' | 'updatedAt'>[] = [
+  {
+    id: 'habit-1',
+    title: 'Deep Coding & Architecture',
+    emoji: '💻',
+    category: 'Engineering',
+    targetDaysPerWeek: 7,
+    timeOfDay: 'morning',
+    completedDates: [],
+    currentStreak: 0,
+    bestStreak: 0,
+    archived: false,
+    order: 1,
+  },
+  {
+    id: 'habit-2',
+    title: 'Physical Workout / Gym',
+    emoji: '🏋️',
+    category: 'Fitness',
+    targetDaysPerWeek: 5,
+    timeOfDay: 'morning',
+    completedDates: [],
+    currentStreak: 0,
+    bestStreak: 0,
+    archived: false,
+    order: 2,
+  },
+  {
+    id: 'habit-3',
+    title: 'Read Tech Docs / System Design',
+    emoji: '📖',
+    category: 'Learning',
+    targetDaysPerWeek: 6,
+    timeOfDay: 'evening',
+    completedDates: [],
+    currentStreak: 0,
+    bestStreak: 0,
+    archived: false,
+    order: 3,
+  },
+  {
+    id: 'habit-4',
+    title: 'Drink 3L Clean Water',
+    emoji: '💧',
+    category: 'Health',
+    targetDaysPerWeek: 7,
+    timeOfDay: 'anytime',
+    completedDates: [],
+    currentStreak: 0,
+    bestStreak: 0,
+    archived: false,
+    order: 4,
+  },
+  {
+    id: 'habit-5',
+    title: 'Japanese N5 Language Practice',
+    emoji: '🇯🇵',
+    category: 'Learning',
+    targetDaysPerWeek: 5,
+    timeOfDay: 'afternoon',
+    completedDates: [],
+    currentStreak: 0,
+    bestStreak: 0,
+    archived: false,
+    order: 5,
+  },
+  {
+    id: 'habit-6',
+    title: '8 Hours Quality Rest & Sleep',
+    emoji: '💤',
+    category: 'Health',
+    targetDaysPerWeek: 7,
+    timeOfDay: 'evening',
+    completedDates: [],
+    currentStreak: 0,
+    bestStreak: 0,
+    archived: false,
+    order: 6,
+  },
+];
+
+export const DEFAULT_SCHEDULE_BLOCKS: Omit<ScheduleBlock, 'createdAt' | 'updatedAt'>[] = [
+  {
+    id: 'sched-1',
+    title: 'Morning Routine & Fitness',
+    startTime: '06:30',
+    endTime: '08:00',
+    type: 'exercise',
+    description: 'Hydration, gym workout, stretching & breakfast',
+    daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
+    completedDates: [],
+    color: '#10b981',
+    order: 1,
+  },
+  {
+    id: 'sched-2',
+    title: 'Daily Planning & Inbound Review',
+    startTime: '08:00',
+    endTime: '09:00',
+    type: 'admin',
+    description: 'Check CRM leads, client messages, review today tasks',
+    daysOfWeek: [1, 2, 3, 4, 5],
+    completedDates: [],
+    color: '#3b82f6',
+    order: 2,
+  },
+  {
+    id: 'sched-3',
+    title: 'Deep Engineering Work Block 1',
+    startTime: '09:00',
+    endTime: '13:00',
+    type: 'deep_work',
+    description: 'High-focus programming, full-stack systems, core feature implementation',
+    daysOfWeek: [1, 2, 3, 4, 5, 6],
+    completedDates: [],
+    color: '#6366f1',
+    order: 3,
+  },
+  {
+    id: 'sched-4',
+    title: 'Lunch & Rest Recharge',
+    startTime: '13:00',
+    endTime: '14:00',
+    type: 'break',
+    description: 'Healthy meal, walk, disconnect from screens',
+    daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
+    completedDates: [],
+    color: '#84cc16',
+    order: 4,
+  },
+  {
+    id: 'sched-5',
+    title: 'Deep Work Block 2 & Client Deliverables',
+    startTime: '14:00',
+    endTime: '18:00',
+    type: 'deep_work',
+    description: 'API development, debugging, testing, deployment & client reviews',
+    daysOfWeek: [1, 2, 3, 4, 5],
+    completedDates: [],
+    color: '#06b6d4',
+    order: 5,
+  },
+  {
+    id: 'sched-6',
+    title: 'Skill Upgrade / Language Study',
+    startTime: '18:30',
+    endTime: '20:00',
+    type: 'learning',
+    description: 'Japanese study, new frameworks, reading technical blogs',
+    daysOfWeek: [1, 2, 3, 4, 5],
+    completedDates: [],
+    color: '#ec4899',
+    order: 6,
+  },
+  {
+    id: 'sched-7',
+    title: 'Evening Wind-down & Daily Retrospective',
+    startTime: '21:30',
+    endTime: '22:30',
+    type: 'routine',
+    description: 'Reflect on habits, journal notes, plan tomorrow',
+    daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
+    completedDates: [],
+    color: '#a855f7',
+    order: 7,
+  },
+];
+

@@ -27,7 +27,8 @@ export async function middleware(req: NextRequest) {
     const isProtectedGet =
       pathname.startsWith('/api/messages') ||
       pathname.startsWith('/api/analytics/stats') ||
-      pathname.startsWith('/api/analytics/logs');
+      pathname.startsWith('/api/analytics/logs') ||
+      pathname.startsWith('/api/planner');
 
     if (isMutation || isProtectedGet) {
       const isValid = await verifySignedSessionToken(token);

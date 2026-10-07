@@ -22,6 +22,7 @@ import {
   TrendingUp,
   ChevronRight,
   HelpCircle,
+  CalendarCheck,
 } from 'lucide-react';
 import { Project, SkillsMap, ExperienceItem, PortfolioSettings } from '@/lib/types';
 
@@ -203,6 +204,9 @@ export default function AdminDashboardPage() {
           </p>
         </div>
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <Link href="/admin/planner" className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <CalendarCheck size={16} /> Planner & Daily Hub
+          </Link>
           <span style={{ display: 'inline-flex', alignItems: 'center', padding: '4px 10px', borderRadius: '12px', fontSize: '12px', fontWeight: '600', background: 'rgba(22, 163, 74, 0.1)', color: 'var(--status-success)' }}>
             ● Portfolio Live
           </span>
@@ -447,6 +451,14 @@ export default function AdminDashboardPage() {
         <div className="card">
           <h3 style={{ fontSize: '16px', fontWeight: '700', marginBottom: '16px' }}>Quick Navigation</h3>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <Link
+              href="/admin/planner"
+              className="btn btn-outline"
+              style={{ justifyContent: 'flex-start', padding: '12px', gap: '8px', fontSize: '13px', borderLeft: '3px solid var(--accent)' }}
+            >
+              <CalendarCheck size={16} color="var(--accent)" /> Planner & Daily Hub
+            </Link>
+
             <Link
               href="/admin/projects"
               className="btn btn-outline"
