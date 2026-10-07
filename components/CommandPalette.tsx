@@ -17,6 +17,9 @@ import {
   MessageSquare,
   DollarSign,
   Calendar,
+  Shield,
+  CheckSquare,
+  BarChart3,
 } from 'lucide-react';
 import { Project, SkillsMap } from '@/lib/types';
 
@@ -31,7 +34,7 @@ interface CommandPaletteProps {
 
 interface PaletteItem {
   id: string;
-  category: 'Lead Actions' | 'Projects' | 'Blog' | 'Skills' | 'Preferences';
+  category: 'Lead Actions' | 'Projects' | 'Blog' | 'Skills' | 'Admin & System' | 'Preferences';
   title: string;
   subtitle?: string;
   icon: React.ReactNode;
@@ -181,6 +184,52 @@ export default function CommandPalette({
       action: () => {
         onClose();
         router.push('/blog');
+      },
+    },
+
+    // Admin & System (Instant access on mobile PWA & desktop)
+    {
+      id: 'admin-dashboard',
+      category: 'Admin & System',
+      title: 'Admin Dashboard & CMS',
+      subtitle: 'Manage projects, posts, content and system settings',
+      icon: <Shield size={16} color="#ef4444" />,
+      action: () => {
+        onClose();
+        router.push('/admin');
+      },
+    },
+    {
+      id: 'admin-planner',
+      category: 'Admin & System',
+      title: 'Daily Planner & Task Tracker',
+      subtitle: 'Manage daily schedule, todo list, habits & quick notes',
+      icon: <CheckSquare size={16} color="#10b981" />,
+      action: () => {
+        onClose();
+        router.push('/admin/planner');
+      },
+    },
+    {
+      id: 'admin-analytics',
+      category: 'Admin & System',
+      title: 'Traffic & Visitor Analytics',
+      subtitle: 'Deep-dive visitor logs, country breakdown & stats',
+      icon: <BarChart3 size={16} color="#3b82f6" />,
+      action: () => {
+        onClose();
+        router.push('/admin/analytics');
+      },
+    },
+    {
+      id: 'admin-messages',
+      category: 'Admin & System',
+      title: 'CRM Leads & Messages',
+      subtitle: 'Incoming inquiries and contact submissions',
+      icon: <MessageSquare size={16} color="#f59e0b" />,
+      action: () => {
+        onClose();
+        router.push('/admin/messages');
       },
     },
 
