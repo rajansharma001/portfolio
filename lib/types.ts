@@ -268,6 +268,7 @@ export interface TaskItem {
   actualMinutes?: number;
   recurring: 'none' | 'daily' | 'weekdays' | 'weekly';
   completedAt?: string;
+  completedDates?: string[]; // per-day completion for recurring tasks (YYYY-MM-DD)
   order: number;
   createdAt: string;
   updatedAt: string;

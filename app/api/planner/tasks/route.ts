@@ -50,6 +50,7 @@ export async function POST(req: NextRequest) {
       estimatedMinutes: Number(body.estimatedMinutes) || 0,
       actualMinutes: Number(body.actualMinutes) || 0,
       recurring: body.recurring || 'none',
+      completedDates: [],
       order: Number(body.order) || 0,
     };
 

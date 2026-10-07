@@ -40,6 +40,7 @@ const TaskSchema = new Schema<TaskItem>(
       default: 'none',
     },
     completedAt: { type: String, default: '' },
+    completedDates: { type: [String], default: [] },
     order: { type: Number, default: 0 },
   },
   { timestamps: true }
