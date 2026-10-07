@@ -24,7 +24,10 @@ export async function middleware(req: NextRequest) {
     !pathname.startsWith('/api/analytics/track')
   ) {
     const isMutation = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method);
-    const isProtectedGet = pathname.startsWith('/api/messages');
+    const isProtectedGet =
+      pathname.startsWith('/api/messages') ||
+      pathname.startsWith('/api/analytics/stats') ||
+      pathname.startsWith('/api/analytics/logs');
 
     if (isMutation || isProtectedGet) {
       const isValid = await verifySignedSessionToken(token);

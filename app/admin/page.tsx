@@ -394,9 +394,23 @@ export default function AdminDashboardPage() {
               <h3 style={{ fontSize: '16px', fontWeight: '700' }}>Recent Visitor Sessions</h3>
               <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Real-time incoming traffic locations & IP traces</p>
             </div>
-            <span style={{ fontSize: '12px', color: 'var(--accent)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              Live Log <ArrowUpRight size={14} />
-            </span>
+            <Link
+              href="/admin/analytics"
+              style={{
+                fontSize: '12px',
+                color: 'var(--accent)',
+                fontWeight: '700',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                background: 'var(--bg-main)',
+                padding: '6px 12px',
+                borderRadius: '6px',
+                border: '1px solid var(--border)',
+              }}
+            >
+              Open Full Analytics Dashboard <ArrowUpRight size={14} />
+            </Link>
           </div>
 
           <div style={{ overflowX: 'auto' }}>

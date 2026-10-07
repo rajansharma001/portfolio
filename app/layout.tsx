@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
+import AnalyticsTracker from '@/components/AnalyticsTracker';
 import './globals.css';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rajansharma.info.np';
@@ -139,7 +141,12 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <Suspense fallback={null}>
+          <AnalyticsTracker />
+        </Suspense>
+        {children}
+      </body>
     </html>
   );
 }
