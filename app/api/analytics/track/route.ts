@@ -1,23 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
-import { AnalyticsModel, VisitLogModel, IVisitRecord, IVisitLog } from '@/models/Analytics';
+import { AnalyticsModel, VisitLogModel, IVisitRecord } from '@/models/Analytics';
 import { parseUserAgent } from '@/lib/ua-parser';
+import { syncAndMergeAnalytics } from '@/lib/analytics-migrator';
 
 export async function GET() {
   try {
     await connectToDatabase();
-    let analytics = await AnalyticsModel.findOne({ key: 'global_analytics' }).lean();
-
-    if (!analytics) {
-      analytics = await AnalyticsModel.create({
-        key: 'global_analytics',
-        totalViews: 0,
-        uniqueVisitors: 0,
-        visits: [],
-      });
+    const result = await syncAndMergeAnalytics();
+    if (result.success && result.analytics) {
+      return NextResponse.json(result.analytics);
     }
-
-    return NextResponse.json(analytics);
+    let analytics = await AnalyticsModel.findOne({ key: 'global_analytics' }).lean();
+    return NextResponse.json(analytics || { totalViews: 0, uniqueVisitors: 0, visits: [] });
   } catch (error) {
     console.error('MongoDB Analytics GET error:', error);
     return NextResponse.json({ totalViews: 0, uniqueVisitors: 0, visits: [] });

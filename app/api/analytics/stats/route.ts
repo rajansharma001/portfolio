@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { AnalyticsModel, VisitLogModel } from '@/models/Analytics';
+import { syncAndMergeAnalytics } from '@/lib/analytics-migrator';
 
 export async function GET(req: NextRequest) {
   try {
     await connectToDatabase();
+
+    // Auto-merge legacy AnalyticsModel visits into VisitLogModel collection
+    await syncAndMergeAnalytics();
 
     const url = new URL(req.url);
     const range = url.searchParams.get('range') || '7d'; // 'today', '7d', '30d', 'all'
@@ -22,7 +26,7 @@ export async function GET(req: NextRequest) {
 
     const dateQuery = startDate ? { timestamp: { $gte: startDate } } : {};
 
-    // 1. Overall KPIs
+    // 1. Overall Merged KPIs
     const [summary, totalLogs, humanVisitors, botCount, todayCount, sevenDaysCount] = await Promise.all([
       AnalyticsModel.findOne({ key: 'global_analytics' }).lean(),
       VisitLogModel.countDocuments(dateQuery),
@@ -36,7 +40,10 @@ export async function GET(req: NextRequest) {
       }),
     ]);
 
-    // 2. Timeline Aggregation (Daily views for last 7 or 14 days)
+    const consolidatedTotalViews = Math.max(summary?.totalViews || 0, totalLogs);
+    const consolidatedUniqueVisitors = Math.max(summary?.uniqueVisitors || 0, humanVisitors.length);
+
+    // 2. Timeline Aggregation (Daily views)
     const timelineDays = range === '30d' ? 30 : range === 'today' ? 1 : 7;
     const timelineStart = new Date(now.getTime() - timelineDays * 24 * 60 * 60 * 1000);
 
@@ -150,9 +157,9 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       kpis: {
-        totalViews: summary?.totalViews || totalLogs,
+        totalViews: consolidatedTotalViews,
         rangeViews: totalLogs,
-        uniqueVisitors: humanVisitors.length,
+        uniqueVisitors: consolidatedUniqueVisitors,
         botVisits: botCount,
         todayViews: todayCount,
         sevenDaysViews: sevenDaysCount,
