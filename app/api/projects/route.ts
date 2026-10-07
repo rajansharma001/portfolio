@@ -4,6 +4,7 @@ import { ProjectModel, IProject } from '@/models/Project';
 import { verifyRequestAuth } from '@/lib/auth';
 import { ensureDatabaseSeeded } from '@/lib/auto-seed';
 import { getCache, setCache, invalidateCache } from '@/lib/cache';
+import { FALLBACK_PROJECTS } from '@/lib/fallback-data';
 
 const CACHE_KEY = 'public_projects_list';
 
@@ -43,8 +44,8 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('MongoDB Projects GET error:', error);
-    return NextResponse.json([], { status: 500 });
+    console.warn('MongoDB Projects GET notice, serving fallback projects:', error);
+    return NextResponse.json(FALLBACK_PROJECTS, { status: 200 });
   }
 }
 

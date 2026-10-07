@@ -20,34 +20,24 @@ import {
   SectionVisibility,
   DEFAULT_VISIBILITY,
 } from '@/lib/types';
+import {
+  FALLBACK_BUNDLE,
+  FALLBACK_PROJECTS,
+  FALLBACK_SKILLS_MAP,
+  FALLBACK_EXPERIENCES,
+} from '@/lib/fallback-data';
 
 export default function HomePage() {
-  const [settings, setSettings] = useState<PortfolioSettings>({
-    name: 'Rajan Sharma',
-    role: 'Full-Stack Software Engineer',
-    headline: 'Building production-grade web systems, REST APIs & scalable backends.',
-    heroImpactText: '16 production systems shipped across LMS, POS, tourism & geospatial domains.',
-    location: 'Kathmandu, Bagmati Prov, Nepal (UTC +5:45)',
-    email: 'email.rajan001@gmail.com',
-    phone: '+977 9800000000',
-    isAvailableForHire: true,
-    availabilityBadgeText: 'Open for Roles',
-    availabilityBadgeDate: 'Oct 2026',
-    resumeUrl: '/uploads/resume.pdf',
-    bio: 'Full-Stack Software Engineer specializing in Next.js, TypeScript, Node.js, Express, PostgreSQL, and MongoDB architectures.',
-    codeSnippet: '',
-    sectionVisibility: DEFAULT_VISIBILITY,
-  });
-
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [skills, setSkills] = useState<SkillsMap>({});
-  const [experience, setExperience] = useState<ExperienceItem[]>([]);
+  const [settings, setSettings] = useState<PortfolioSettings>(FALLBACK_BUNDLE.settings);
+  const [projects, setProjects] = useState<Project[]>(FALLBACK_PROJECTS);
+  const [skills, setSkills] = useState<SkillsMap>(FALLBACK_SKILLS_MAP);
+  const [experience, setExperience] = useState<ExperienceItem[]>(FALLBACK_EXPERIENCES);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [inquiryTopic, setInquiryTopic] = useState<string | undefined>(undefined);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const vis: SectionVisibility = settings.sectionVisibility || DEFAULT_VISIBILITY;
 

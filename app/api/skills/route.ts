@@ -3,6 +3,7 @@ import { connectToDatabase } from '@/lib/mongodb';
 import { SkillModel } from '@/models/Skill';
 import { verifyRequestAuth } from '@/lib/auth';
 import { ensureDatabaseSeeded } from '@/lib/auto-seed';
+import { FALLBACK_SKILLS_MAP } from '@/lib/fallback-data';
 
 export async function GET() {
   try {
@@ -17,10 +18,10 @@ export async function GET() {
       skillsMap[r.category] = r.skills || [];
     });
 
-    return NextResponse.json(skillsMap);
+    return NextResponse.json(Object.keys(skillsMap).length > 0 ? skillsMap : FALLBACK_SKILLS_MAP);
   } catch (error) {
-    console.error('MongoDB Skills GET error:', error);
-    return NextResponse.json({}, { status: 500 });
+    console.warn('MongoDB Skills GET notice, serving fallback skills:', error);
+    return NextResponse.json(FALLBACK_SKILLS_MAP, { status: 200 });
   }
 }
 

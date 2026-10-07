@@ -1890,9 +1890,6 @@ textarea.form-input {
    RESPONSIVE — MOBILE (≤768px)
    ========================================================================== */
 @media (max-width: 768px) {
-  body {
-    padding-top: calc(var(--nav-height) + 1rem);
-  }
   .container {
     padding: 0 1.25rem;
   }
@@ -2518,6 +2515,21 @@ body:has(.admin-layout) {
 .bottom-nav-item.active,
 .bottom-nav-item:hover {
   color: #60a5fa;
+}
+
+/* Planner Mobile Floating Action Button (FAB) */
+.planner-fab-container {
+  position: fixed;
+  bottom: calc(56px + 18px + env(safe-area-inset-bottom, 0px));
+  right: 18px;
+  z-index: 2600;
+}
+
+@media (min-width: 1024px) {
+  .planner-fab-container {
+    bottom: 24px;
+    right: 24px;
+  }
 }
 
 /* Helper visibility classes: Mobile-First */

@@ -3,6 +3,7 @@ import { connectToDatabase } from '@/lib/mongodb';
 import { ExperienceModel, IExperience } from '@/models/Experience';
 import { verifyRequestAuth } from '@/lib/auth';
 import { ensureDatabaseSeeded } from '@/lib/auto-seed';
+import { FALLBACK_EXPERIENCES } from '@/lib/fallback-data';
 
 export async function GET() {
   try {
@@ -10,10 +11,10 @@ export async function GET() {
     await ensureDatabaseSeeded();
 
     const experiences = await ExperienceModel.find({}).sort({ period: -1 }).lean();
-    return NextResponse.json(experiences);
+    return NextResponse.json(experiences && experiences.length > 0 ? experiences : FALLBACK_EXPERIENCES);
   } catch (error) {
-    console.error('MongoDB Experience GET error:', error);
-    return NextResponse.json([], { status: 500 });
+    console.warn('MongoDB Experience GET notice, serving fallback experiences:', error);
+    return NextResponse.json(FALLBACK_EXPERIENCES, { status: 200 });
   }
 }
 

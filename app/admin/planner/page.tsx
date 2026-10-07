@@ -1394,20 +1394,20 @@ export default function PlannerPage() {
         </div>
       )}
 
-      {/* Mobile Floating Action Button (FAB) */}
-      <div style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 1000 }}>
+      {/* Mobile Floating Action Button (FAB) - Elevated above bottom navigation bar */}
+      <div className="planner-fab-container">
         {showFabMenu && (
-          <div style={{ position: 'absolute', bottom: '56px', right: 0, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '6px', padding: '6px', display: 'flex', flexDirection: 'column', gap: '4px', minWidth: '140px', boxShadow: '0 10px 25px rgba(0,0,0,0.4)' }}>
-            <button type="button" onClick={() => { setShowFabMenu(false); setShowTaskModal(true); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px', background: 'none', border: 'none', color: 'var(--text-primary)', fontSize: '12px', cursor: 'pointer' }}>
+          <div style={{ position: 'absolute', bottom: '58px', right: 0, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', padding: '6px', display: 'flex', flexDirection: 'column', gap: '4px', minWidth: '150px', boxShadow: '0 12px 30px rgba(0,0,0,0.6)', zIndex: 2700 }}>
+            <button type="button" onClick={() => { setShowFabMenu(false); setShowTaskModal(true); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '9px 12px', background: 'none', border: 'none', color: 'var(--text-primary)', fontSize: '12px', fontWeight: '600', cursor: 'pointer', borderRadius: '4px' }}>
               <CheckSquare size={14} color="var(--accent)" /> Task
             </button>
-            <button type="button" onClick={() => { setShowFabMenu(false); setShowHabitModal(true); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px', background: 'none', border: 'none', color: 'var(--text-primary)', fontSize: '12px', cursor: 'pointer' }}>
+            <button type="button" onClick={() => { setShowFabMenu(false); setShowHabitModal(true); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '9px 12px', background: 'none', border: 'none', color: 'var(--text-primary)', fontSize: '12px', fontWeight: '600', cursor: 'pointer', borderRadius: '4px' }}>
               <Flame size={14} color="#10b981" /> Habit
             </button>
-            <button type="button" onClick={() => { setShowFabMenu(false); setShowScheduleModal(true); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px', background: 'none', border: 'none', color: 'var(--text-primary)', fontSize: '12px', cursor: 'pointer' }}>
+            <button type="button" onClick={() => { setShowFabMenu(false); setShowScheduleModal(true); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '9px 12px', background: 'none', border: 'none', color: 'var(--text-primary)', fontSize: '12px', fontWeight: '600', cursor: 'pointer', borderRadius: '4px' }}>
               <Clock size={14} color="#8b5cf6" /> Time Block
             </button>
-            <button type="button" onClick={() => { setShowFabMenu(false); setShowNoteModal(true); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px', background: 'none', border: 'none', color: 'var(--text-primary)', fontSize: '12px', cursor: 'pointer' }}>
+            <button type="button" onClick={() => { setShowFabMenu(false); setShowNoteModal(true); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '9px 12px', background: 'none', border: 'none', color: 'var(--text-primary)', fontSize: '12px', fontWeight: '600', cursor: 'pointer', borderRadius: '4px' }}>
               <FileText size={14} color="#f59e0b" /> Note
             </button>
           </div>
@@ -1415,7 +1415,8 @@ export default function PlannerPage() {
         <button
           type="button"
           onClick={() => setShowFabMenu(!showFabMenu)}
-          style={{ width: '46px', height: '46px', borderRadius: '50%', background: 'var(--accent)', color: '#fff', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+          style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'var(--accent)', color: '#fff', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 6px 20px rgba(0, 85, 255, 0.45)', transition: 'transform 0.2s ease' }}
+          aria-label="Quick Action Menu"
         >
           {showFabMenu ? <X size={20} /> : <Plus size={22} />}
         </button>

@@ -3,6 +3,7 @@ import { connectToDatabase } from '@/lib/mongodb';
 import { SettingModel, ISetting } from '@/models/Setting';
 import { verifyRequestAuth } from '@/lib/auth';
 import { getCache, setCache, invalidateAllPortfolioCache } from '@/lib/cache';
+import { FALLBACK_SETTINGS } from '@/lib/fallback-data';
 
 const CACHE_KEY = 'global_site_settings';
 
@@ -47,8 +48,8 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error('MongoDB Settings GET error:', error);
-    return NextResponse.json({}, { status: 500 });
+    console.warn('MongoDB Settings GET notice, serving fallback settings:', error);
+    return NextResponse.json(FALLBACK_SETTINGS, { status: 200 });
   }
 }
 

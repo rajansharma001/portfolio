@@ -6,7 +6,7 @@ export interface Project {
   tagline: string;
   impact: string;
   description: string;
-  thumbnail: string;
+  thumbnail?: string;
   techStack: string[];
   liveUrl?: string;
   githubUrl?: string;

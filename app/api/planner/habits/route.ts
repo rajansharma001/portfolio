@@ -19,8 +19,8 @@ export async function GET(req: NextRequest) {
       .lean();
     return NextResponse.json(habits);
   } catch (error) {
-    console.error('Planner habits GET error:', error);
-    return NextResponse.json({ error: 'Failed to fetch habits' }, { status: 500 });
+    console.warn('Planner habits GET notice, serving default habits:', error);
+    return NextResponse.json(DEFAULT_HABITS, { status: 200 });
   }
 }
 
