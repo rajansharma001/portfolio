@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PortfolioSettings, DEFAULT_FAQS } from '@/lib/types';
-import { Mail, Send, CheckCircle2, AlertCircle, Sparkles, Clock, Layers } from 'lucide-react';
+import { Mail, Send, CheckCircle2, AlertCircle } from 'lucide-react';
 
 interface ContactSectionProps {
   settings?: PortfolioSettings | null;
@@ -12,12 +12,10 @@ interface ContactSectionProps {
 
 export default function ContactSection({ settings, onShowToast, initialInquiryTopic }: ContactSectionProps) {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
-  const [inquiryType, setInquiryType] = useState('Full-Time Engineering Role');
-  const [timeline, setTimeline] = useState('Immediate / 1 Month');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    message: initialInquiryTopic ? `Hi Rajan,\n\nI'm reaching out regarding your work on ${initialInquiryTopic}...` : '',
+    message: initialInquiryTopic ? `Hi Rajan,\n\nI'm reaching out regarding ${initialInquiryTopic}...` : '',
     website_url: '',
   });
 
@@ -28,16 +26,15 @@ export default function ContactSection({ settings, onShowToast, initialInquiryTo
   const [formError, setFormError] = useState<string | null>(null);
   const [isSent, setIsSent] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchCaptcha();
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (initialInquiryTopic) {
-      setInquiryType('Custom System / MVP Build');
       setFormData((prev) => ({
         ...prev,
-        message: `Hi Rajan,\n\nI'm reaching out regarding your work on ${initialInquiryTopic}. We have a project requirement and would like to discuss feasibility and timeline.`,
+        message: `Hi Rajan,\n\nI'm reaching out regarding your work on ${initialInquiryTopic}. We'd like to discuss an engineering requirement with you.`,
       }));
     }
   }, [initialInquiryTopic]);
@@ -74,8 +71,6 @@ export default function ContactSection({ settings, onShowToast, initialInquiryTo
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          inquiryType,
-          timeline,
           captchaAnswer,
           captchaToken,
         }),
@@ -86,13 +81,13 @@ export default function ContactSection({ settings, onShowToast, initialInquiryTo
       if (res.ok) {
         setIsSent(true);
         if (onShowToast) {
-          onShowToast('Inquiry delivered to Rajan! Response within 24h.');
+          onShowToast('Message delivered successfully!');
         }
         setFormData({ name: '', email: '', message: '', website_url: '' });
         fetchCaptcha();
       } else {
         fetchCaptcha();
-        setFormError(data.error || 'Failed to deliver inquiry.');
+        setFormError(data.error || 'Failed to deliver message.');
       }
     } catch {
       fetchCaptcha();
@@ -102,15 +97,6 @@ export default function ContactSection({ settings, onShowToast, initialInquiryTo
     }
   };
 
-  const inquiryTypes = [
-    'Full-Time Engineering Role',
-    'Custom System / MVP Build',
-    'POS / LMS Platform',
-    'Architecture Consulting',
-  ];
-
-  const timelineOptions = ['Immediate / 1 Month', '1–3 Months', 'Exploring / Flexible'];
-
   return (
     <section id="contact" className="section container reveal">
       <div className="section-header">
@@ -119,10 +105,10 @@ export default function ContactSection({ settings, onShowToast, initialInquiryTo
       </div>
 
       <div className="contact-grid">
-        {/* Left Side: FAQ & Direct Reach-out */}
+        {/* Left Side: FAQs & Direct Email */}
         <div>
           <h3 className="text-h3" style={{ marginBottom: '1.5rem' }}>
-            Frequently Asked
+            Frequently Asked Questions
           </h3>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0', marginBottom: '2.5rem' }}>
@@ -136,7 +122,7 @@ export default function ContactSection({ settings, onShowToast, initialInquiryTo
                     onClick={() => toggleFaq(idx)}
                     aria-expanded={isActive}
                   >
-                    {faq.q} <span className="faq-icon">+</span>
+                    {faq.q} <span className="faq-icon">{isActive ? '−' : '+'}</span>
                   </button>
                   <div className="faq-answer">
                     <p>{faq.a}</p>
@@ -168,13 +154,13 @@ export default function ContactSection({ settings, onShowToast, initialInquiryTo
           </div>
         </div>
 
-        {/* Right Side: High-Converting Lead Generation Form */}
+        {/* Right Side: Clean Professional Contact Form */}
         <div>
           <span className="label" style={{ marginBottom: '0.5rem', color: 'var(--accent)', display: 'block' }}>
-            Direct Engineering Inquiry
+            Get in Touch
           </span>
           <h2 className="text-h2" style={{ marginBottom: '1.5rem', fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}>
-            Start a Project Discussion
+            Send a Direct Message
           </h2>
 
           <form className="contact-form" id="contact-form" onSubmit={handleSubmit}>
@@ -210,74 +196,9 @@ export default function ContactSection({ settings, onShowToast, initialInquiryTo
                   borderRadius: '4px',
                 }}
               >
-                <CheckCircle2 size={16} /> Inquiry delivered successfully! I will review your requirements and respond within 24 hours.
+                <CheckCircle2 size={16} /> Message delivered successfully! I will respond within 24 hours.
               </div>
             )}
-
-            {/* Inquiry Scope Pills */}
-            <div className="form-group" style={{ marginBottom: '14px' }}>
-              <label className="form-label" style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Sparkles size={14} color="var(--accent)" /> Inquiry Scope
-              </label>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '6px' }}>
-                {inquiryTypes.map((type) => {
-                  const isSelected = inquiryType === type;
-                  return (
-                    <button
-                      key={type}
-                      type="button"
-                      onClick={() => setInquiryType(type)}
-                      style={{
-                        padding: '8px 10px',
-                        fontSize: '11px',
-                        fontWeight: '600',
-                        fontFamily: 'var(--font-sans)',
-                        textAlign: 'center',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        background: isSelected ? 'var(--accent)' : 'var(--bg-primary)',
-                        color: isSelected ? '#ffffff' : 'var(--text-secondary)',
-                        border: isSelected ? '1px solid var(--accent)' : '1px solid var(--border-color)',
-                        transition: 'all 0.15s ease',
-                      }}
-                    >
-                      {type}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Timeline Selection */}
-            <div className="form-group" style={{ marginBottom: '14px' }}>
-              <label className="form-label" style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Clock size={14} color="var(--accent)" /> Target Timeline
-              </label>
-              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                {timelineOptions.map((opt) => {
-                  const isSelected = timeline === opt;
-                  return (
-                    <button
-                      key={opt}
-                      type="button"
-                      onClick={() => setTimeline(opt)}
-                      style={{
-                        padding: '6px 12px',
-                        fontSize: '11px',
-                        fontWeight: '600',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        background: isSelected ? 'var(--text-primary)' : 'var(--bg-primary)',
-                        color: isSelected ? 'var(--bg-primary)' : 'var(--text-secondary)',
-                        border: isSelected ? '1px solid var(--text-primary)' : '1px solid var(--border-color)',
-                      }}
-                    >
-                      {opt}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
 
             <div className="form-group">
               <label htmlFor="name">Your Name</label>
@@ -294,7 +215,7 @@ export default function ContactSection({ settings, onShowToast, initialInquiryTo
             </div>
 
             <div className="form-group">
-              <label htmlFor="email">Your Work / Personal Email</label>
+              <label htmlFor="email">Your Email Address</label>
               <input
                 type="email"
                 id="email"
@@ -322,16 +243,16 @@ export default function ContactSection({ settings, onShowToast, initialInquiryTo
             </div>
 
             <div className="form-group">
-              <label htmlFor="message">Project Requirements / Role Details</label>
+              <label htmlFor="message">Message</label>
               <textarea
                 id="message"
                 className="form-input"
                 required
-                placeholder="Describe your tech stack, system goals, or engineering role..."
+                placeholder="Describe your role, opportunity, or system requirements..."
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 disabled={isSubmitting}
-                rows={4}
+                rows={5}
               />
             </div>
 
@@ -351,9 +272,14 @@ export default function ContactSection({ settings, onShowToast, initialInquiryTo
               </div>
             )}
 
-            <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }} disabled={isSubmitting}>
+            <button
+              type="submit"
+              className="btn btn-primary"
+              style={{ width: '100%', marginTop: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+              disabled={isSubmitting}
+            >
               <Send size={16} />
-              {isSubmitting ? 'Delivering Inquiry...' : 'Submit Engineering Inquiry'}
+              {isSubmitting ? 'Sending Message...' : 'Send Message'}
             </button>
           </form>
         </div>

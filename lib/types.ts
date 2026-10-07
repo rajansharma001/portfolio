@@ -130,15 +130,31 @@ export interface QuickFacts {
 export const DEFAULT_FAQS: FAQItem[] = [
   {
     q: 'Engineering Roles & Availability',
-    a: 'I am open to full-time remote engineering positions, hybrid roles, and contract architectural projects worldwide.',
+    a: 'I am open to full-time remote software engineering positions, long-term contractor roles, and high-impact web system development worldwide.',
   },
   {
-    q: 'Full-Stack Technical Scope',
-    a: 'From relational/document database schemas and REST APIs to reactive Next.js frontends and production deployment, I handle end-to-end technical delivery.',
+    q: 'Core Technical Stack & Architectural Scope',
+    a: 'Specialized in Next.js 16, React 19, TypeScript, Node.js, Express REST APIs, PostgreSQL (Prisma), MongoDB (Mongoose), and secure JWT RBAC authentication.',
   },
   {
-    q: 'Timezone & Collaboration',
-    a: 'Based in Kathmandu, Nepal (UTC+5:45), coordinating seamlessly with Asian, European, and US working schedules.',
+    q: 'Timezone Alignment & Remote Collaboration',
+    a: 'Based in Kathmandu, Nepal (UTC+5:45), coordinating seamlessly with Asian, European, and US working schedules with proactive daily communication.',
+  },
+  {
+    q: 'How do we start a project or schedule an interview?',
+    a: 'Send a message through the contact form or email directly to email.rajan001@gmail.com. I respond within 24 hours to schedule an introductory technical discussion.',
+  },
+  {
+    q: 'Production Experience & Project Track Record',
+    a: 'Have engineered and shipped 16 production software systems across Learning Management (LMS), Point of Sale (POS), tourism portals, and geospatial data pipelines.',
+  },
+  {
+    q: 'Code Quality, Testing & Security Standards',
+    a: 'Strict type safety, cryptographic password hashing, rate limiting, parameterized queries, and optimized server rendering for top Core Web Vitals.',
+  },
+  {
+    q: 'Deployment, CI/CD & Project Handover',
+    a: 'Deliver production-ready environments on Linux VPS, Vercel, Docker, or cPanel with complete documentation, database migration scripts, and ongoing support.',
   },
 ];
 

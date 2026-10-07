@@ -3,7 +3,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { PortfolioSettings, SectionVisibility, DEFAULT_VISIBILITY, SkillsMap, Project } from '@/lib/types';
 import { Download, MapPin, Layers, Cpu, Terminal as TerminalIcon } from 'lucide-react';
-import { triggerConfetti } from '@/lib/confetti';
 
 interface HeroProps {
   settings?: PortfolioSettings | null;
@@ -24,13 +23,12 @@ export default function Hero({ settings, visibility, skills, projects }: HeroPro
     {
       type: 'output',
       text: `Available commands:
-  whoami          - Display engineer bio & credentials
-  skills          - Inspect active technical stack
-  projects        - List shipped production systems
-  cat resume      - Output condensed ASCII resume
-  contact         - Get direct reach-out channels
-  sudo hire-rajan - Run instant hiring pipeline 🚀
-  clear           - Reset terminal session`,
+  whoami      - Display engineer background & role
+  skills      - Inspect active technical stack
+  projects    - List shipped production systems
+  cat resume  - Output condensed text resume
+  contact     - Direct communication channels
+  clear       - Reset terminal session`,
     },
   ]);
   const [terminalInput, setTerminalInput] = useState('');
@@ -70,13 +68,12 @@ export default function Hero({ settings, visibility, skills, projects }: HeroPro
       newHistory.push({
         type: 'output',
         text: `Available commands:
-  whoami          - Display engineer bio & credentials
-  skills          - Inspect active technical stack
-  projects        - List shipped production systems
-  cat resume      - Output condensed ASCII resume
-  contact         - Get direct reach-out channels
-  sudo hire-rajan - Run instant hiring pipeline 🚀
-  clear           - Reset terminal session`,
+  whoami      - Display engineer background & role
+  skills      - Inspect active technical stack
+  projects    - List shipped production systems
+  cat resume  - Output condensed text resume
+  contact     - Direct communication channels
+  clear       - Reset terminal session`,
       });
     } else if (cmd === 'whoami') {
       newHistory.push({
@@ -117,7 +114,7 @@ Bio: ${settings?.bio || 'Building scalable web systems, REST APIs & resilient da
           text: '16+ production systems shipped across LMS, POS, tourism & geospatial pipelines.',
         });
       }
-    } else if (cmd === 'cat resume' || cmd === 'cat resume.txt' || cmd === 'cat resume.pdf') {
+    } else if (cmd === 'cat resume' || cmd === 'cat resume.txt' || cmd === 'cat resume.pdf' || cmd === 'resume') {
       newHistory.push({
         type: 'output',
         text: `================================================
@@ -138,20 +135,6 @@ Phone: ${settings?.phone || '+977 9800000000'}
 LinkedIn: https://linkedin.com/in/rajansharma001
 Location: ${settings?.location || 'Kathmandu, Nepal'}`,
       });
-    } else if (cmd === 'sudo hire-rajan' || cmd === 'hire-rajan' || cmd === 'hire') {
-      triggerConfetti();
-      newHistory.push({
-        type: 'output',
-        text: `🎉 EXCELLENT DECISION! Initiating recruiter onboarding sequence...
-Status: 200 OK — Interview schedule pipeline unlocked.
-Redirecting to direct message channel in 1 second...`,
-      });
-      setTimeout(() => {
-        const contactSection = document.getElementById('contact');
-        if (contactSection) {
-          contactSection.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 1000);
     } else if (cmd === 'theme') {
       const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
       if (isDark) {
@@ -247,7 +230,7 @@ Redirecting to direct message channel in 1 second...`,
                   onChange={(e) => setTerminalInput(e.target.value)}
                   autoComplete="off"
                   spellCheck="false"
-                  placeholder="type 'sudo hire-rajan'..."
+                  placeholder="type 'help' or 'skills'..."
                 />
               </form>
               <div ref={terminalEndRef} />
