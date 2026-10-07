@@ -1797,51 +1797,86 @@ body:has(.admin-layout) {
   --status-danger: #ef4444;
 
   display: flex;
+  flex-direction: column;
   min-height: 100vh;
-  background: var(--bg-main);
+  background-color: var(--bg-main);
   color: #ffffff;
   font-family: var(--font-sans);
+  width: 100%;
 }
 
+/* Sidebar is completely hidden by default on all mobile & tablet viewports */
 .admin-sidebar {
-  width: 260px;
-  background: var(--bg-sidebar);
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  z-index: 40;
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+  position: absolute !important;
+  visibility: hidden !important;
 }
 
 .admin-main-wrapper {
-  flex: 1;
   display: flex;
   flex-direction: column;
+  flex: 1;
   min-width: 0;
-  background: var(--bg-main);
+  width: 100%;
+  background-color: var(--bg-main);
 }
 
 .admin-header {
-  height: 60px;
-  background: var(--bg-surface);
+  height: 48px;
+  background-color: #0f172a !important;
   border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
-  z-index: 30;
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 2rem;
+  padding: 0 0.85rem;
+  width: 100%;
 }
 
 .admin-main {
   flex: 1;
-  padding: 2rem;
-  max-width: 1280px;
+  padding: 0.75rem 0.75rem 70px 0.75rem;
+  max-width: 100%;
   margin: 0 auto;
   width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .admin-layout {
+    flex-direction: row;
+  }
+
+  .admin-sidebar {
+    display: flex !important;
+    visibility: visible !important;
+    position: sticky !important;
+    width: 260px !important;
+    height: 100vh !important;
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border);
+    flex-direction: column;
+    top: 0;
+    z-index: 40;
+    overflow-y: auto !important;
+  }
+
+  .admin-header {
+    height: 60px;
+    padding: 0 2rem;
+  }
+
+  .admin-main {
+    padding: 2rem;
+    max-width: 1280px;
+  }
 }
 
 .admin-nav {
@@ -2053,85 +2088,90 @@ body:has(.admin-layout) {
   color: #60a5fa;
 }
 
-.mobile-only {
-  display: none !important;
-}
-
+/* Helper visibility classes: Mobile-First */
+.mobile-only,
 .mobile-only-btn {
-  display: none !important;
-}
-
-.desktop-only {
   display: flex !important;
 }
 
-@media (max-width: 768px) {
+.desktop-only,
+.desktop-only-btn {
+  display: none !important;
+}
+
+.header-status-text {
+  display: none !important;
+}
+
+.admin-main h1 {
+  font-size: 1.35rem !important;
+  line-height: 1.25 !important;
+}
+
+.admin-main p {
+  font-size: 0.825rem !important;
+  margin-top: 2px !important;
+}
+
+.admin-main > div:first-child {
+  margin-bottom: 1rem !important;
+}
+
+.admin-layout .card {
+  padding: 0.875rem;
+}
+
+.admin-layout .form-input,
+.admin-layout textarea.form-input,
+.admin-layout select.form-input {
+  font-size: 16px !important; /* Prevents auto-zoom on iOS Safari */
+  padding: 0.6rem;
+}
+
+@media (min-width: 1024px) {
   .mobile-only,
   .mobile-only-btn {
+    display: none !important;
+  }
+
+  .desktop-only {
     display: flex !important;
   }
 
-  .desktop-only,
   .desktop-only-btn {
+    display: inline-flex !important;
+  }
+
+  .admin-bottom-nav {
     display: none !important;
-  }
-
-  .admin-sidebar {
-    display: none !important;
-  }
-
-  .admin-layout {
-    flex-direction: column;
-    background-color: #060911 !important;
-  }
-
-  .admin-main-wrapper {
-    background-color: #060911 !important;
-  }
-
-  .admin-header {
-    padding: 0 0.85rem;
-    height: 48px;
-    background-color: #0f172a !important;
-    border-bottom: 1px solid #243048;
-    position: sticky;
-    top: 0;
-    z-index: 100;
   }
 
   .header-status-text {
-    display: none !important;
-  }
-
-  .admin-main {
-    padding: 0.75rem 0.75rem 70px 0.75rem;
-    max-width: 100%;
-    background-color: #060911 !important;
+    display: block !important;
   }
 
   .admin-main h1 {
-    font-size: 1.35rem !important;
-    line-height: 1.25 !important;
+    font-size: 28px !important;
   }
 
   .admin-main p {
-    font-size: 0.825rem !important;
-    margin-top: 2px !important;
+    font-size: 0.95rem !important;
+    margin-top: 6px !important;
   }
 
   .admin-main > div:first-child {
-    margin-bottom: 1rem !important;
+    margin-bottom: 2rem !important;
   }
 
   .admin-layout .card {
-    padding: 0.875rem;
+    padding: 1.5rem;
   }
 
   .admin-layout .form-input,
   .admin-layout textarea.form-input,
   .admin-layout select.form-input {
-    font-size: 16px !important; /* Prevents auto-zoom on iOS Safari */
-    padding: 0.6rem;
+    font-size: 0.9rem !important;
+    padding: 0.75rem 0.875rem;
   }
 }
 

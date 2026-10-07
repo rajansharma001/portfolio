@@ -87,55 +87,68 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     return 'Admin';
   };
 
+  const [isDesktop, setIsDesktop] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(typeof window !== 'undefined' && window.innerWidth >= 1024);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <div className="admin-layout">
-      {/* Desktop Sidebar */}
-      <aside className="admin-sidebar desktop-only">
-        <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-          <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: '#ffffff', fontSize: '15px' }}>
-            R
+      {/* Desktop Sidebar (Only mounted on desktop screens) */}
+      {isDesktop && (
+        <aside className="admin-sidebar desktop-only">
+          <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+            <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: '#ffffff', fontSize: '15px' }}>
+              R
+            </div>
+            <div>
+              <div style={{ fontWeight: '800', fontSize: '14px', color: '#ffffff', letterSpacing: '-0.01em' }}>Rajan Portfolio</div>
+              <div style={{ fontSize: '11px', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' }}>PRODUCTION CMS</div>
+            </div>
           </div>
-          <div>
-            <div style={{ fontWeight: '800', fontSize: '14px', color: '#ffffff', letterSpacing: '-0.01em' }}>Rajan Portfolio</div>
-            <div style={{ fontSize: '11px', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' }}>PRODUCTION CMS</div>
+
+          <nav className="admin-nav" style={{ padding: '1rem', flex: 1, overflowY: 'auto' }}>
+            {navItems.map((item) => {
+              const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`admin-nav-item ${isActive ? 'active' : ''}`}
+                  style={{ padding: '9px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderRadius: '6px', marginBottom: '2px' }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    {item.icon}
+                    <span>{item.label}</span>
+                  </div>
+                  {Boolean(item.badge && item.badge > 0) && (
+                    <span style={{ background: '#ef4444', color: '#fff', fontSize: '10px', fontWeight: '800', padding: '2px 7px', borderRadius: '10px', fontFamily: 'var(--font-mono)' }}>
+                      {item.badge}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div style={{ padding: '1rem', borderTop: '1px solid var(--border)' }}>
+            <button
+              onClick={handleLogout}
+              className="btn btn-outline"
+              style={{ width: '100%', justifyContent: 'center', color: '#ef4444', borderColor: 'rgba(239,68,68,0.3)', background: 'transparent', padding: '8px 12px', fontSize: '13px' }}
+            >
+              <LogOut size={15} />
+              <span>Logout</span>
+            </button>
           </div>
-        </div>
-
-        <nav className="admin-nav" style={{ padding: '1rem', flex: 1, overflowY: 'auto' }}>
-          {navItems.map((item) => {
-            const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`admin-nav-item ${isActive ? 'active' : ''}`}
-                style={{ padding: '9px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderRadius: '6px', marginBottom: '2px' }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  {item.icon}
-                  <span>{item.label}</span>
-                </div>
-                {Boolean(item.badge && item.badge > 0) && (
-                  <span style={{ background: '#ef4444', color: '#fff', fontSize: '10px', fontWeight: '800', padding: '2px 7px', borderRadius: '10px', fontFamily: 'var(--font-mono)' }}>
-                    {item.badge}
-                  </span>
-                )}
-              </Link>
-            );
-          })}
-        </nav>
-
-        <div style={{ padding: '1rem', borderTop: '1px solid var(--border)' }}>
-          <button
-            onClick={handleLogout}
-            className="btn btn-outline"
-            style={{ width: '100%', justifyContent: 'center', color: '#ef4444', borderColor: 'rgba(239,68,68,0.3)', background: 'transparent', padding: '8px 12px', fontSize: '13px' }}
-          >
-            <LogOut size={15} />
-            <span>Logout</span>
-          </button>
-        </div>
-      </aside>
+        </aside>
+      )}
 
       {/* Mobile Drawer Overlay */}
       {mobileDrawerOpen && (
