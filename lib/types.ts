@@ -183,14 +183,9 @@ export const DEFAULT_PROCESS_STEPS: ProcessStep[] = [
 
 export const DEFAULT_EDUCATION: EducationItem[] = [
   {
-    degree: 'Diploma in Electrical Engineering',
-    school: 'CTEVT (3-Year Technical Engineering Track)',
-    note: 'Engineering fundamentals, logic circuits & technical math.',
-  },
-  {
-    degree: 'Bachelor of Business Studies',
-    school: 'Enrolled / Higher Education',
-    note: 'Organizational strategy and business context.',
+    degree: 'Diploma in Computer Engineering',
+    school: 'CTEVT — Tribhuvan Secondary School, Kohalpur',
+    note: '2016 — 2021 · Completed with First Division.',
   },
 ];
 
@@ -198,6 +193,7 @@ export const DEFAULT_LANGUAGES: LanguageItem[] = [
   { language: 'English', proficiency: 'Professional Proficiency' },
   { language: 'Nepali', proficiency: 'Native Speaker' },
   { language: 'Hindi', proficiency: 'Fluent' },
+  { language: 'Japanese', proficiency: 'Beginner' },
 ];
 
 export const DEFAULT_QUICK_FACTS: QuickFacts = {

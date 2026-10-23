@@ -25,20 +25,57 @@ export async function POST(req: NextRequest) {
 
   try {
     await connectToDatabase();
-    const body = (await req.json()) as Partial<IExperience>;
+    const body = await req.json();
 
-    if (!body.role || !body.company) {
+    // Bulk save: the admin Experience page submits the ENTIRE timeline array
+    // at once, so replace the whole collection (persists edits, deletions,
+    // and reordering) instead of creating a single record.
+    if (Array.isArray(body)) {
+      const items = body as Array<Partial<IExperience>>;
+
+      const hasInvalidItem = items.some(
+        (item) =>
+          !item ||
+          typeof item.role !== 'string' ||
+          item.role.trim() === '' ||
+          typeof item.company !== 'string' ||
+          item.company.trim() === ''
+      );
+      if (hasInvalidItem) {
+        return NextResponse.json({ error: 'Role and Company are required' }, { status: 400 });
+      }
+
+      const docs = (items as IExperience[]).map((item, index) => ({
+        id: item.id || `exp_${Date.now()}_${index}_${Math.random().toString(36).substring(2, 6)}`,
+        role: item.role,
+        company: item.company,
+        period: item.period || '2024 — Present',
+        location: item.location || 'Nepal',
+        description: item.description || '',
+        highlights: Array.isArray(item.highlights) ? item.highlights : [],
+        order: index,
+      }));
+
+      await ExperienceModel.deleteMany({});
+      const saved = docs.length > 0 ? await ExperienceModel.insertMany(docs) : [];
+
+      return NextResponse.json(saved, { status: 200 });
+    }
+
+    const single = body as Partial<IExperience>;
+
+    if (!single.role || !single.company) {
       return NextResponse.json({ error: 'Role and Company are required' }, { status: 400 });
     }
 
     const newExperience = await ExperienceModel.create({
       id: `exp_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
-      role: body.role,
-      company: body.company,
-      period: body.period || '2024 — Present',
-      location: body.location || 'Nepal',
-      description: body.description || '',
-      highlights: Array.isArray(body.highlights) ? body.highlights : [],
+      role: single.role,
+      company: single.company,
+      period: single.period || '2024 — Present',
+      location: single.location || 'Nepal',
+      description: single.description || '',
+      highlights: Array.isArray(single.highlights) ? single.highlights : [],
     });
 
     return NextResponse.json(newExperience, { status: 201 });

@@ -197,14 +197,9 @@ const SettingSchema = new Schema<ISetting>(
       type: [EducationSchema],
       default: [
         {
-          degree: 'Diploma in Electrical Engineering',
-          school: 'CTEVT (3-Year Technical Engineering Track)',
-          note: 'Engineering fundamentals, logic circuits & technical math.',
-        },
-        {
-          degree: 'Bachelor of Business Studies',
-          school: 'Enrolled / Higher Education',
-          note: 'Organizational strategy and business context.',
+          degree: 'Diploma in Computer Engineering',
+          school: 'CTEVT — Tribhuvan Secondary School, Kohalpur',
+          note: '2016 — 2021 · Completed with First Division.',
         },
       ],
     },
@@ -214,6 +209,7 @@ const SettingSchema = new Schema<ISetting>(
         { language: 'English', proficiency: 'Professional Proficiency' },
         { language: 'Nepali', proficiency: 'Native Speaker' },
         { language: 'Hindi', proficiency: 'Fluent' },
+        { language: 'Japanese', proficiency: 'Beginner' },
       ],
     },
   },

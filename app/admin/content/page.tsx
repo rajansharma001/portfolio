@@ -693,7 +693,7 @@ export default function AdminContentPage() {
                     className="form-input"
                     value={edu.degree}
                     onChange={(e) => handleUpdateEducation(idx, 'degree', e.target.value)}
-                    placeholder="Diploma in Electrical Engineering"
+                    placeholder="Diploma in Computer Engineering"
                     required
                   />
                 </div>
