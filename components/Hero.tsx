@@ -43,8 +43,14 @@ export default function Hero({ settings, visibility, skills, projects }: HeroPro
   };
 
   const scrollToBottom = () => {
-    if (terminalEndRef.current) {
-      terminalEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    const end = terminalEndRef.current;
+    if (!end) return;
+    // Scroll only the terminal's own scrollable body. Using
+    // scrollIntoView() here also scrolls the page itself, which on
+    // mobile drags the hero up underneath the fixed header.
+    const scroller = end.closest('.terminal-body');
+    if (scroller) {
+      scroller.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' });
     }
   };
 

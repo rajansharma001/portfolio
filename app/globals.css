@@ -187,7 +187,8 @@ h5 {
 .container {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
 .section {
@@ -1891,7 +1892,8 @@ textarea.form-input {
    ========================================================================== */
 @media (max-width: 768px) {
   .container {
-    padding: 0 1.25rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
   }
   .section {
     padding: 4rem 0;
@@ -2019,7 +2021,8 @@ textarea.form-input {
    ========================================================================== */
 @media (max-width: 480px) {
   .container {
-    padding: 0 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 
   .hero-name {
